@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Newsonic Age — We don't just build websites. We build experiences. Premium digital experience studio specializing in interactive websites and cinematic content creation.">
+  <title>Newsonic Age — Digital Experience Studio</title>
+  <link rel="icon" type="image/png" href="assets/nsa-logo.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- ─── PRELOADER ─── -->
+  <div id="preloader">
+    <div class="preloader-inner">
+      <img src="assets/nsa-logo.png" alt="Newsonic Age" class="preloader-logo">
+      <div class="preloader-text">INITIALIZING EXPERIENCE</div>
+      <div class="preloader-bar"><div class="preloader-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- ─── MOBILE MENU ─── -->
+  <div id="mobile-menu">
+    <a href="#pain" onclick="closeMenu(); scrollToSection('pain')">The Problem</a>
+    <a href="#services" onclick="closeMenu(); scrollToSection('services')">Services</a>
+    <a href="#pricing" onclick="closeMenu(); scrollToSection('pricing')">Pricing</a>
+    <a href="#process" onclick="closeMenu(); scrollToSection('process')">Process</a>
+    <button class="btn-cta" onclick="closeMenu(); openTerminal()"><span>Start a Project</span></button>
+  </div>
+
+  <!-- ─── NAV ─── -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">
+        <img src="assets/nsa-logo.png" alt="Newsonic Age">
+      </a>
+      <div class="nav-links">
+        <a href="#" onclick="scrollToSection('pain'); return false;">The Problem</a>
+        <a href="#" onclick="scrollToSection('services'); return false;">Services</a>
+        <a href="#" onclick="scrollToSection('pricing'); return false;">Pricing</a>
+        <a href="#" onclick="scrollToSection('process'); return false;">Process</a>
+        <button class="btn-cta" onclick="openTerminal()"><span>Start a Project</span></button>
+      </div>
+      <button class="nav-hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ─── HERO ─── -->
+  <section id="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-orb"></div>
+
+    <div class="hero-eyebrow">NEWSONIC AGE &nbsp;/&nbsp; DIGITAL EXPERIENCE STUDIO &nbsp;/&nbsp; 2026</div>
+
+    <h1 class="hero-headline">
+      <span class="glow-text">Your brand deserves</span><br>
+      more than a website.
+    </h1>
+
+    <p class="hero-sub">We don't just build websites &mdash; we build experiences.</p>
+
+    <!-- Two main service tiles -->
+    <div class="choice-grid">
+
+      <div class="choice-tile" onclick="scrollToSection('web-section')">
+        <div class="tile-corner"></div>
+        <div class="tile-number">01 &mdash;</div>
+        <div class="tile-icon">
+          <!-- Web/Code icon -->
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="12" width="56" height="40" rx="2"/>
+            <polyline points="16,28 8,36 16,44"/>
+            <polyline points="48,28 56,36 48,44"/>
+            <line x1="28" y1="44" x2="36" y2="28"/>
+            <circle cx="32" cy="4" r="2" fill="currentColor" stroke="none"/>
+            <line x1="32" y1="6" x2="32" y2="12"/>
+          </svg>
+        </div>
+        <div class="tile-label">WEBSITE CREATION<br>&amp; MAINTENANCE</div>
+        <div class="tile-desc">Fully custom-coded digital experiences engineered to engage, convert, and grow with your brand.</div>
+        <div class="tile-cta">EXPLORE SERVICE <span class="arrow">→</span></div>
+      </div>
+
+      <div class="choice-tile" onclick="scrollToSection('content-section')">
+        <div class="tile-corner"></div>
+        <div class="tile-number">02 &mdash;</div>
+        <div class="tile-icon">
+          <!-- Camera/Content icon -->
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="18" width="60" height="38" rx="2"/>
+            <path d="M18 18 L24 8 L40 8 L46 18"/>
+            <circle cx="32" cy="37" r="12"/>
+            <circle cx="32" cy="37" r="5"/>
+            <circle cx="52" cy="27" r="3"/>
+          </svg>
+        </div>
+        <div class="tile-label">CONTENT<br>CREATION</div>
+        <div class="tile-desc">Cinematic video, brand photography, and social content that stops the scroll and builds desire.</div>
+        <div class="tile-cta">EXPLORE SERVICE <span class="arrow">→</span></div>
+      </div>
+
+    </div>
+
+    <div class="scroll-hint">scroll to explore &darr;</div>
+  </section>
+
+  <!-- ─── PAIN POINTS ─── -->
+  <section id="pain">
+    <div style="max-width:1200px; margin:0 auto;">
+      <div class="section-tag reveal">THE 2026 REALITY</div>
+      <h2 class="section-headline reveal reveal-delay-1">
+        The digital landscape<br>is <span class="accent">broken.</span>
+      </h2>
+      <p class="section-sub reveal reveal-delay-2">
+        AI flooded the internet with average. Your competitors all look the same.
+        Attention is worth more than ever — and most brands are wasting it.
+      </p>
+
+      <div class="pain-grid">
+        <div class="pain-item reveal">
+          <div class="pain-num">01</div>
+          <div class="pain-title">AI Made Average Free</div>
+          <div class="pain-text">Template sites, AI-generated copy, stock visuals — your audience has seen it all a thousand times. When mediocrity costs nothing, standing out requires deliberate craft.</div>
+        </div>
+        <div class="pain-item reveal reveal-delay-1">
+          <div class="pain-num">02</div>
+          <div class="pain-title">8-Second Attention Windows</div>
+          <div class="pain-text">Short-form video rewired how people consume. Visitors decide in seconds whether you're worth their time. A slow, forgettable first impression is an invisible exit sign.</div>
+        </div>
+        <div class="pain-item reveal reveal-delay-2">
+          <div class="pain-num">03</div>
+          <div class="pain-title">Trust Is the New Currency</div>
+          <div class="pain-text">In an era of synthetic content and AI personas, authenticity and premium presentation are the signals that separate serious brands from noise. Your digital presence is your handshake.</div>
+        </div>
+        <div class="pain-item reveal reveal-delay-3">
+          <div class="pain-num">04</div>
+          <div class="pain-title">Templates Kill Brands</div>
+          <div class="pain-text">Drag-and-drop builders create a sea of sameness. When your brand looks like everyone else's, price becomes the only differentiator. That's a race to the bottom you won't win.</div>
+        </div>
+        <div class="pain-item reveal reveal-delay-4">
+          <div class="pain-num">05</div>
+          <div class="pain-title">Engagement Over Impressions</div>
+          <div class="pain-text">Algorithms in 2026 reward time on page, return visits, and saves — not just reach. A website people actually explore becomes your most powerful marketing channel.</div>
+        </div>
+        <div class="pain-item reveal reveal-delay-5">
+          <div class="pain-num">06</div>
+          <div class="pain-title">Content Without Context Fails</div>
+          <div class="pain-text">Posting without a cohesive visual world is shouting into a void. Your website and your content need to speak the same language — or neither of them speaks loud enough.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── STATS ─── -->
+  <div id="stats">
+    <div class="stats-inner">
+      <div>
+        <div class="stat-num" data-target="3" data-suffix="s">0s</div>
+        <div class="stat-label">Avg. Time Before Judgment</div>
+      </div>
+      <div>
+        <div class="stat-num" data-target="74" data-suffix="%">0%</div>
+        <div class="stat-label">Users Judge Credibility by Design</div>
+      </div>
+      <div>
+        <div class="stat-num" data-target="400" data-suffix="%">0%</div>
+        <div class="stat-label">More Conversions: Custom vs Template</div>
+      </div>
+      <div>
+        <div class="stat-num" data-target="2" data-suffix="x">0x</div>
+        <div class="stat-label">Longer Time on Site with Interaction</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SERVICES ─── -->
+  <section id="services">
+    <div style="max-width:1200px; margin:0 auto 80px;">
+      <div class="section-tag reveal">WHAT WE DO</div>
+      <h2 class="section-headline reveal reveal-delay-1">
+        Two disciplines.<br><span class="accent">One unified vision.</span>
+      </h2>
+    </div>
+
+    <!-- SERVICE 1: Website -->
+    <div id="web-section" class="service-block reveal">
+      <div class="service-content">
+        <div class="service-label">01 — WEBSITE CREATION &amp; MAINTENANCE</div>
+        <h3 class="service-title">Not just a website.<br>A digital flagship.</h3>
+        <p class="service-desc">
+          We build from scratch — no themes, no templates, no shortcuts. Every interaction, transition,
+          and layout decision is deliberate. The result is a digital presence that doesn't just represent
+          your brand — it elevates it.
+        </p>
+        <ul class="service-features">
+          <li>Fully custom-coded — zero templates, total control</li>
+          <li>Advanced UI/UX tailored to your specific audience</li>
+          <li>Interactive elements: hover effects, animations, transitions</li>
+          <li>Mobile-first with the same premium feel at every size</li>
+          <li>Shopify Storefront API &amp; custom e-commerce integration</li>
+          <li>Custom cart flows optimized for conversion</li>
+          <li>Performance-tuned for Core Web Vitals and speed</li>
+          <li>Ongoing hosting, updates, and technical support</li>
+        </ul>
+        <div class="glow-line" style="margin-top:36px;"></div>
+        <button class="btn-cta" onclick="openTerminal('web')" style="margin-top:4px;"><span>Start a Web Project</span></button>
+      </div>
+      <div class="service-visual">
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+        <div class="vis-web">
+          <div style="display:flex;gap:6px;margin-bottom:16px;">
+            <div style="width:8px;height:8px;background:rgba(0,168,255,0.5);border-radius:50%;box-shadow:0 0 8px #00a8ff;"></div>
+            <div style="width:8px;height:8px;background:rgba(0,168,255,0.3);border-radius:50%;"></div>
+            <div style="width:8px;height:8px;background:rgba(0,168,255,0.3);border-radius:50%;"></div>
+          </div>
+          <div class="vis-bar"></div>
+          <div style="height:20px;"></div>
+          <div class="vis-bar" style="width:45%;height:60px;background:rgba(0,168,255,0.08);border:1px solid rgba(0,168,255,0.2);box-shadow:none;margin-bottom:8px;"></div>
+          <div class="vis-bar"></div>
+          <div class="vis-bar"></div>
+          <div class="vis-bar"></div>
+          <div style="height:16px;"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+            <div class="vis-bar" style="height:40px;background:rgba(0,168,255,0.08);border:1px solid rgba(0,168,255,0.15);box-shadow:none;"></div>
+            <div class="vis-bar" style="height:40px;background:rgba(0,168,255,0.08);border:1px solid rgba(0,168,255,0.15);box-shadow:none;"></div>
+            <div class="vis-bar" style="height:40px;background:rgba(0,168,255,0.08);border:1px solid rgba(0,168,255,0.15);box-shadow:none;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICE 2: Content -->
+    <div id="content-section" class="service-block reverse reveal" style="max-width:1200px;margin:0 auto;">
+      <div class="service-content">
+        <div class="service-label">02 — CONTENT CREATION</div>
+        <h3 class="service-title">Content that doesn't<br>just get seen — it's felt.</h3>
+        <p class="service-desc">
+          We produce on-site video, brand photography, and social content that matches the level of your
+          website. No stock. No filler. Every frame is constructed to communicate value, trigger emotion,
+          and build the kind of trust that makes people spend.
+        </p>
+        <ul class="service-features">
+          <li>On-site video production: brand films, product, behind-the-scenes</li>
+          <li>Brand photography that becomes your visual identity</li>
+          <li>Social media content aligned with your website aesthetic</li>
+          <li>Cinematic direction and post-production</li>
+          <li>Short-form content engineered for algorithm performance</li>
+          <li>Storytelling strategy that deepens brand perception</li>
+          <li>Content calendars and campaign planning</li>
+        </ul>
+        <div class="glow-line" style="margin-top:36px;"></div>
+        <button class="btn-cta" onclick="openTerminal('content')" style="margin-top:4px;"><span>Start a Content Project</span></button>
+      </div>
+      <div class="service-visual">
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+        <div class="vis-content">
+          <div style="width:100%;aspect-ratio:16/9;background:rgba(0,168,255,0.05);border:1px solid rgba(0,168,255,0.2);display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#00a8ff" stroke-width="1.5" style="filter:drop-shadow(0 0 8px #00a8ff);">
+              <circle cx="20" cy="20" r="18"/>
+              <polygon points="16,13 30,20 16,27" fill="#00a8ff" stroke="none"/>
+            </svg>
+          </div>
+          <div class="vis-dot"></div>
+          <div class="vis-dot"></div>
+          <div class="vis-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional services mention -->
+    <div style="max-width:1200px;margin:0 auto;padding-top:40px;">
+      <div style="border:1px solid rgba(0,168,255,0.1);padding:48px;background:var(--bg2);display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;" class="reveal">
+        <div>
+          <div class="service-label" style="margin-bottom:12px;">E-COMMERCE</div>
+          <p style="font-size:0.88rem;color:var(--white-dim);line-height:1.6;">Shopify Storefront API integration with custom cart flows and product storytelling built to convert.</p>
+        </div>
+        <div>
+          <div class="service-label" style="margin-bottom:12px;">DIGITAL EXPERIENCE DESIGN</div>
+          <p style="font-size:0.88rem;color:var(--white-dim);line-height:1.6;">We build worlds around brands — not just pages. Emotional user journeys that increase time on site and trust.</p>
+        </div>
+        <div>
+          <div class="service-label" style="margin-bottom:12px;">ONGOING MANAGEMENT</div>
+          <p style="font-size:0.88rem;color:var(--white-dim);line-height:1.6;">Hosting, monitoring, continuous updates, and growth optimization. Your site gets better over time, not stale.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PRICING ─── -->
+  <section id="pricing">
+    <div class="pricing-inner">
+      <div class="pricing-intro">
+        <div class="section-tag reveal">INVESTMENT</div>
+        <h2 class="section-headline reveal reveal-delay-1">
+          Choose your<br><span class="accent">level of ambition.</span>
+        </h2>
+        <p class="section-sub reveal reveal-delay-2">
+          Every tier is built to outperform its market. The question is how far you want to go.
+        </p>
+      </div>
+
+      <div class="pricing-grid">
+
+        <!-- LITE -->
+        <div class="price-card reveal">
+          <div class="price-tier">TIER ONE</div>
+          <div class="price-name">Lite</div>
+          <div class="price-tagline">Clean, modern, and intentional. Best for emerging brands ready to make a real first impression.</div>
+          <div class="price-divider"></div>
+          <ul class="price-features">
+            <li><span class="check">✦</span> Custom-designed, fully coded website</li>
+            <li><span class="check">✦</span> Up to 5 pages with responsive layout</li>
+            <li><span class="check">✦</span> Clean UI/UX — minimal but premium</li>
+            <li><span class="check">✦</span> Performance optimized &amp; mobile-first</li>
+            <li><span class="check">✦</span> Contact form &amp; basic integrations</li>
+            <li><span class="check">✦</span> Netlify hosting setup</li>
+            <li><span class="check">✦</span> 30-day post-launch support</li>
+          </ul>
+          <button class="price-cta" onclick="openTerminal('web')"><span>Get Started</span></button>
+        </div>
+
+        <!-- PRO -->
+        <div class="price-card featured reveal reveal-delay-1">
+          <div class="price-badge">MOST POPULAR</div>
+          <div class="price-tier">TIER TWO</div>
+          <div class="price-name">Pro</div>
+          <div class="price-tagline">A full interactive experience. Custom UI/UX, e-commerce ready, and built to convert high-value clients.</div>
+          <div class="price-divider"></div>
+          <ul class="price-features">
+            <li><span class="check">✦</span> Everything in Lite</li>
+            <li><span class="check">✦</span> Advanced interactive UI/UX design</li>
+            <li><span class="check">✦</span> Hover effects, animations, scroll transitions</li>
+            <li><span class="check">✦</span> Shopify or custom e-commerce integration</li>
+            <li><span class="check">✦</span> Product storytelling through design</li>
+            <li><span class="check">✦</span> Visual brand language development</li>
+            <li><span class="check">✦</span> SEO architecture &amp; performance tuning</li>
+            <li><span class="check">✦</span> 60-day post-launch support</li>
+          </ul>
+          <button class="price-cta" onclick="openTerminal('web')"><span>Get Started</span></button>
+        </div>
+
+        <!-- ELITE -->
+        <div class="price-card reveal reveal-delay-2">
+          <div class="price-tier">TIER THREE</div>
+          <div class="price-name">Elite</div>
+          <div class="price-tagline">Cinematic. Flagship. Unforgettable. For premium brands that refuse to be ordinary.</div>
+          <div class="price-divider"></div>
+          <ul class="price-features">
+            <li><span class="check">✦</span> Everything in Pro</li>
+            <li><span class="check">✦</span> Cinematic interaction design &amp; WebGL effects</li>
+            <li><span class="check">✦</span> Custom micro-animations throughout</li>
+            <li><span class="check">✦</span> Advanced e-commerce &amp; custom checkout</li>
+            <li><span class="check">✦</span> Full brand world development</li>
+            <li><span class="check">✦</span> Content production bundle included</li>
+            <li><span class="check">✦</span> Priority support &amp; feature expansion</li>
+            <li><span class="check">✦</span> Dedicated project manager</li>
+            <li><span class="check">✦</span> 90-day post-launch partnership</li>
+          </ul>
+          <button class="price-cta" onclick="openTerminal('web')"><span>Get Started</span></button>
+        </div>
+
+      </div>
+
+      <!-- Management Tiers -->
+      <div class="mgmt-section reveal">
+        <div class="mgmt-title">+ MONTHLY MANAGEMENT OPTIONS</div>
+        <div class="mgmt-grid">
+          <div class="mgmt-card">
+            <div class="service-label" style="margin-bottom:10px;">BASIC MAINTENANCE</div>
+            <div class="mgmt-card-name">Keep It Running</div>
+            <div class="mgmt-card-desc">Hosting management, security updates, performance monitoring, and minor content edits. Your site stays fast, secure, and online.</div>
+          </div>
+          <div class="mgmt-card">
+            <div class="service-label" style="margin-bottom:10px;">GROWTH OPTIMIZATION</div>
+            <div class="mgmt-card-name">Keep It Growing</div>
+            <div class="mgmt-card-desc">Everything in Basic plus monthly analytics reviews, conversion optimization, A/B testing, and content strategy adjustments. We actively improve performance.</div>
+          </div>
+          <div class="mgmt-card">
+            <div class="service-label" style="margin-bottom:10px;">PREMIUM PARTNERSHIP</div>
+            <div class="mgmt-card-name">Keep It Evolving</div>
+            <div class="mgmt-card-desc">Full ongoing development, new feature rollouts, priority support, and a dedicated point of contact. Your digital presence grows as your brand grows.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PROCESS ─── -->
+  <section id="process">
+    <div class="process-inner">
+      <div class="section-tag reveal">HOW IT WORKS</div>
+      <h2 class="section-headline reveal reveal-delay-1">
+        From first contact<br><span class="accent">to full launch.</span>
+      </h2>
+      <p class="section-sub reveal reveal-delay-2">
+        A proven process designed to be clear, collaborative, and efficient — so you always know what's happening and why.
+      </p>
+
+      <div class="process-steps">
+
+        <div class="process-step reveal">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <div class="step-title">Discovery &amp; Strategy</div>
+            <div class="step-desc">We start by understanding your brand, your audience, and your goals — not just aesthetically, but commercially. We identify what makes you different and build the digital strategy around that truth.</div>
+          </div>
+        </div>
+
+        <div class="process-step reveal reveal-delay-1">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <div class="step-title">Concept &amp; Direction</div>
+            <div class="step-desc">We present a visual direction and interaction concept for your approval before a line of code is written. You see the vision clearly before we commit — no surprises, no revisions that waste time.</div>
+          </div>
+        </div>
+
+        <div class="process-step reveal reveal-delay-2">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <div class="step-title">Design &amp; Build</div>
+            <div class="step-desc">We design and develop simultaneously, keeping the experience cohesive. Every element — from typography to motion — is considered. You receive regular updates and have input throughout.</div>
+          </div>
+        </div>
+
+        <div class="process-step reveal reveal-delay-3">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <div class="step-title">Refinement &amp; Testing</div>
+            <div class="step-desc">Before launch we stress-test across all devices, optimize for performance, and refine based on your final feedback. The standard is pixel-perfect on every screen size.</div>
+          </div>
+        </div>
+
+        <div class="process-step reveal reveal-delay-4">
+          <div class="step-num">05</div>
+          <div class="step-content">
+            <div class="step-title">Launch &amp; Beyond</div>
+            <div class="step-desc">We handle deployment, monitoring, and the post-launch period. This is the beginning of a relationship, not the end of a transaction. Your success beyond the launch is part of our measure of success.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA ─── -->
+  <section id="cta">
+    <div class="cta-bg"></div>
+    <div class="cta-line"></div>
+
+    <div class="cta-eyebrow reveal">READY TO BEGIN</div>
+    <h2 class="cta-headline reveal reveal-delay-1">
+      Your audience is<br>waiting for <span class="accent">something real.</span>
+    </h2>
+    <p class="cta-sub reveal reveal-delay-2">
+      Let's build a digital presence that doesn't just look the part — it performs,
+      it converts, and it stays in people's minds long after they leave.
+    </p>
+
+    <div class="cta-buttons reveal reveal-delay-3">
+      <button class="btn-primary" onclick="openTerminal()">Start a Project</button>
+      <button class="btn-secondary" onclick="scrollToSection('pricing')">View Pricing</button>
+    </div>
+
+    <!-- Shock value: subtle hidden message that appears on hover of logo area -->
+    <div style="margin-top:80px;position:relative;z-index:2;" class="reveal reveal-delay-4">
+      <img src="assets/nsa-logo2.png" alt="Newsonic Age" style="width:140px;margin:0 auto;opacity:0.85;filter:drop-shadow(0 0 30px rgba(0,168,255,0.6)) drop-shadow(0 0 60px rgba(0,168,255,0.3));transition:filter 0.4s,transform 0.4s;"
+        onmouseenter="this.style.filter='drop-shadow(0 0 50px #00a8ff) drop-shadow(0 0 100px #00a8ff) drop-shadow(0 0 200px rgba(0,168,255,0.4))';this.style.transform='scale(1.06)'"
+        onmouseleave="this.style.filter='drop-shadow(0 0 30px rgba(0,168,255,0.6)) drop-shadow(0 0 60px rgba(0,168,255,0.3))';this.style.transform='scale(1)'">
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <div class="footer-inner">
+      <a href="#" class="footer-logo" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">
+        <img src="assets/nsa-logo.png" alt="Newsonic Age">
+      </a>
+      <div class="footer-copy">
+        &copy; 2026 NEWSONIC AGE. ALL RIGHTS RESERVED.
+      </div>
+      <div class="footer-links">
+        <a href="#" onclick="scrollToSection('services'); return false;">Services</a>
+        <a href="#" onclick="scrollToSection('pricing'); return false;">Pricing</a>
+        <a href="#" onclick="openTerminal(); return false;">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ─── TERMINAL POPUP ─── -->
+  <div id="terminal-overlay">
+    <div class="terminal-window">
+      <div class="terminal-header">
+        <div class="t-dots">
+          <div class="t-dot red"></div>
+          <div class="t-dot yellow"></div>
+          <div class="t-dot green"></div>
+        </div>
+        <div class="t-title">newsonic_age &mdash; project_intake.sh</div>
+        <button class="t-close" onclick="closeTerminal()">&#x2715;</button>
+      </div>
+      <div class="terminal-body">
+        <div class="t-output" id="t-output"></div>
+
+        <form id="terminal-form" onsubmit="submitForm(event)" style="display:flex;flex-direction:column;">
+          <div class="t-field">
+            <label class="t-label" for="t-name">&gt; name</label>
+            <input class="t-input" id="t-name" name="name" type="text" placeholder="your full name" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="t-field">
+            <label class="t-label" for="t-email">&gt; email</label>
+            <input class="t-input" id="t-email" name="email" type="email" placeholder="your@email.com" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="t-field">
+            <label class="t-label" for="t-service">&gt; service</label>
+            <select class="t-select" id="t-service" name="service">
+              <option value="">— select service —</option>
+              <option value="web">Website Creation &amp; Maintenance</option>
+              <option value="content">Content Creation</option>
+              <option value="both">Both Services</option>
+            </select>
+          </div>
+          <div class="t-field">
+            <label class="t-label" for="t-budget">&gt; tier interest</label>
+            <select class="t-select" id="t-budget" name="budget">
+              <option value="">— select tier —</option>
+              <option value="lite">Lite</option>
+              <option value="pro">Pro</option>
+              <option value="elite">Elite</option>
+              <option value="management">Monthly Management</option>
+            </select>
+          </div>
+          <div class="t-field">
+            <label class="t-label" for="t-message">&gt; vision</label>
+            <textarea class="t-textarea" id="t-message" name="message" placeholder="tell us about your brand and goals_"></textarea>
+          </div>
+          <button type="submit" class="t-submit"><span>&gt; TRANSMIT MESSAGE_</span></button>
+        </form>
+
+        <div id="t-success" style="display:none;font-family:var(--mono);font-size:0.82rem;line-height:1.8;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>

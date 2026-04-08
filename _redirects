@@ -1,0 +1,4 @@
+# Clean URLs — remove .html extensions
+/index.html  /       301
+/home.html   /home   301
+/home        /home.html  200
