@@ -89,8 +89,12 @@ function closeMenu() {
 function scrollToSection(id) {
   const el = document.getElementById(id);
   if (!el) return;
-  const offset = 80;
-  const top = el.getBoundingClientRect().top + window.scrollY - offset;
+  const nav   = document.getElementById('nav');
+  const navH  = nav ? nav.offsetHeight : 80;
+  // Compensate for nav height + section's own top padding so content
+  // appears just below the nav with a small breathing gap (24px).
+  const pt  = parseInt(window.getComputedStyle(el).paddingTop, 10) || 0;
+  const top = el.getBoundingClientRect().top + window.scrollY + pt - navH - 24;
   window.scrollTo({ top, behavior: 'smooth' });
   closeMenu();
 }

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --check server.js)",
+      "Bash(node:*)",
+      "Bash(npm install:*)"
+    ]
+  }
+}

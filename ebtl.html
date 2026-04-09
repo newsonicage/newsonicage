@@ -1,0 +1,2538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- viewport-fit=cover prevents layout shift from safe areas; font-size minimum handled in CSS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Executive Branch Tree & Landscape — Newsonic Age Client Portal">
+  <title>EBTL | Newsonic Age Client Portal</title>
+  <link rel="icon" type="image/png" href="assets/ebtl-icon.png">
+
+  <!-- Fonts: Space Grotesk (headings/UI) + Questrial (body) + Space Mono (labels/code) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Questrial&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'nsa-blue':   '#00a8ff',
+            'ebtl-green': '#68943E',
+            'dark':       '#04070d',
+          },
+          fontFamily: {
+            'grotesk': ['Space Grotesk', 'sans-serif'],
+            'body':    ['Questrial', 'sans-serif'],
+            'mono':    ['Space Mono', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ==============================================
+       EBTL CLIENT PORTAL  ·  Newsonic Age
+       Login: NSA blue tones + glassmorphism
+       Content: EBTL green (#68943E) + soft accents
+    =============================================== */
+
+    :root {
+      /* Login palette */
+      --blue:         #00a8ff;
+      --blue-dim:     rgba(0,168,255,0.12);
+      --blue-mid:     rgba(0,168,255,0.35);
+
+      /* Content palette */
+      --green:        #68943E;
+      --green-dim:    rgba(104,148,62,0.12);
+      --green-mid:    rgba(104,148,62,0.35);
+
+      /* Shared */
+      --red:          #e03050;
+      --bg:           #04070d;
+      --bg2:          #070d15;
+      --bg3:          #0b1422;
+      --white:        #ffffff;
+      --white-dim:    rgba(255,255,255,0.55);
+      --white-faint:  rgba(255,255,255,0.05);
+
+      /* Glow presets — intentionally soft */
+      --glow-blue:    0 0 12px rgba(0,168,255,0.35), 0 0 32px rgba(0,168,255,0.15);
+      --glow-green:   0 0 12px rgba(104,148,62,0.4),  0 0 32px rgba(104,148,62,0.15);
+      --glow-white:   0 0 16px rgba(255,255,255,0.12), 0 0 40px rgba(255,255,255,0.05);
+      --glow-red:     0 0 12px rgba(224,48,80,0.45),  0 0 28px rgba(224,48,80,0.15);
+    }
+
+    /* ── CUSTOM CURSOR ── */
+    #cursor {
+      position: fixed;
+      width: 10px; height: 10px;
+      background: var(--blue);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      transition: width .15s ease, height .15s ease, opacity .2s ease;
+      box-shadow: 0 0 8px var(--blue), 0 0 20px rgba(0,168,255,0.4);
+      mix-blend-mode: normal;
+    }
+    #cursor-ring {
+      position: fixed;
+      width: 32px; height: 32px;
+      border: 1px solid rgba(0,168,255,0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99998;
+      transform: translate(-50%, -50%);
+      transition: opacity .2s ease;
+    }
+    body.cursor-hover #cursor { width: 18px; height: 18px; }
+    body.cursor-hover #cursor-ring { width: 50px; height: 50px; border-color: var(--blue); }
+    body { cursor: none; }
+    button, a, input, [role="button"] { cursor: none; }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      /* Prevent rubber-band scroll on iOS from shifting the gate */
+      overscroll-behavior: none;
+    }
+
+    body {
+      font-family: 'Questrial', sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a  { text-decoration: none; color: inherit; }
+    img { display: block; max-width: 100%; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+    /* Thin scrollbar */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 2px; }
+
+
+    /* ══════════════════════════════════════════
+       NAV
+    ══════════════════════════════════════════ */
+    #portal-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(4,7,13,0.88);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(0,168,255,0.18);
+    }
+    .nav-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 24px;
+    }
+    .nav-logo img {
+      height: 32px;
+      filter: brightness(1) drop-shadow(0 0 6px rgba(0,168,255,0.3));
+    }
+    .nav-center {
+      flex: 1;
+      text-align: center;
+    }
+    .nav-center-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.5rem, 1.3vw, 0.7rem);
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--blue);
+      line-height: 1.4;
+    }
+    .nav-center-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      margin-top: 2px;
+      display: none;
+    }
+    @media (min-width: 640px) { .nav-center-sub { display: block; } }
+
+    .nav-icon {
+      width: 38px; height: 38px;
+      border-radius: 8px;
+      border: 1px solid rgba(0,168,255,0.25);
+      background: rgba(0,168,255,0.06);
+      padding: 5px;
+      flex-shrink: 0;
+    }
+    .nav-icon img { width: 100%; height: 100%; object-fit: contain; }
+
+
+    /* ══════════════════════════════════════════
+       GATE SECTION  (full-screen login)
+       Uses dvh so keyboard on mobile doesn't
+       cause layout shift — body stays locked.
+    ══════════════════════════════════════════ */
+    #gate-section {
+      /* dvh = dynamic viewport height (shrinks when keyboard opens) */
+      min-height: 100dvh;
+      min-height: 100vh; /* fallback */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 84px 20px 40px;
+      overflow: hidden;
+    }
+
+    /* Subtle blue grid */
+    .gate-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,168,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,168,255,0.04) 1px, transparent 1px);
+      background-size: 56px 56px;
+      pointer-events: none;
+    }
+
+    /* Radial blue haze */
+    .gate-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 48%,
+        rgba(0,168,255,0.07) 0%,
+        transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Rising particles */
+    .gate-particles { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--blue);
+      opacity: 0;
+      animation: rise linear infinite;
+    }
+    @keyframes rise {
+      0%   { transform: translateY(110vh); opacity: 0; }
+      8%   { opacity: 0.5; }
+      92%  { opacity: 0.4; }
+      100% { transform: translateY(-60px); opacity: 0; }
+    }
+
+    /* ── GLASSMORPHIC TERMINAL CARD ── */
+    .terminal-card {
+      position: relative;
+      width: 100%;
+      max-width: 520px;
+      background: rgba(6, 14, 28, 0.72);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border-radius: 16px;
+      border: 1px solid rgba(0,168,255,0.28);
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(0,168,255,0.1),
+        0 0 40px rgba(0,168,255,0.12),
+        0 40px 100px rgba(0,0,0,0.7);
+      transition: box-shadow 0.4s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1), opacity 0.5s ease;
+      /* Prevent iOS bounce from flickering the card */
+      will-change: transform, opacity;
+    }
+    .terminal-card.gate-open {
+      transform: scale(1.02) translateY(-8px);
+      opacity: 0;
+      box-shadow:
+        0 0 0 2px var(--blue),
+        0 0 60px rgba(0,168,255,0.5),
+        0 0 120px rgba(0,168,255,0.2);
+    }
+
+    /* Terminal top bar */
+    .terminal-header {
+      background: rgba(0,168,255,0.07);
+      border-bottom: 1px solid rgba(0,168,255,0.2);
+      padding: 13px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .terminal-dots { display: flex; gap: 6px; }
+    .tdot { width: 11px; height: 11px; border-radius: 50%; }
+    .tdot-r { background: #ff5f57; }
+    .tdot-y { background: #febc2e; }
+    .tdot-g { background: var(--blue); box-shadow: 0 0 6px var(--blue); }
+
+    .th-icon { width: 24px; height: 24px; flex-shrink: 0; margin-left: 4px; }
+    .th-icon img { width: 100%; height: 100%; object-fit: contain; }
+
+    .th-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.52rem, 1.4vw, 0.65rem);
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--blue);
+      flex: 1;
+      text-align: center;
+    }
+
+    /* Terminal body */
+    .terminal-body {
+      padding: 36px 32px 40px;
+    }
+    @media (max-width: 420px) {
+      .terminal-body { padding: 28px 20px 32px; }
+    }
+
+    .t-prompt {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(0,168,255,0.45);
+      letter-spacing: 0.08em;
+      margin-bottom: 28px;
+    }
+    .t-prompt em { color: var(--blue); font-style: normal; }
+
+    .t-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 8vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .t-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 32px;
+    }
+
+    /* Input label */
+    .input-label {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(0,168,255,0.6);
+      margin-bottom: 8px;
+    }
+
+    /* Password input
+       font-size: 16px prevents iOS auto-zoom on focus */
+    #pw {
+      width: 100%;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      color: var(--white);
+      background: rgba(0,168,255,0.06);
+      border: 1.5px solid rgba(0,168,255,0.25);
+      border-radius: 10px;
+      padding: 15px 16px;
+      outline: none;
+      margin-bottom: 20px;
+      -webkit-appearance: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      /* Touch action: prevents double-tap zoom interfering */
+      touch-action: manipulation;
+    }
+    #pw::placeholder { color: rgba(255,255,255,0.2); }
+    #pw:focus {
+      border-color: var(--blue);
+      box-shadow:
+        0 0 0 3px rgba(0,168,255,0.12),
+        0 0 20px rgba(0,168,255,0.15);
+      background: rgba(0,168,255,0.09);
+    }
+    #pw.shake {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(224,48,80,0.15);
+      animation: shake 0.38s ease;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-7px); }
+      40%      { transform: translateX(7px); }
+      60%      { transform: translateX(-4px); }
+      80%      { transform: translateX(4px); }
+    }
+
+    /* ── CLIENT STANDING INDICATOR ── */
+    .standing-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: -16px;
+      margin-bottom: 24px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: rgba(76,255,145,0.05);
+      border: 1px solid rgba(76,255,145,0.12);
+    }
+    .standing-row.terminated {
+      background: rgba(224,48,80,0.05);
+      border-color: rgba(224,48,80,0.12);
+    }
+    .standing-led {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #4cff91;
+      box-shadow: 0 0 5px #4cff91, 0 0 12px rgba(76,255,145,0.5);
+      flex-shrink: 0;
+      animation: standing-blink 1.8s ease-in-out infinite;
+    }
+    .standing-row.terminated .standing-led {
+      background: var(--red);
+      box-shadow: 0 0 5px var(--red), 0 0 12px rgba(224,48,80,0.5);
+    }
+    @keyframes standing-blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.25; }
+    }
+    .standing-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(76,255,145,0.75);
+    }
+    .standing-row.terminated .standing-label { color: rgba(224,48,80,0.75); }
+
+    /* LED row */
+    .led-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .led {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--blue);
+      flex-shrink: 0;
+      box-shadow: 0 0 6px var(--blue), 0 0 14px rgba(0,168,255,0.4);
+      animation: led-breathe 2s ease-in-out infinite;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .led.led-error {
+      background: var(--red);
+      box-shadow: 0 0 6px var(--red), 0 0 14px rgba(224,48,80,0.4);
+      animation: led-flash 0.35s ease-in-out 4;
+    }
+    .led.led-ok {
+      background: #4cff91;
+      box-shadow: 0 0 6px #4cff91, 0 0 14px rgba(76,255,145,0.4);
+      animation: led-flash 0.25s ease-in-out 6;
+    }
+    @keyframes led-breathe {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0.35; }
+    }
+    @keyframes led-flash {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0.1; }
+    }
+    .led-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(0,168,255,0.5);
+      transition: color 0.3s;
+    }
+    .led-label.is-error  { color: var(--red); }
+    .led-label.is-ok     { color: #4cff91; }
+
+    /* Unlock button */
+    .btn-unlock {
+      width: 100%;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.75rem, 2.5vw, 0.88rem);
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--white);
+      background: transparent;
+      border: 1.5px solid var(--blue);
+      border-radius: 10px;
+      padding: 18px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.25s, box-shadow 0.25s, transform 0.2s;
+      box-shadow: 0 0 18px rgba(0,168,255,0.2), inset 0 0 18px rgba(0,168,255,0.04);
+      touch-action: manipulation;
+    }
+    .btn-unlock::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,168,255,0.06);
+    }
+    .btn-unlock:hover {
+      background: rgba(0,168,255,0.1);
+      box-shadow: 0 0 30px rgba(0,168,255,0.35), 0 0 60px rgba(0,168,255,0.12), inset 0 0 24px rgba(0,168,255,0.08);
+      transform: translateY(-1px);
+    }
+    .btn-unlock:active { transform: scale(0.99); }
+
+    /* Error text */
+    #err {
+      display: none;
+      margin-top: 12px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--red);
+      text-align: center;
+      animation: fade-up 0.25s ease both;
+    }
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Gate footer note */
+    .gate-note {
+      margin-top: 24px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.12);
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+
+    /* ══════════════════════════════════════════
+       ACCESS GRANTED BANNER
+    ══════════════════════════════════════════ */
+    #granted-banner {
+      display: none;
+      position: fixed;
+      top: 76px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3000;
+      background: #4cff91;
+      color: #04070d;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 12px 32px;
+      border-radius: 100px;
+      white-space: nowrap;
+      box-shadow: 0 0 24px rgba(76,255,145,0.5), 0 0 60px rgba(76,255,145,0.15);
+      animation: banner-in 0.45s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    @keyframes banner-in {
+      from { opacity: 0; transform: translateX(-50%) translateY(-12px) scale(0.92); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+    }
+    #granted-banner.fade-out {
+      animation: banner-out 0.5s ease forwards;
+    }
+    @keyframes banner-out {
+      to { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+    }
+
+
+    /* ══════════════════════════════════════════
+       MAIN CONTENT (hidden until unlock)
+    ══════════════════════════════════════════ */
+    #main-content {
+      display: none;
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+    #main-content.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+
+    /* ══════════════════════════════════════════
+       SHARED LAYOUT
+    ══════════════════════════════════════════ */
+    .section {
+      padding: 96px 24px;
+    }
+    .section-sm {
+      padding: 72px 24px;
+    }
+    .inner {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    /* Dividers */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(104,148,62,0.25), rgba(0,168,255,0.15), transparent);
+    }
+
+    /* Eyebrow label */
+    .eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .eyebrow::before {
+      content: '';
+      width: 32px; height: 1px;
+      background: var(--green);
+      opacity: 0.6;
+      flex-shrink: 0;
+    }
+
+    /* Section headings: Space Grotesk, bold, all-caps */
+    .h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      line-height: 1.02;
+      color: var(--white);
+      margin-bottom: 20px;
+    }
+    .h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.9rem, 4vw, 3rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      line-height: 1.05;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+    .h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .accent-green { color: var(--green); }
+    .accent-blue  { color: var(--blue); }
+
+    /* Body text: Questrial */
+    .body-text {
+      font-family: 'Questrial', sans-serif;
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      line-height: 1.75;
+      color: var(--white-dim);
+      max-width: 680px;
+    }
+    .body-text strong { color: var(--white); font-weight: 400; }
+
+    /* ── CARDS ── */
+    .card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .card-g { border-color: rgba(104,148,62,0.2); }
+    .card-b { border-color: rgba(0,168,255,0.2); }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+    }
+    .card-g::before { background: linear-gradient(90deg, transparent, rgba(104,148,62,0.4), transparent); }
+    .card-b::before { background: linear-gradient(90deg, transparent, rgba(0,168,255,0.4), transparent); }
+    .card:hover { transform: translateY(-3px); }
+    .card-g:hover { border-color: rgba(104,148,62,0.4); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+    .card-b:hover { border-color: rgba(0,168,255,0.4); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+
+    /* ── TWO-COL GRID ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    @media (min-width: 600px) {
+      .two-col { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ── THREE-COL GRID ── */
+    .three-col {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 640px)  { .three-col { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1000px) { .three-col { grid-template-columns: 1fr 1fr 1fr; } }
+
+    /* Price display */
+    .price-big {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 700;
+      color: var(--green);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .price-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 16px;
+    }
+
+
+    /* ══════════════════════════════════════════
+       WELCOME SECTION
+    ══════════════════════════════════════════ */
+    .welcome-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 56px;
+      align-items: center;
+    }
+    @media (min-width: 860px) {
+      .welcome-grid { grid-template-columns: 3fr 2fr; }
+    }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(104,148,62,0.3);
+      border-radius: 100px;
+      padding: 7px 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-top: 24px;
+    }
+    .live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: led-breathe 2.2s ease-in-out infinite;
+    }
+
+    .welcome-logo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .welcome-logo {
+      max-width: 240px;
+      width: 100%;
+      opacity: 0.9;
+    }
+
+
+    /* ══════════════════════════════════════════
+       OBJECTIVE SECTION
+    ══════════════════════════════════════════ */
+    .obj-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 32px;
+    }
+    .obj-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px 24px;
+      border: 1px solid rgba(104,148,62,0.15);
+      border-radius: 12px;
+      background: rgba(104,148,62,0.03);
+      transition: border-color 0.25s;
+    }
+    .obj-item:hover { border-color: rgba(104,148,62,0.3); }
+    .obj-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .obj-text {
+      font-family: 'Questrial', sans-serif;
+      font-size: 1rem;
+      line-height: 1.65;
+      color: var(--white-dim);
+    }
+    .obj-text strong { color: var(--white); }
+
+
+    /* ══════════════════════════════════════════
+       PRICING SECTION
+    ══════════════════════════════════════════ */
+    .total-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      background: rgba(104,148,62,0.06);
+      border: 1px solid rgba(104,148,62,0.25);
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 28px;
+    }
+    .total-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 4px;
+    }
+    .total-amount {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.4rem, 5vw, 3.4rem);
+      font-weight: 700;
+      color: var(--green);
+      line-height: 1;
+    }
+    .total-sub {
+      font-family: 'Questrial', sans-serif;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .partner-callout {
+      background: linear-gradient(135deg, rgba(104,148,62,0.07) 0%, rgba(0,168,255,0.04) 100%);
+      border: 1.5px solid rgba(104,148,62,0.35);
+      border-radius: 14px;
+      padding: 28px 32px;
+      text-align: center;
+      margin-top: 28px;
+    }
+    .partner-callout-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+    .partner-callout-body {
+      font-family: 'Questrial', sans-serif;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.6;
+    }
+
+
+    /* ══════════════════════════════════════════
+       PROGRESS / METRICS  (4-card dashboard)
+    ══════════════════════════════════════════ */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 860px) {
+      .metrics-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .metric-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 28px 20px 24px;
+      text-align: center;
+      transition: border-color 0.25s, transform 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .metric-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .metric-card:hover {
+      border-color: rgba(104,148,62,0.3);
+      transform: translateY(-4px);
+    }
+    .metric-card:hover::after { opacity: 1; }
+
+    .metric-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.4rem, 6vw, 3.6rem);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .metric-num .accent-green { color: var(--green); }
+    .metric-label {
+      font-family: 'Questrial', sans-serif;
+      font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+      color: rgba(255,255,255,0.45);
+      line-height: 1.35;
+    }
+
+    .metrics-note {
+      margin-top: 28px;
+      font-family: 'Questrial', sans-serif;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.28);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+
+    /* ══════════════════════════════════════════
+       STRATEGY / FLYWHEEL
+    ══════════════════════════════════════════ */
+    .flywheel-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    @media (min-width: 640px)  { .flywheel-grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1000px) { .flywheel-grid { grid-template-columns: 1fr 1fr 1fr; } }
+
+    .fw-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px 20px;
+      border: 1px solid rgba(0,168,255,0.13);
+      border-radius: 12px;
+      background: rgba(0,168,255,0.025);
+      transition: border-color 0.25s, background 0.25s;
+    }
+    .fw-item:hover {
+      border-color: rgba(0,168,255,0.3);
+      background: rgba(0,168,255,0.05);
+    }
+    .fw-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--blue);
+      flex-shrink: 0;
+      min-width: 24px;
+      opacity: 0.7;
+    }
+    .fw-text {
+      font-family: 'Questrial', sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.55;
+      color: var(--white-dim);
+    }
+    .fw-text strong { color: var(--white); }
+
+    /* Quote / highlight bar */
+    .highlight-bar {
+      border-left: 3px solid var(--blue);
+      background: rgba(0,168,255,0.04);
+      border-radius: 0 10px 10px 0;
+      padding: 20px 24px;
+      margin: 32px 0;
+      font-family: 'Questrial', sans-serif;
+      font-size: clamp(0.95rem, 2vw, 1.1rem);
+      line-height: 1.7;
+      color: var(--white-dim);
+    }
+    .highlight-bar strong { color: var(--white); }
+
+    /* Ad split cards */
+    .ad-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin-top: 32px;
+    }
+    @media (min-width: 640px) { .ad-grid { grid-template-columns: 1fr 1fr 1fr; } }
+
+    .ad-card {
+      text-align: center;
+      border: 1px solid rgba(0,168,255,0.2);
+      border-radius: 14px;
+      padding: 28px 20px;
+      background: rgba(0,168,255,0.03);
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .ad-card:hover { border-color: rgba(0,168,255,0.4); transform: translateY(-3px); }
+    .ad-pct {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 700;
+      color: var(--blue);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .ad-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+    .ad-desc {
+      font-family: 'Questrial', sans-serif;
+      font-size: 0.9rem;
+      color: var(--white-dim);
+      line-height: 1.55;
+    }
+
+
+    /* ══════════════════════════════════════════
+       OUR STORY
+    ══════════════════════════════════════════ */
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    @media (min-width: 860px) {
+      .story-grid { grid-template-columns: 3fr 2fr; align-items: start; }
+    }
+
+    .timeline { display: flex; flex-direction: column; }
+    .tl-item {
+      display: flex;
+      gap: 18px;
+      padding-bottom: 28px;
+      position: relative;
+    }
+    .tl-item:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 11px; top: 24px; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, rgba(104,148,62,0.3), transparent);
+    }
+    .tl-dot {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 1.5px solid var(--green);
+      background: var(--bg2);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.65rem;
+      color: var(--green);
+      margin-top: 2px;
+    }
+    .tl-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 5px;
+    }
+    .tl-body {
+      font-family: 'Questrial', sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--white-dim);
+    }
+    .tl-body strong { color: var(--white); }
+
+    .client-info-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(104,148,62,0.18);
+      border-radius: 16px;
+      padding: 28px;
+      text-align: center;
+    }
+    .client-info-card img { max-width: 160px; margin: 0 auto 18px; }
+    .ci-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      margin-bottom: 6px;
+    }
+    .ci-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1.3;
+    }
+    .ci-badge {
+      margin-top: 18px;
+      background: rgba(104,148,62,0.08);
+      border: 1px solid rgba(104,148,62,0.2);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .ci-badge-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.18em;
+      color: var(--green);
+      margin-bottom: 3px;
+    }
+    .ci-badge-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+
+    /* ══════════════════════════════════════════
+       CTA SECTION
+    ══════════════════════════════════════════ */
+    #cta-section {
+      background: var(--bg2);
+      text-align: center;
+    }
+    .btn-cta {
+      display: inline-block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.85rem, 2vw, 1rem);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--white);
+      background: transparent;
+      border: 1.5px solid rgba(255,255,255,0.45);
+      border-radius: 100px;
+      padding: 20px 48px;
+      cursor: pointer;
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s, color 0.3s;
+      box-shadow: var(--glow-white);
+      touch-action: manipulation;
+    }
+    .btn-cta:hover {
+      border-color: rgba(255,255,255,0.8);
+      color: var(--white);
+      box-shadow:
+        0 0 24px rgba(255,255,255,0.18),
+        0 0 60px rgba(255,255,255,0.07);
+      transform: translateY(-2px);
+    }
+    .btn-cta:active { transform: scale(0.98); }
+
+
+    /* ══════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════ */
+    #portal-footer {
+      background: var(--bg2);
+      border-top: 1px solid rgba(104,148,62,0.1);
+      padding: 56px 24px 36px;
+    }
+    .footer-inner { max-width: 1120px; margin: 0 auto; }
+    .footer-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      padding-bottom: 36px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 28px;
+    }
+    .footer-logos {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .footer-logos img { height: 34px; object-fit: contain; }
+    .footer-sep { width: 1px; height: 32px; background: rgba(255,255,255,0.08); }
+
+    .footer-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+    .footer-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(104,148,62,0.5);
+    }
+    .btn-producer {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--green);
+      border-radius: 6px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 16px rgba(104,148,62,0.25);
+    }
+    .btn-producer:hover {
+      transform: scale(1.04) translateY(-1px);
+      box-shadow: 0 0 28px rgba(104,148,62,0.4);
+    }
+    .footer-bottom {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .footer-copy {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.15);
+    }
+    .footer-copy span { color: rgba(104,148,62,0.45); }
+    .footer-secure {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.15);
+    }
+    .secure-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: led-breathe 2.5s ease-in-out infinite;
+    }
+
+
+    /* ══════════════════════════════════════════
+       SCROLL REVEAL
+    ══════════════════════════════════════════ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.65s cubic-bezier(0.22,1,0.36,1),
+                  transform 0.65s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal.on { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.08s; }
+    .d2 { transition-delay: 0.16s; }
+    .d3 { transition-delay: 0.24s; }
+    .d4 { transition-delay: 0.32s; }
+
+    /* Mobile tweaks */
+    @media (max-width: 640px) {
+      .section  { padding: 64px 20px; }
+      .section-sm { padding: 52px 20px; }
+      .footer-right { align-items: flex-start; }
+      .footer-top   { flex-direction: column; }
+    }
+
+
+    /* ══════════════════════════════════════════
+       TOP ACTION BUTTONS BAR (shown post-login)
+    ══════════════════════════════════════════ */
+    #top-actions {
+      display: none; /* revealed after login */
+      position: sticky;
+      top: 68px;
+      z-index: 900;
+      background: rgba(4,7,13,0.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 12px 24px;
+    }
+    .top-actions-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .btn-action-blue {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--white);
+      background: rgba(0,168,255,0.18);
+      border: 1.5px solid rgba(0,168,255,0.5);
+      border-radius: 10px;
+      padding: 13px 28px;
+      cursor: pointer;
+      transition: background 0.25s, box-shadow 0.25s, transform 0.2s;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 16px rgba(0,168,255,0.12);
+      touch-action: manipulation;
+      white-space: nowrap;
+    }
+    .btn-action-blue:hover {
+      background: rgba(0,168,255,0.28);
+      box-shadow: 0 0 28px rgba(0,168,255,0.3), 0 0 60px rgba(0,168,255,0.1);
+      transform: translateY(-1px) scale(1.02);
+    }
+    .btn-action-blue:active { transform: scale(0.98); }
+
+    .btn-action-green {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      background: rgba(104,148,62,0.08);
+      border: 1.5px solid rgba(104,148,62,0.4);
+      border-radius: 10px;
+      padding: 13px 28px;
+      cursor: pointer;
+      transition: background 0.25s, box-shadow 0.25s, transform 0.2s;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 12px rgba(104,148,62,0.08);
+      touch-action: manipulation;
+      white-space: nowrap;
+    }
+    .btn-action-green:hover {
+      background: rgba(104,148,62,0.15);
+      box-shadow: 0 0 24px rgba(104,148,62,0.25), 0 0 50px rgba(104,148,62,0.08);
+      transform: translateY(-1px) scale(1.02);
+      color: var(--green);
+    }
+    .btn-action-green:active { transform: scale(0.98); }
+
+
+    /* ══════════════════════════════════════════
+       CONTENT PIPELINE (arrow chain)
+    ══════════════════════════════════════════ */
+    .pipeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 36px;
+    }
+    @media (min-width: 800px) {
+      .pipeline {
+        flex-direction: row;
+        align-items: stretch;
+      }
+      .pipeline-step { flex: 1; }
+      .pipeline-arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 4px;
+        flex-shrink: 0;
+      }
+    }
+    @media (max-width: 799px) {
+      .arrow-svg { transform: rotate(0deg) !important; }
+    }
+    .pipeline-step {
+      flex: 1;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 24px 22px;
+      position: relative;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+    }
+    .pipeline-step:hover {
+      border-color: rgba(255,255,255,0.22);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.4), 0 0 20px rgba(255,255,255,0.04);
+    }
+    .pipeline-step-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.25);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .pipeline-step-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.9rem, 2vw, 1.05rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--white);
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+    .pipeline-step-body {
+      font-family: 'Questrial', sans-serif;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--white-dim);
+    }
+    .pipeline-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 6px;
+      color: rgba(255,255,255,0.2);
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    @media (min-width: 800px) {
+      .pipeline-arrow { padding: 0 4px; }
+    }
+    /* Drive icon badge on pipeline step 2 */
+    .drive-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 6px;
+      padding: 4px 10px;
+      margin-top: 10px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.4);
+    }
+
+    /* Consistency callout inside pipeline section */
+    .consistency-note {
+      margin-top: 28px;
+      background: rgba(104,148,62,0.06);
+      border: 1px solid rgba(104,148,62,0.2);
+      border-radius: 12px;
+      padding: 20px 24px;
+      font-family: 'Questrial', sans-serif;
+      font-size: clamp(0.95rem, 2vw, 1.05rem);
+      line-height: 1.7;
+      color: var(--white-dim);
+    }
+    .consistency-note strong { color: var(--white); }
+
+
+    /* ══════════════════════════════════════════
+       CONTACT PRODUCER MODAL
+    ══════════════════════════════════════════ */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 5000;
+      background: rgba(4,7,13,0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      animation: overlay-in 0.3s ease both;
+    }
+    .modal-overlay.open { display: flex; }
+    @keyframes overlay-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    .modal-card {
+      width: 100%;
+      max-width: 480px;
+      background: #ffffff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(0,168,255,0.3),
+        0 0 50px rgba(0,168,255,0.2),
+        0 40px 100px rgba(0,0,0,0.8);
+      animation: modal-in 0.4s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    @keyframes modal-in {
+      from { opacity: 0; transform: scale(0.92) translateY(16px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-header {
+      background: var(--bg);
+      border-bottom: 2px solid var(--blue);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .modal-dots { display: flex; gap: 5px; }
+    .modal-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .modal-dot-r { background: #ff5f57; }
+    .modal-dot-y { background: #febc2e; }
+    .modal-dot-b { background: var(--blue); box-shadow: 0 0 5px var(--blue); }
+    .modal-header-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--blue);
+      flex: 1;
+      text-align: center;
+    }
+    .modal-close {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.4);
+      cursor: pointer;
+      background: none;
+      border: none;
+      line-height: 1;
+      padding: 2px 6px;
+      transition: color 0.2s;
+    }
+    .modal-close:hover { color: var(--white); }
+    .modal-body {
+      background: #ffffff;
+      padding: 36px 32px 40px;
+    }
+    .modal-prompt {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: rgba(0,168,255,0.45);
+      letter-spacing: 0.08em;
+      margin-bottom: 24px;
+    }
+    .modal-prompt em { color: var(--blue); font-style: normal; }
+    .modal-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--bg);
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+      line-height: 1.05;
+    }
+    .modal-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(0,0,0,0.35);
+      letter-spacing: 0.06em;
+      margin-bottom: 28px;
+    }
+    .modal-info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .modal-info-row:last-of-type { border-bottom: none; }
+    .modal-info-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: rgba(0,168,255,0.08);
+      border: 1px solid rgba(0,168,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .modal-info-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.3);
+      margin-bottom: 3px;
+    }
+    .modal-info-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--bg);
+      line-height: 1.2;
+    }
+    .modal-info-sub {
+      font-family: 'Questrial', sans-serif;
+      font-size: 0.82rem;
+      color: rgba(0,0,0,0.35);
+    }
+    .modal-cta {
+      margin-top: 24px;
+      width: 100%;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--white);
+      background: var(--blue);
+      border: none;
+      border-radius: 10px;
+      padding: 16px 24px;
+      cursor: pointer;
+      transition: background 0.25s, box-shadow 0.25s, transform 0.2s;
+      box-shadow: 0 0 20px rgba(0,168,255,0.3);
+      touch-action: manipulation;
+    }
+    .modal-cta:hover {
+      background: #22b8ff;
+      box-shadow: 0 0 32px rgba(0,168,255,0.5);
+      transform: translateY(-1px);
+    }
+    .modal-cta:active { transform: scale(0.99); }
+
+    @media (max-width: 480px) {
+      .modal-body { padding: 28px 22px 32px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- ── ACCESS GRANTED BANNER ── -->
+  <div id="granted-banner">Access Granted</div>
+
+  <!-- ══════════════════════════════════════════
+       NAVBAR
+  ══════════════════════════════════════════ -->
+  <nav id="portal-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/nsa-logo2.png" alt="Newsonic Age">
+      </a>
+      <div class="nav-center">
+        <div class="nav-center-title">Executive Branch Tree &amp; Landscape &nbsp;|&nbsp; Client Portal</div>
+        <div class="nav-center-sub">Experience Studio &nbsp;/&nbsp; Newsonic Age &nbsp;/&nbsp; 2026</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+        <!-- Google Drive shortcut icon -->
+        <a href="https://drive.google.com/drive/folders/1BLTWAga842Rj_WccImkTIc_vacukbWky?usp=sharing" target="_blank" rel="noopener" title="Google Drive — Content Folder" style="display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); transition:background 0.2s, border-color 0.2s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.25)'; this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'; this.style.background='rgba(255,255,255,0.04)'">
+          <!-- Google Drive SVG logo (inline, no external deps) -->
+          <svg width="18" height="16" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
+            <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3L29.1 48.1 13.65 48.1z" fill="#0066da"/>
+            <path d="M43.65 24.15 27.9 0c-1.35.8-2.5 1.9-3.3 3.3l-20.85 36a7.94 7.94 0 0 0-1.05 3.9h31.5z" fill="#00ac47"/>
+            <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.7-1.2 1.05-2.55 1.05-3.9H56.7l6.85 13z" fill="#ea4335"/>
+            <path d="M43.65 24.15 57.4 0H43.65 29.9z" fill="#00832d"/>
+            <path d="M56.7 48.1H29.1L15.35 73.8h43.8z" fill="#2684fc"/>
+            <path d="M73.4 3.3c-.8-1.4-1.95-2.5-3.3-3.3L43.65 24.15 57.4 48.1h31.45c0-1.35-.35-2.7-1.05-3.9z" fill="#ffba00"/>
+          </svg>
+        </a>
+        <div class="nav-icon">
+          <img src="assets/ebtl-icon.png" alt="EBTL">
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- ── TOP ACTION BUTTONS (revealed after login) ── -->
+  <div id="top-actions">
+    <div class="top-actions-inner">
+      <button class="btn-action-blue snd" onclick="scrollToCoreFocus()">Review Strategy</button>
+      <a href="booking.html" style="text-decoration:none;">
+        <button class="btn-action-green snd">Schedule Content Day</button>
+      </a>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       GATE — FULL-SCREEN LOGIN
+  ══════════════════════════════════════════ -->
+  <section id="gate-section">
+    <div class="gate-grid"></div>
+    <div class="gate-glow"></div>
+    <div class="gate-particles" id="particles"></div>
+
+    <!-- Glassmorphic terminal card -->
+    <div class="terminal-card" id="terminal-card">
+
+      <!-- Header bar -->
+      <div class="terminal-header">
+        <div class="terminal-dots">
+          <div class="tdot tdot-r"></div>
+          <div class="tdot tdot-y"></div>
+          <div class="tdot tdot-g"></div>
+        </div>
+        <div class="th-icon">
+          <img src="assets/ebtl-icon.png" alt="EBTL">
+        </div>
+        <div class="th-title">Newsonic Age &nbsp;·&nbsp; Secure Terminal</div>
+      </div>
+
+      <!-- Body -->
+      <div class="terminal-body">
+        <div class="t-prompt"><em>$</em> ./portal --client=ebtl --auth</div>
+
+        <div class="t-title">Access Code</div>
+        <div class="t-sub">Enter your secure client password</div>
+
+        <label class="input-label" for="pw">Password</label>
+        <input
+          type="password"
+          id="pw"
+          placeholder="••••••••"
+          autocomplete="current-password"
+          spellcheck="false"
+          onkeydown="if(event.key==='Enter') tryUnlock()"
+        >
+
+        <div class="led-row">
+          <div class="led" id="led"></div>
+          <div class="led-label" id="led-label">Awaiting Input</div>
+        </div>
+
+        <!-- Client standing indicator — controlled by CLIENT_STATUS constant below -->
+        <div class="standing-row" id="standing-row">
+          <div class="standing-led"></div>
+          <div class="standing-label" id="standing-label">Active</div>
+        </div>
+
+        <button class="btn-unlock" onclick="tryUnlock()">
+          Unlock Client Dashboard
+        </button>
+
+        <div id="err">Access Denied — Contact your producer</div>
+      </div>
+    </div>
+
+    <div class="gate-note">Password-protected client portal &nbsp;/&nbsp; Newsonic Age &nbsp;/&nbsp; 2026</div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <div id="main-content">
+
+    <!-- ─── 1. WELCOME ─── -->
+    <section class="section" id="welcome-section" style="background:var(--bg); padding-top:180px;">
+      <div class="inner">
+        <div class="welcome-grid">
+          <div>
+            <div class="eyebrow reveal">Client Experience &nbsp;/&nbsp; 2026</div>
+            <h1 class="h1 reveal d1">
+              Welcome,<br>
+              <span class="accent-green">Executive Branch</span>
+            </h1>
+            <p class="body-text reveal d2">
+              As your Experience Studio, Newsonic Age builds more than a website — we build the system that makes your business impossible to ignore. Premium content, precision strategy, and infrastructure that compounds over time.
+            </p>
+            <div class="live-badge reveal d3">
+              <div class="live-dot"></div>
+              Active Partner &nbsp;·&nbsp; Producer Assigned &nbsp;·&nbsp; 2026
+            </div>
+          </div>
+          <div class="welcome-logo-wrap reveal d2">
+            <img src="assets/ebtl-white-full.png" alt="Executive Branch Tree & Landscape" class="welcome-logo">
+            <p style="font-family:'Space Mono',monospace; font-size:0.55rem; letter-spacing:0.18em; color:rgba(255,255,255,0.2); text-align:center;">
+              EXECUTIVE BRANCH TREE &amp; LANDSCAPE<br>NEWSONIC AGE PARTNER
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="divider"></div>
+
+
+    <!-- ─── 2. CORE FOCUS ─── -->
+    <section class="section" id="core-focus" style="background:var(--bg2);">
+      <div class="inner">
+        <div class="eyebrow reveal">Strategy / Core Focus</div>
+        <h2 class="h2 reveal d1">Our Core Focus</h2>
+
+        <div class="two-col reveal d2" style="margin-bottom:20px;">
+
+          <div class="card card-g snd" style="padding:36px 32px;">
+            <div style="font-family:'Space Mono',monospace; font-size:0.55rem; letter-spacing:0.2em; color:var(--green); margin-bottom:14px; opacity:0.7; text-transform:uppercase;">01 — Primary Revenue Driver</div>
+            <div style="font-family:'Space Grotesk',sans-serif; font-size:clamp(1.8rem,4vw,2.6rem); font-weight:700; color:var(--green); line-height:1.05; margin-bottom:14px; text-transform:uppercase; letter-spacing:-0.01em;">Word-of-Mouth<br>First.</div>
+            <p class="body-text" style="font-size:0.95rem;">Word-of-mouth currently brings you the most work and the most revenue. Our entire system is engineered around it — taking what's already working and broadcasting it so loud your entire service area can't ignore you.</p>
+          </div>
+
+          <div class="card card-g snd" style="padding:36px 32px; border-color:rgba(104,148,62,0.38); background:rgba(104,148,62,0.05);">
+            <div style="font-family:'Space Mono',monospace; font-size:0.55rem; letter-spacing:0.2em; color:var(--green); margin-bottom:14px; opacity:0.7; text-transform:uppercase;">02 — Non-Negotiable</div>
+            <div style="font-family:'Space Grotesk',sans-serif; font-size:clamp(1.8rem,4vw,2.6rem); font-weight:700; color:var(--white); line-height:1.05; margin-bottom:14px; text-transform:uppercase; letter-spacing:-0.01em;">Zero Lapses.<br>Ever.</div>
+            <p class="body-text" style="font-size:0.95rem;">No dark weeks. No quiet months. Consistent content, consistent updates, consistent presence. Marketing that goes quiet loses ground — we make sure that never happens to you.</p>
+          </div>
+
+        </div>
+
+        <div class="card card-b snd reveal d3" style="padding:28px 32px;">
+          <div style="font-family:'Space Mono',monospace; font-size:0.55rem; letter-spacing:0.2em; color:var(--blue); margin-bottom:10px; opacity:0.7; text-transform:uppercase;">03 — Content That Converts</div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-size:clamp(1.1rem,2.5vw,1.5rem); font-weight:700; color:var(--white); line-height:1.15; margin-bottom:10px; text-transform:uppercase;">Personable + Professional. Real Moments. Real Trust.</div>
+          <p class="body-text" style="font-size:0.95rem; max-width:none;">We capture authentic on-site footage alongside polished professional clips — the exact mix that builds trust fast and amplifies your existing reputation rather than replacing it. Every hour of filming becomes an asset library that powers every future ad, post, and campaign.</p>
+        </div>
+
+      </div>
+    </section>
+    <div class="divider"></div>
+
+
+    <!-- ─── 2b. CONTENT PIPELINE ─── -->
+    <section class="section" style="background:var(--bg);">
+      <div class="inner">
+        <div class="eyebrow reveal">Production / How It Works</div>
+        <h2 class="h2 reveal d1">
+          Content Production<br>
+          <span class="accent-green">&amp; Pipeline</span>
+        </h2>
+        <p class="body-text reveal d2" style="margin-bottom:8px;">
+          One dedicated filming day per month captures high-quality personable and professional footage. This content is edited and delivered to fuel consistent posting throughout the month.
+        </p>
+        <p class="body-text reveal d2" style="font-size:0.9rem; color:rgba(255,255,255,0.3); margin-bottom:36px;">
+          We do not promise 30 unique pieces — we deliver what moves the needle.
+        </p>
+
+        <!-- Pipeline steps connected by arrows -->
+        <div class="pipeline reveal d2">
+
+          <div class="pipeline-step snd">
+            <div class="pipeline-step-num">Step 01</div>
+            <div class="pipeline-step-title">We Film</div>
+            <div class="pipeline-step-body">
+              We schedule a day that works for you — ideally one where we can speak with the owner for authentic moments, or a strong operational day capturing your crew in action.
+            </div>
+          </div>
+
+          <div class="pipeline-arrow">
+            <!-- right arrow on desktop, down arrow on mobile -->
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(-90deg);" class="arrow-svg">
+              <path d="M10 3v14M10 17l-5-5M10 17l5-5" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+          <div class="pipeline-step snd">
+            <div class="pipeline-step-num">Step 02</div>
+            <div class="pipeline-step-title">Edited &amp; Delivered</div>
+            <div class="pipeline-step-body">
+              Footage is edited and uploaded directly to your shared Google Drive folder. Everything organized, labeled, and ready to review.
+            </div>
+            <a href="https://drive.google.com/drive/folders/1BLTWAga842Rj_WccImkTIc_vacukbWky?usp=sharing" target="_blank" rel="noopener" class="drive-badge" style="text-decoration:none; cursor:pointer; transition:background 0.2s, border-color 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.13)'; this.style.borderColor='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.07)'; this.style.borderColor='rgba(255,255,255,0.12)'">
+              <svg width="12" height="11" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
+                <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3L29.1 48.1 13.65 48.1z" fill="#0066da"/>
+                <path d="M43.65 24.15 27.9 0c-1.35.8-2.5 1.9-3.3 3.3l-20.85 36a7.94 7.94 0 0 0-1.05 3.9h31.5z" fill="#00ac47"/>
+                <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.7-1.2 1.05-2.55 1.05-3.9H56.7l6.85 13z" fill="#ea4335"/>
+                <path d="M43.65 24.15 57.4 0H43.65 29.9z" fill="#00832d"/>
+                <path d="M56.7 48.1H29.1L15.35 73.8h43.8z" fill="#2684fc"/>
+                <path d="M73.4 3.3c-.8-1.4-1.95-2.5-3.3-3.3L43.65 24.15 57.4 48.1h31.45c0-1.35-.35-2.7-1.05-3.9z" fill="#ffba00"/>
+              </svg>
+              Open Google Drive ↗
+            </a>
+          </div>
+
+          <div class="pipeline-arrow">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(-90deg);" class="arrow-svg">
+              <path d="M10 3v14M10 17l-5-5M10 17l5-5" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+          <div class="pipeline-step snd">
+            <div class="pipeline-step-num">Step 03</div>
+            <div class="pipeline-step-title">You Post &amp; Amplify</div>
+            <div class="pipeline-step-body">
+              Content goes out across platforms — amplifying word-of-mouth the same way major brands run commercials that build emotion and recognition beyond the product itself.
+            </div>
+          </div>
+
+          <div class="pipeline-arrow">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(-90deg);" class="arrow-svg">
+              <path d="M10 3v14M10 17l-5-5M10 17l5-5" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+          <div class="pipeline-step snd" style="border-color:rgba(104,148,62,0.25);">
+            <div class="pipeline-step-num" style="color:rgba(104,148,62,0.5);">Result</div>
+            <div class="pipeline-step-title" style="color:var(--green);">Guaranteed Consistency</div>
+            <div class="pipeline-step-body">
+              Your marketing never goes quiet. Consistent presence month after month builds the kind of recognition that word-of-mouth alone can't sustain at scale.
+            </div>
+          </div>
+
+        </div>
+
+        <!-- arrows always point down on all screen sizes -->
+      </div>
+    </section>
+    <div class="divider"></div>
+
+
+    <!-- ─── 3. INVESTMENT (PRICING) ─── -->
+    <section class="section" style="background:var(--bg);">
+      <div class="inner">
+        <div class="eyebrow reveal">Investment / Monthly</div>
+        <h2 class="h2 reveal d1">
+          Partner Pricing.<br>
+          <span class="accent-green">A Studio Deal.</span>
+        </h2>
+        <p class="body-text reveal d2" style="margin-bottom:36px;">
+          You're receiving <strong>exclusive Newsonic Age partner pricing</strong> — this is not what we quote to the open market. This is a rate reserved for clients we've chosen to build a long-term relationship with.
+        </p>
+
+        <!-- Total -->
+        <div class="total-bar reveal d2">
+          <div>
+            <div class="total-label">Total Monthly Investment</div>
+            <div class="total-sub">Everything included. No hidden fees.</div>
+          </div>
+          <div class="total-amount">$550<span style="font-size:1.2rem; opacity:0.5;">/mo</span></div>
+        </div>
+
+        <!-- Three cards -->
+        <div class="three-col reveal d2">
+          <div class="card card-g snd">
+            <div style="font-family:'Space Mono',monospace; font-size:0.55rem; letter-spacing:0.2em; color:var(--green); margin-bottom:12px; opacity:0.7;">01 — PLATFORM</div>
+            <div class="price-big">$150</div>
+            <div class="price-label">Per Month</div>
+            <div class="h3" style="margin-bottom:10px;">Website Experience Platform</div>
+            <p class="body-text" style="font-size:0.95rem;">
+              Fully custom-coded — no templates, no page builders. Built and maintained by our studio. At this price, it is a genuine steal for the infrastructure and ongoing optimization you receive.
+            </p>
+          </div>
+          <div class="card card-g snd">
+            <div style="font-family:'Space Mono',monospace; font-size:0.55rem; letter-spacing:0.2em; color:var(--green); margin-bottom:12px; opacity:0.7;">02 — PRODUCTION</div>
+            <div class="price-big">$400</div>
+            <div class="price-label">Per Month</div>
+            <div class="h3" style="margin-bottom:10px;">On-Site Content Production</div>
+            <p class="body-text" style="font-size:0.95rem;">
+              One dedicated filming day per month. We capture, edit, and deliver a full month of content — done entirely for you.
+            </p>
+          </div>
+          <div class="card card-b snd">
+            <div style="font-family:'Space Mono',monospace; font-size:0.55rem; letter-spacing:0.2em; color:var(--blue); margin-bottom:12px; opacity:0.7;">03 — ADVERTISING</div>
+            <div class="price-big" style="color:var(--blue); font-size:clamp(1.4rem, 3.5vw, 2rem); margin-bottom:4px;">No Upfront Fee</div>
+            <div class="price-label" style="color:rgba(0,168,255,0.4);">% of Sold Jobs Generated</div>
+            <div class="h3" style="margin-bottom:10px; color:var(--white);">Ad Strategy &amp; Creative</div>
+            <p class="body-text" style="font-size:0.95rem;">
+              We handle your full ad strategy and creative at <strong>no additional monthly fee</strong> — in exchange for a percentage of sold jobs we help generate.
+            </p>
+            <div style="margin-top:16px; padding:14px 16px; background:rgba(0,168,255,0.06); border:1px solid rgba(0,168,255,0.2); border-radius:10px;">
+              <div style="font-family:'Space Mono',monospace; font-size:0.55rem; letter-spacing:0.16em; color:rgba(0,168,255,0.6); margin-bottom:5px; text-transform:uppercase;">Recommendation</div>
+              <div style="font-family:'Questrial',sans-serif; font-size:0.88rem; line-height:1.6; color:rgba(255,255,255,0.5);">We strongly recommend a dedicated monthly ad budget. This lets us run targeted campaigns that maximize visibility and drive qualified leads while everything compounds with your content and website.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Callout -->
+        <div class="partner-callout reveal d3">
+          <div class="partner-callout-title">Exclusive Partner Pricing — Not Available to the Public</div>
+          <div class="partner-callout-body">
+            Custom platform + full content production + scheduling + strategy + optimization. $550/month. This is what we charge partners we believe in.
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="divider"></div>
+
+
+    <!-- ─── 4. LAST MONTH'S PROGRESS ─── -->
+    <section class="section" style="background:var(--bg2);">
+      <div class="inner">
+        <div class="eyebrow reveal">Dashboard / Last Month</div>
+        <h2 class="h2 reveal d1">
+          Last Month's<br>
+          <span class="accent-green">Progress</span>
+        </h2>
+        <p class="body-text reveal d2" style="font-size:0.88rem; color:rgba(255,255,255,0.32); margin-bottom:8px; font-style:italic;">
+          ⚠ The figures below are example metrics shown for illustration purposes only. Actual numbers are updated at the end of each month for review.
+        </p>
+
+        <!-- 4 metric cards
+             ✏️  UPDATE THESE NUMBERS EACH MONTH  ✏️  -->
+        <div class="metrics-grid reveal d2" style="margin-top:28px;">
+
+          <div class="metric-card">
+            <!-- ✏️ Change number below each month -->
+            <div class="metric-num"><span class="accent-green">18</span></div>
+            <div class="metric-label">Qualified Leads This Month</div>
+          </div>
+
+          <div class="metric-card">
+            <!-- ✏️ Change number below each month -->
+            <div class="metric-num"><span class="accent-green">4.2</span><span style="font-size:1.4rem; opacity:0.5;">x</span></div>
+            <div class="metric-label">Return on Ad Spend</div>
+          </div>
+
+          <div class="metric-card">
+            <!-- ✏️ Change number below each month -->
+            <div class="metric-num"><span class="accent-green">62</span><span style="font-size:1.4rem; opacity:0.5;">%</span></div>
+            <div class="metric-label">Avg Video View Duration</div>
+          </div>
+
+          <div class="metric-card">
+            <!-- ✏️ Change number below each month -->
+            <div class="metric-num"><span style="font-size:1.8rem; opacity:0.5;">+</span><span class="accent-green">340</span><span style="font-size:1.4rem; opacity:0.5;">%</span></div>
+            <div class="metric-label">Website Traffic Lift</div>
+          </div>
+
+        </div>
+
+        <div class="metrics-note reveal d3">
+          These metrics are updated at the end of each month for review.
+        </div>
+      </div>
+    </section>
+    <div class="divider"></div>
+
+
+    <!-- ─── 5. STRATEGY / FLYWHEEL ─── -->
+    <section class="section" style="background:var(--bg);">
+      <div class="inner">
+        <div class="eyebrow reveal">Strategy / Full System</div>
+        <h2 class="h2 reveal d1">
+          The Full<br>
+          <span class="accent-blue">Flywheel</span>
+        </h2>
+
+        <div class="highlight-bar reveal d2">
+          <strong>We don't just build websites — we implement complete, interconnected strategies.</strong><br>
+          Facebook helps the website. Content powers the ads. Ads drive the website. Testimonials fuel the ads. Everything compounds. One investment multiplies across every channel.
+        </div>
+
+        <div class="flywheel-grid reveal d2" style="margin-bottom:52px;">
+          <div class="fw-item">
+            <div class="fw-num">01</div>
+            <div class="fw-text"><strong>Website</strong> — Your premium digital home, built to convert visitors into calls.</div>
+          </div>
+          <div class="fw-item">
+            <div class="fw-num">02</div>
+            <div class="fw-text"><strong>Content Production</strong> — One dedicated filming day per month captures footage that is edited and delivered for consistent posting throughout the month.</div>
+          </div>
+          <div class="fw-item">
+            <div class="fw-num">03</div>
+            <div class="fw-text"><strong>Facebook &amp; Instagram</strong> — Organic posts build your local audience daily.</div>
+          </div>
+          <div class="fw-item">
+            <div class="fw-num">04</div>
+            <div class="fw-text"><strong>Paid Advertising</strong> — Amplify what's already working. Dollar-in, multiples-out.</div>
+          </div>
+          <div class="fw-item">
+            <div class="fw-num">05</div>
+            <div class="fw-text"><strong>Testimonials</strong> — Captured on-site, repurposed as social proof across all ads.</div>
+          </div>
+          <div class="fw-item" style="border-color:rgba(104,148,62,0.25); background:rgba(104,148,62,0.04);">
+            <div class="fw-num" style="color:var(--green);">06</div>
+            <div class="fw-text"><strong style="color:var(--white);">Word-of-Mouth — Hacked &amp; Broadcast</strong> — The big brain play: we capture a testimonial on-site and push it directly into your ads. Every person that client knows — hundreds of people who already trust them — now sees your work endorsed by someone in their own network. You're not just getting a review. You're hijacking your client's entire social graph and broadcasting your reputation through the most trusted channel that exists. One happy client becomes a viral node.</div>
+          </div>
+        </div>
+
+        <!-- Ad Strategy -->
+        <div class="eyebrow reveal" style="margin-bottom:16px;">Recommended Ad Strategy</div>
+        <h3 class="h3 reveal d1" style="font-size:clamp(1.1rem, 2.5vw, 1.5rem); margin-bottom:10px;">
+          AI-Optimized Advertising
+        </h3>
+        <p class="body-text reveal d2">
+          We handle setup, creative, and optimization. You watch the leads come in. Our AI-powered approach puts your content in front of exactly the right people at exactly the right time.
+        </p>
+        <div class="ad-grid reveal d2">
+          <div class="ad-card">
+            <div class="ad-pct">60%</div>
+            <div class="ad-label">Prospecting</div>
+            <div class="ad-desc">Broad targeting across your service area — everyone searching or thinking about tree &amp; landscape services.</div>
+          </div>
+          <div class="ad-card">
+            <div class="ad-pct">40%</div>
+            <div class="ad-label">Retargeting</div>
+            <div class="ad-desc">Warm audiences + lookalikes from your best past clients. Offer limited-time deals to push fast conversions.</div>
+          </div>
+          <div class="ad-card" style="border-color:rgba(104,148,62,0.2); background:rgba(104,148,62,0.03);">
+            <div class="ad-pct" style="color:var(--green); font-size:clamp(1.4rem, 4vw, 2rem);">AI-Powered</div>
+            <div class="ad-label" style="color:var(--green);">2026 Optimized</div>
+            <div class="ad-desc">Lookalike audiences are still extremely powerful when AI-optimized. We stay ahead of the algorithm so you don't have to.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="divider"></div>
+
+
+    <!-- ─── 6. OUR STORY ─── -->
+    <section class="section" style="background:var(--bg2);">
+      <div class="inner">
+        <div class="eyebrow reveal">Relationship / Your Story</div>
+        <h2 class="h2 reveal d1">
+          We Listened.<br>
+          <span class="accent-green">We Built This For You.</span>
+        </h2>
+        <p class="body-text reveal d2" style="margin-bottom:48px;">
+          At Newsonic Age, every client is a person first — not a ticket number. Here's what we learned about you, and how we built the system around it.
+        </p>
+
+        <div class="story-grid">
+          <div class="timeline">
+            <div class="tl-item reveal">
+              <div class="tl-dot">✦</div>
+              <div>
+                <div class="tl-tag">The Foundation</div>
+                <div class="tl-body">
+                  Your founder and his sister built <strong>Executive Branch Tree &amp; Landscape</strong> on genuine word-of-mouth and real service. That foundation is proof your work speaks for itself.
+                </div>
+              </div>
+            </div>
+            <div class="tl-item reveal d1">
+              <div class="tl-dot">✦</div>
+              <div>
+                <div class="tl-tag">The Old Provider</div>
+                <div class="tl-body">
+                  ~$300/mo for copied blog posts. <strong>Executive Branch saw no measurable difference in new clients.</strong> The old provider also had the wrong phone number listed on the website. Rightfully, you moved on.
+                </div>
+              </div>
+            </div>
+            <div class="tl-item reveal d2">
+              <div class="tl-dot">✦</div>
+              <div>
+                <div class="tl-tag">What Was Working</div>
+                <div class="tl-body">
+                  The Facebook posts help — real engagement, real reach. But there was <strong>no system</strong> behind it. Good instinct. No infrastructure to make it consistent.
+                </div>
+              </div>
+            </div>
+            <div class="tl-item reveal d3">
+              <div class="tl-dot" style="border-color:var(--green); box-shadow:0 0 10px rgba(104,148,62,0.35);">✓</div>
+              <div>
+                <div class="tl-tag" style="color:var(--green);">What We Built</div>
+                <div class="tl-body">
+                  A complete custom platform + content production engine built <strong>specifically for you</strong>. No guesswork. No copied content. A real system that compounds over time.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Client card -->
+          <div class="client-info-card reveal d2">
+            <img src="assets/ebtl-black-full.png" alt="EBTL" style="filter:invert(1);">
+            <div class="ci-label">Your Newsonic Age Partner</div>
+            <div class="ci-name">Executive Branch<br>Tree &amp; Landscape</div>
+            <div class="ci-badge">
+              <div class="ci-badge-label">Partner Since</div>
+              <div class="ci-badge-val">2026</div>
+            </div>
+            <div class="ci-badge" style="margin-top:10px; border-color:rgba(0,168,255,0.2); background:rgba(0,168,255,0.05);">
+              <div class="ci-badge-label" style="color:var(--blue);">Producer</div>
+              <div class="ci-badge-val">Newsonic Age Studio</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="divider"></div>
+
+
+    <!-- ─── 7. CTA ─── -->
+    <section class="section section-sm" id="cta-section" style="padding-top:80px; padding-bottom:80px;">
+      <div class="inner" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
+        <div class="eyebrow reveal" style="justify-content:center;">Next Step</div>
+        <h2 class="h2 reveal d1" style="max-width:600px; text-align:center;">
+          Let's Look at the<br>
+          <span class="accent-green">Numbers Together</span>
+        </h2>
+        <p class="body-text reveal d2" style="text-align:center; margin: 0 auto 36px; max-width:500px;">
+          We review strategy and results with you every month. No guesswork — just clear data and a plan for what's next.
+        </p>
+        <button class="btn-cta reveal d3" onclick="scrollToCoreFocus()">
+          Review Strategy
+        </button>
+      </div>
+    </section>
+
+
+    <!-- ─── FOOTER ─── -->
+    <footer id="portal-footer">
+      <div class="footer-inner">
+        <div class="footer-top">
+          <div class="footer-logos">
+            <img src="assets/nsa-logo2.png" alt="Newsonic Age" style="filter:drop-shadow(0 0 5px rgba(0,168,255,0.2));">
+            <div class="footer-sep"></div>
+            <img src="assets/ebtl-white-full.png" alt="Executive Branch T&L">
+          </div>
+          <div class="footer-right">
+            <div class="footer-tag">Experience Studio &nbsp;/&nbsp; Newsonic Age</div>
+            <button class="btn-producer snd" onclick="openModal()">Contact Your Producer</button>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <div class="footer-copy">
+            Powered by <span>Newsonic Age</span> &nbsp;·&nbsp; Password Protected Client Portal &nbsp;·&nbsp; &copy; 2026 Newsonic Age. All rights reserved.
+          </div>
+          <div class="footer-secure">
+            <div class="secure-dot"></div>
+            Secure session active
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- /#main-content -->
+
+
+  <!-- ══════════════════════════════════════════
+       CONTACT PRODUCER MODAL
+  ══════════════════════════════════════════ -->
+  <div class="modal-overlay" id="producer-modal" onclick="if(event.target===this) closeModal()">
+    <div class="modal-card">
+      <!-- Header -->
+      <div class="modal-header">
+        <div class="modal-dots">
+          <div class="modal-dot modal-dot-r"></div>
+          <div class="modal-dot modal-dot-y"></div>
+          <div class="modal-dot modal-dot-b"></div>
+        </div>
+        <div class="modal-header-title">Newsonic Age &nbsp;·&nbsp; Your Producer</div>
+        <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+        <!-- NSA logo — glow appears only on hover -->
+        <div style="text-align:center; margin-bottom:22px;">
+          <img src="assets/nsa-logo.png" alt="Newsonic Age"
+            style="height:34px; margin:0 auto; display:block; filter:brightness(0) saturate(100%); transition:filter 0.35s ease;"
+            onmouseover="this.style.filter='brightness(0) saturate(100%) invert(50%) sepia(100%) saturate(500%) hue-rotate(185deg) brightness(1.4) drop-shadow(0 0 10px #00a8ff) drop-shadow(0 0 24px rgba(0,168,255,0.5))'"
+            onmouseout="this.style.filter='brightness(0) saturate(100%)'">
+        </div>
+        <div class="modal-prompt"><em>$</em> ./contact --producer=bradley --client=ebtl</div>
+        <div class="modal-title">Your Producer</div>
+        <div class="modal-sub">Newsonic Age Experience Studio &nbsp;/&nbsp; 2026</div>
+
+        <div class="modal-info-row">
+          <div class="modal-info-icon">👤</div>
+          <div>
+            <div class="modal-info-label">Name</div>
+            <div class="modal-info-val">Bradley DeSouza</div>
+            <div class="modal-info-sub">Producer, Newsonic Age</div>
+          </div>
+        </div>
+
+        <div class="modal-info-row">
+          <div class="modal-info-icon">📱</div>
+          <div>
+            <div class="modal-info-label">Phone — Text or Call</div>
+            <div class="modal-info-val">
+              <a href="tel:4049106583" style="color:var(--bg); text-decoration:none;">404-910-6583</a>
+            </div>
+            <div class="modal-info-sub">Text preferred for quick replies</div>
+          </div>
+        </div>
+
+        <div class="modal-info-row">
+          <div class="modal-info-icon">✉️</div>
+          <div>
+            <div class="modal-info-label">Email</div>
+            <div class="modal-info-val">
+              <a href="mailto:newsonicage@gmail.com" style="color:var(--bg); text-decoration:none;">newsonicage@gmail.com</a>
+            </div>
+            <div class="modal-info-sub">For strategy, scheduling &amp; reviews</div>
+          </div>
+        </div>
+
+        <a href="tel:4049106583" style="text-decoration:none; display:block;">
+          <button class="modal-cta">Call or Text Bradley</button>
+        </a>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       JAVASCRIPT
+  ══════════════════════════════════════════ -->
+  <script>
+    /* ── CUSTOM CURSOR ─────────────────────────── */
+    (function() {
+      const cursor = document.getElementById('cursor');
+      const ring   = document.getElementById('cursor-ring');
+      let cx = 0, cy = 0, rx = 0, ry = 0;
+
+      document.addEventListener('mousemove', e => {
+        cx = e.clientX; cy = e.clientY;
+        cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px';
+      });
+      (function animateRing() {
+        rx += (cx - rx) * 0.12; ry += (cy - ry) * 0.12;
+        ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+        requestAnimationFrame(animateRing);
+      })();
+      document.addEventListener('mouseleave', () => { cursor.style.opacity = '0'; ring.style.opacity = '0'; });
+      document.addEventListener('mouseenter', () => { cursor.style.opacity = '1'; ring.style.opacity = '1'; });
+
+      function addCursorHover() {
+        document.querySelectorAll('a, button, input, [role="button"], .snd, .card, .metric-card, .fw-item, .obj-item, .ad-card, .pipeline-step, .type-card, .slot-btn').forEach(el => {
+          if (!el.dataset.cursorBound) {
+            el.dataset.cursorBound = '1';
+            el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+          }
+        });
+      }
+      addCursorHover();
+      // Re-run after content reveals
+      window._addCursorHover = addCursorHover;
+    })();
+
+    /* ── SMOOTH SCROLL TO CORE FOCUS ────────────── */
+    function scrollToCoreFocus() {
+      const target = document.getElementById('core-focus');
+      if (!target) return;
+      const offset = 80;
+      const top = target.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+
+    /* ── PASSWORD GATE ──────────────────────────
+       Password is case-insensitive.
+       In production, move authentication to server-side.
+       TO CHANGE: update PORTAL_PASSWORD below.
+    ────────────────────────────────────────── */
+    const PORTAL_PASSWORD = 'penny';
+
+    // ── CLIENT STANDING ──────────────────────────
+    // Change to 'TERMINATED' for ex-clients to see a red blinking indicator.
+    const CLIENT_STATUS = 'ACTIVE';
+
+    (function initStanding() {
+      const row   = document.getElementById('standing-row');
+      const label = document.getElementById('standing-label');
+      if (CLIENT_STATUS === 'TERMINATED') {
+        row.classList.add('terminated');
+        label.textContent = 'Terminated';
+      } else {
+        label.textContent = 'Active';
+      }
+    })();
+
+    function tryUnlock() {
+      const input    = document.getElementById('pw');
+      const led      = document.getElementById('led');
+      const ledLabel = document.getElementById('led-label');
+      const errEl    = document.getElementById('err');
+      const terminal = document.getElementById('terminal-card');
+
+      const entered = input.value.trim().toLowerCase();
+
+      if (entered === PORTAL_PASSWORD.toLowerCase()) {
+        // ── CORRECT ──
+        led.classList.remove('led-error');
+        led.classList.add('led-ok');
+        ledLabel.classList.remove('is-error');
+        ledLabel.classList.add('is-ok');
+        ledLabel.textContent = 'Access Granted';
+        errEl.style.display = 'none';
+        input.disabled = true;
+
+        setTimeout(() => { terminal.classList.add('gate-open'); }, 150);
+
+        setTimeout(() => {
+          const banner  = document.getElementById('granted-banner');
+          const content = document.getElementById('main-content');
+          const gate    = document.getElementById('gate-section');
+
+          // Collapse the gate so it no longer takes up scroll height
+          gate.style.display = 'none';
+
+          banner.style.display = 'block';
+          content.style.display = 'block';
+
+          // Show top action buttons
+          document.getElementById('top-actions').style.display = 'block';
+
+          setTimeout(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }, 80);
+
+          setTimeout(() => {
+            content.classList.add('visible');
+            initReveal();
+            initHoverSounds();
+            if (window._addCursorHover) window._addCursorHover();
+          }, 550);
+
+          setTimeout(() => {
+            banner.classList.add('fade-out');
+            setTimeout(() => { banner.style.display = 'none'; }, 550);
+          }, 3200);
+        }, 420);
+
+      } else {
+        // ── WRONG ──
+        input.classList.remove('shake');
+        void input.offsetWidth;
+        input.classList.add('shake');
+        input.value = '';
+
+        led.classList.add('led-error');
+        ledLabel.classList.add('is-error');
+        ledLabel.textContent = 'Access Denied';
+        errEl.style.display = 'block';
+
+        setTimeout(() => {
+          input.classList.remove('shake');
+          led.classList.remove('led-error');
+          ledLabel.classList.remove('is-error');
+          ledLabel.textContent = 'Awaiting Input';
+          errEl.style.display = 'none';
+        }, 2200);
+      }
+    }
+
+    /* ── MOBILE KEYBOARD STABILITY ─────────────
+       Prevent layout shift when keyboard opens.
+    ────────────────────────────────────────── */
+    const pwInput = document.getElementById('pw');
+
+    pwInput.addEventListener('focus', () => {
+      document.body.style.overflow = 'hidden';
+      const led = document.getElementById('led');
+      if (!led.classList.contains('led-error') && !led.classList.contains('led-ok')) {
+        document.getElementById('led-label').textContent = 'Ready';
+      }
+    });
+    pwInput.addEventListener('blur', () => {
+      document.body.style.overflow = '';
+      const led = document.getElementById('led');
+      if (!led.classList.contains('led-error') && !led.classList.contains('led-ok')) {
+        document.getElementById('led-label').textContent = 'Awaiting Input';
+      }
+    });
+
+    /* ── HOVER SOUND EFFECTS ────────────────────
+       Randomly plays hover1, hover2, or hover3 on
+       mouseenter for any element with class "snd".
+       Uses the Web Audio API as a fallback unlock
+       on first user interaction to satisfy browser
+       autoplay policies.
+    ────────────────────────────────────────── */
+    const SOUNDS = ['assets/hover1.mp3', 'assets/hover2.mp3', 'assets/hover3.mp3'];
+
+    // Pre-create Audio objects for instant playback
+    const audioPool = SOUNDS.map(src => {
+      const a = new Audio(src);
+      a.volume = 0.18;
+      a.preload = 'auto';
+      return a;
+    });
+
+    // Cooldown: don't fire more than once per 80ms globally
+    let lastSoundTime = 0;
+
+    function playHoverSound() {
+      const now = Date.now();
+      if (now - lastSoundTime < 80) return;
+      lastSoundTime = now;
+      const track = audioPool[Math.floor(Math.random() * audioPool.length)];
+      track.currentTime = 0;
+      track.play().catch(() => {}); // swallow autoplay errors gracefully
+    }
+
+    function initHoverSounds() {
+      // Attach to all elements with class "snd" within main content
+      document.querySelectorAll('.snd, .card, .metric-card, .fw-item, .obj-item, .ad-card, .pipeline-step, .flywheel-grid .fw-item').forEach(el => {
+        if (!el.dataset.sndBound) {
+          el.dataset.sndBound = '1';
+          el.addEventListener('mouseenter', playHoverSound, { passive: true });
+        }
+      });
+    }
+
+    // Also attach to login-page interactive elements immediately
+    document.querySelectorAll('.btn-unlock, .btn-action-blue, .btn-action-green').forEach(el => {
+      el.addEventListener('mouseenter', playHoverSound, { passive: true });
+    });
+
+    /* ── RISING PARTICLES ───────────────────── */
+    (function createParticles() {
+      const container = document.getElementById('particles');
+      const count = window.innerWidth < 640 ? 10 : 20;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const sz = 1 + Math.random() * 2;
+        p.style.cssText = `
+          width:${sz}px; height:${sz}px;
+          left:${Math.random() * 100}%;
+          animation-duration:${10 + Math.random() * 18}s;
+          animation-delay:${Math.random() * 14}s;
+          opacity:0;
+        `;
+        container.appendChild(p);
+      }
+    })();
+
+    /* ── SCROLL REVEAL ──────────────────────── */
+    let revealObs;
+    function initReveal() {
+      if (revealObs) revealObs.disconnect();
+      revealObs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('on');
+            revealObs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
+      document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+    }
+
+    /* ── PRODUCER MODAL ─────────────────────── */
+    function openModal() {
+      document.getElementById('producer-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+      document.getElementById('producer-modal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    // Close modal on Escape key
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    /* ── NAV SHADOW ON SCROLL ───────────────── */
+    window.addEventListener('scroll', () => {
+      document.getElementById('portal-nav').style.boxShadow =
+        window.scrollY > 16 ? '0 4px 32px rgba(0,0,0,0.6)' : 'none';
+    }, { passive: true });
+  </script>
+
+</body>
+</html>

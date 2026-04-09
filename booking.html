@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book a Session — Newsonic Age</title>
+  <link rel="icon" type="image/png" href="assets/nsa-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Questrial&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── VARIABLES ── */
+    :root {
+      --blue:       #00a8ff;
+      --blue-dim:   rgba(0,168,255,0.12);
+      --blue-mid:   rgba(0,168,255,0.35);
+      --blue-glow:  0 0 10px #00a8ff, 0 0 30px rgba(0,168,255,0.4);
+      --red:        #c0392b;
+      --red-dim:    rgba(192,57,43,0.18);
+      --red-border: rgba(192,57,43,0.5);
+      --bg:         #04070d;
+      --bg2:        #070c14;
+      --bg3:        #0b1220;
+      --card:       #080f1a;
+      --card2:      #0d1826;
+      --border:     rgba(255,255,255,0.06);
+      --border-md:  rgba(255,255,255,0.12);
+      --white:      #ffffff;
+      --dim:        rgba(255,255,255,0.55);
+      --faint:      rgba(255,255,255,0.2);
+      --sans:       'Space Grotesk', sans-serif;
+      --mono:       'Space Mono', monospace;
+      --radius:     6px;
+      --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Questrial', var(--sans);
+      background: var(--bg);
+      color: var(--white);
+      min-height: 100vh;
+      overflow-x: hidden;
+      cursor: none;
+    }
+    button { cursor: none; border: none; background: none; font-family: var(--sans); }
+    a { text-decoration: none; color: inherit; cursor: none; }
+
+    /* ── CUSTOM CURSOR (matches homepage) ── */
+    #cursor {
+      position: fixed;
+      width: 12px; height: 12px;
+      background: var(--blue); border-radius: 50%;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%,-50%);
+      transition: width .2s ease, height .2s ease, opacity .2s ease;
+      box-shadow: 0 0 8px var(--blue), 0 0 16px var(--blue);
+      mix-blend-mode: normal;
+    }
+    #cursor-ring {
+      position: fixed; width: 36px; height: 36px;
+      border: 1px solid rgba(0,168,255,0.5); border-radius: 50%;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%,-50%);
+      transition: width .3s ease, height .3s ease, border-color .3s, opacity .2s;
+    }
+    body.cursor-hover #cursor { width: 20px; height: 20px; box-shadow: 0 0 15px var(--blue), 0 0 35px var(--blue); }
+    body.cursor-hover #cursor-ring { width: 56px; height: 56px; border-color: var(--blue); }
+
+    /* ── HEADER ── */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.1rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      background: linear-gradient(180deg, rgba(4,7,13,0.95) 0%, transparent 100%);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-logo { display: flex; align-items: center; gap: 0.75rem; }
+    .header-logo img { height: 28px; width: auto; }
+    .header-logo-text {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: var(--dim);
+      text-transform: uppercase;
+    }
+    .header-right {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--blue);
+      opacity: 0.7;
+    }
+
+    /* ── PAGE WRAPPER ── */
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 7rem 1.5rem 5rem;
+    }
+
+    /* ── HERO HEADING ── */
+    .page-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: var(--blue);
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      opacity: 0.8;
+    }
+    .page-title {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 600;
+      line-height: 1.1;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.02em;
+    }
+    .page-title span {
+      color: var(--blue);
+      text-shadow: 0 0 25px rgba(0,168,255,0.5);
+    }
+    .page-sub {
+      font-size: 0.95rem;
+      color: var(--dim);
+      margin-bottom: 3rem;
+      font-weight: 300;
+      max-width: 520px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, var(--blue-mid), transparent);
+      margin: 2.5rem 0;
+      opacity: 0.4;
+    }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+
+    /* ── BOOKING TYPE SELECTOR ── */
+    .type-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .type-card {
+      position: relative;
+      padding: 1.5rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: var(--transition);
+      overflow: hidden;
+    }
+    .type-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--blue-dim);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .type-card:hover::before { opacity: 1; }
+    .type-card:hover { border-color: var(--blue-mid); }
+    .type-card.active {
+      border-color: var(--blue);
+      background: var(--bg3);
+      box-shadow: 0 0 0 1px var(--blue), inset 0 0 40px rgba(0,168,255,0.05);
+    }
+    .type-card.active::before { opacity: 1; }
+    .type-number {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--blue);
+      margin-bottom: 0.6rem;
+      opacity: 0.7;
+    }
+    .type-name {
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.3rem;
+    }
+    .type-desc {
+      font-size: 0.78rem;
+      color: var(--dim);
+      line-height: 1.5;
+    }
+    .type-check {
+      position: absolute; top: 1.2rem; right: 1.2rem;
+      width: 20px; height: 20px;
+      border: 1px solid var(--border-md);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: var(--transition);
+    }
+    .type-card.active .type-check {
+      background: var(--blue);
+      border-color: var(--blue);
+      box-shadow: var(--blue-glow);
+    }
+    .type-check svg { display: none; }
+    .type-card.active .type-check svg { display: block; }
+
+    /* ── STATUS BAR ── */
+    #status-bar {
+      display: none;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 2rem;
+    }
+    #status-bar.error {
+      display: flex;
+      background: rgba(192,57,43,0.12);
+      border: 1px solid var(--red-border);
+      color: #e74c3c;
+    }
+    #status-bar.info {
+      display: flex;
+      background: var(--blue-dim);
+      border: 1px solid rgba(0,168,255,0.25);
+      color: var(--blue);
+    }
+
+    /* ── DAY NAVIGATION ── */
+    .days-nav-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .nav-btn {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--dim);
+      background: var(--card);
+      text-transform: uppercase;
+      transition: var(--transition);
+    }
+    .nav-btn:hover:not(:disabled) {
+      border-color: var(--blue-mid);
+      color: var(--blue);
+    }
+    .nav-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+    .nav-range {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--dim);
+    }
+
+    /* ── LOADING SKELETON ── */
+    .skeleton-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .skeleton-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+    .skel-line {
+      height: 10px; border-radius: 4px;
+      background: rgba(255,255,255,0.06);
+      margin-bottom: 0.75rem;
+    }
+    .skel-line.wide { width: 70%; }
+    .skel-line.short { width: 40%; }
+    .skel-slot {
+      height: 56px; border-radius: 4px;
+      background: rgba(255,255,255,0.04);
+      margin-bottom: 0.5rem;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.5; }
+    }
+
+    /* ── DAYS GRID ── */
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    /* ── DAY CARD ── */
+    .day-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color var(--transition);
+    }
+    .day-card.has-selection {
+      border-color: var(--blue-mid);
+    }
+    .day-header {
+      padding: 1rem 1.25rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--card2);
+    }
+    .day-name {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      color: var(--blue);
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+      opacity: 0.8;
+    }
+    .day-date {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .day-month {
+      font-size: 0.72rem;
+      color: var(--dim);
+      margin-top: 0.15rem;
+      font-weight: 300;
+    }
+    .day-slots {
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    /* ── SLOT BUTTON ── */
+    .slot-btn {
+      position: relative;
+      width: 100%;
+      padding: 0.7rem 0.85rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      text-align: left;
+      cursor: pointer;
+      transition: var(--transition);
+      overflow: hidden;
+    }
+    .slot-btn::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--blue-dim);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .slot-btn:hover:not(.busy):not(.selected)::after { opacity: 1; }
+    .slot-btn:hover:not(.busy):not(.selected) { border-color: rgba(0,168,255,0.3); }
+
+    .slot-btn.busy {
+      background: var(--red-dim);
+      border-color: var(--red-border);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    .slot-btn.selected {
+      background: rgba(0,168,255,0.08);
+      border-color: var(--blue);
+      box-shadow: 0 0 0 1px var(--blue), 0 0 20px rgba(0,168,255,0.1);
+    }
+    .slot-btn.selected::after { opacity: 0; }
+
+    .slot-name {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 0.1rem;
+      transition: color var(--transition);
+    }
+    .slot-btn.busy    .slot-name { color: var(--red); }
+    .slot-btn.selected .slot-name { color: var(--blue); }
+    .slot-btn:not(.busy):not(.selected) .slot-name { color: var(--white); }
+
+    .slot-hours {
+      font-size: 0.7rem;
+      color: var(--dim);
+      font-weight: 300;
+    }
+    .slot-badge {
+      position: absolute; top: 0.45rem; right: 0.6rem;
+      font-family: var(--mono);
+      font-size: 0.52rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.45rem;
+      border-radius: 2px;
+    }
+    .slot-btn.busy .slot-badge {
+      background: rgba(192,57,43,0.3);
+      color: #e74c3c;
+    }
+    .slot-btn.selected .slot-badge {
+      background: rgba(0,168,255,0.2);
+      color: var(--blue);
+    }
+
+    /* ── REQUEST PANEL ── */
+    #request-panel {
+      margin-top: 2rem;
+      background: var(--card);
+      border: 1px solid var(--border-md);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: var(--transition);
+      max-height: 0;
+      opacity: 0;
+    }
+    #request-panel.open {
+      max-height: 600px;
+      opacity: 1;
+    }
+    .panel-inner {
+      padding: 1.75rem;
+    }
+    .panel-summary {
+      display: flex;
+      align-items: flex-start;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .summary-item { }
+    .summary-label {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+    .summary-value {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--blue);
+    }
+
+    /* ── FORM ── */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+    .form-group.full { grid-column: 1 / -1; }
+
+    label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+    }
+    label .required { color: var(--blue); margin-left: 2px; }
+
+    input, textarea {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-md);
+      border-radius: 4px;
+      padding: 0.65rem 0.9rem;
+      color: var(--white);
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      transition: var(--transition);
+      outline: none;
+      width: 100%;
+    }
+    input:focus, textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 1px rgba(0,168,255,0.3);
+      background: rgba(0,168,255,0.04);
+    }
+    input::placeholder, textarea::placeholder { color: var(--faint); }
+    textarea { resize: none; height: 80px; }
+
+    /* ── CTA BUTTON ── */
+    .btn-request {
+      width: 100%;
+      margin-top: 1.25rem;
+      padding: 1rem;
+      background: var(--blue);
+      color: var(--bg);
+      border-radius: var(--radius);
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-request:hover { background: #29b6ff; box-shadow: 0 0 30px rgba(0,168,255,0.4); }
+    .btn-request:disabled {
+      background: rgba(0,168,255,0.3);
+      cursor: not-allowed;
+    }
+    .btn-request .btn-label { position: relative; z-index: 1; }
+    .btn-request .btn-loading {
+      display: none;
+      position: absolute; inset: 0;
+      background: inherit;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    .btn-request.loading .btn-loading { display: flex; }
+    .btn-request.loading .btn-label { opacity: 0; }
+
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(4,7,13,0.4);
+      border-top-color: var(--bg);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── OLD INLINE CONFIRMATION (hidden — replaced by modal) ── */
+    #confirmation { display: none !important; }
+
+    /* ── SELECT / DROPDOWN ── */
+    select {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-md);
+      border-radius: 4px;
+      padding: 0.65rem 0.9rem;
+      color: var(--white);
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      transition: var(--transition);
+      outline: none;
+      width: 100%;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.35)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+      cursor: none;
+    }
+    select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 1px rgba(0,168,255,0.3);
+      background-color: rgba(0,168,255,0.04);
+    }
+    select option { background: #0b1220; color: #fff; }
+
+    /* ── CONFIRMATION MODAL ── */
+    #confirm-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    #confirm-modal.open { display: flex; }
+
+    .confirm-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(4,7,13,0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      animation: backdrop-in 0.3s ease forwards;
+    }
+    @keyframes backdrop-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .confirm-card {
+      position: relative;
+      z-index: 1;
+      background: #ffffff;
+      border-radius: 12px;
+      max-width: 480px;
+      width: 100%;
+      overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.15);
+      animation: card-in 0.45s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    @keyframes card-in {
+      from { opacity: 0; transform: scale(0.88) translateY(24px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Card header bar */
+    .confirm-card-header {
+      background: #04070d;
+      padding: 16px 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(0,168,255,0.2);
+    }
+    .confirm-card-header img {
+      height: 22px;
+      width: auto;
+      filter: brightness(1);
+    }
+    .confirm-card-header-dots {
+      display: flex;
+      gap: 5px;
+      margin-left: auto;
+    }
+    .confirm-card-header-dots span {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+    }
+    .confirm-card-header-dots span:nth-child(1) { background: #ff5f57; }
+    .confirm-card-header-dots span:nth-child(2) { background: #febc2e; }
+    .confirm-card-header-dots span:nth-child(3) { background: #28c840; }
+
+    /* Card body */
+    .confirm-card-body {
+      padding: 28px 28px 24px;
+      color: #04070d;
+    }
+
+    .confirm-tag {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+    .confirm-headline {
+      font-family: var(--sans);
+      font-size: clamp(1.4rem, 4vw, 1.9rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #04070d;
+      line-height: 1.1;
+      margin-bottom: 10px;
+    }
+    .confirm-msg {
+      font-size: 0.88rem;
+      color: rgba(4,7,13,0.65);
+      line-height: 1.6;
+      margin-bottom: 20px;
+      font-family: 'Questrial', sans-serif;
+    }
+
+    /* Terminal block inside card */
+    .confirm-terminal {
+      background: #04070d;
+      border-radius: 7px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(0,168,255,0.15);
+    }
+    .confirm-terminal-bar {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .confirm-terminal-bar span {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+    }
+    .confirm-terminal-bar span:nth-child(1) { background: rgba(255,95,87,0.6); }
+    .confirm-terminal-bar span:nth-child(2) { background: rgba(254,188,46,0.6); }
+    .confirm-terminal-bar span:nth-child(3) { background: rgba(40,200,64,0.6); }
+    .confirm-terminal-title {
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.3);
+      margin-left: 6px;
+    }
+    .confirm-detail-row {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      line-height: 1.9;
+      color: rgba(255,255,255,0.5);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .confirm-detail-row span { color: var(--blue); }
+
+    /* CTA button */
+    .confirm-back {
+      width: 100%;
+      padding: 12px;
+      background: #04070d;
+      color: #fff;
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 7px;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: none;
+      transition: var(--transition);
+    }
+    .confirm-back:hover {
+      background: #0a1628;
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.2);
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .days-grid, .skeleton-grid { grid-template-columns: 1fr; }
+      .type-grid { grid-template-columns: 1fr; }
+      .form-row  { grid-template-columns: 1fr; }
+      header { padding: 1rem; }
+      .page { padding: 6rem 1rem 3rem; }
+    }
+    @media (max-width: 480px) {
+      .days-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── FADE IN ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── ACCESSIBLE FOCUS ── */
+    :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+  </style>
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="header-logo">
+      <a href="index.html">
+        <img src="assets/nsa-logo.png" alt="Newsonic Age">
+      </a>
+      <span class="header-logo-text">/ Booking</span>
+    </div>
+    <div class="header-right">Exclusive Sessions</div>
+  </header>
+
+  <!-- ── PAGE ── -->
+  <main class="page" id="main-content">
+
+    <!-- Hero -->
+    <div class="fade-in" id="intro">
+      <p class="page-eyebrow">Newsonic Age &nbsp;/ &nbsp;Session Booking</p>
+      <h1 class="page-title">Select Your <span>Window.</span></h1>
+      <p class="page-sub">Availability is limited and controlled. Choose your session type, pick a window, and send your request. We'll confirm within 24–48 hours.</p>
+    </div>
+
+    <!-- Status bar (errors / info) -->
+    <div id="status-bar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/>
+      </svg>
+      <span id="status-text"></span>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ── STEP 1: Booking Type ── -->
+    <div class="fade-in" id="type-section">
+      <p class="section-label">01 — Session Type</p>
+      <div class="type-grid">
+
+        <div class="type-card" data-type="SHOOT" onclick="selectType('SHOOT')" role="button" tabindex="0">
+          <div class="type-number">01 —</div>
+          <div class="type-name">Shoot</div>
+          <div class="type-desc">Full-day creative session. Blocks the entire day (8AM–10PM) to ensure complete focus on your project.</div>
+          <div class="type-check">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#04070d" stroke-width="3" stroke-linecap="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="type-card" data-type="CONSULTATION" onclick="selectType('CONSULTATION')" role="button" tabindex="0">
+          <div class="type-number">02 —</div>
+          <div class="type-name">Consultation</div>
+          <div class="type-desc">A focused 15-minute discovery call within your chosen time window. Ideal for new projects and alignment.</div>
+          <div class="type-check">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#04070d" stroke-width="3" stroke-linecap="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ── STEP 2: Select Window ── -->
+    <div class="fade-in" id="window-section">
+      <p class="section-label">02 — Select Your Window</p>
+
+      <div class="days-nav-row">
+        <button class="nav-btn" id="btn-prev" onclick="navigate(-1)" disabled>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          Previous
+        </button>
+        <span class="nav-range" id="nav-range">—</span>
+        <button class="nav-btn" id="btn-next" onclick="navigate(1)">
+          Next
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Skeleton loader -->
+      <div class="skeleton-grid" id="skeleton">
+        <div class="skeleton-card">
+          <div class="skel-line wide"></div>
+          <div class="skel-line short"></div>
+          <div class="skel-slot"></div><div class="skel-slot"></div>
+          <div class="skel-slot"></div><div class="skel-slot"></div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skel-line wide"></div>
+          <div class="skel-line short"></div>
+          <div class="skel-slot"></div><div class="skel-slot"></div>
+          <div class="skel-slot"></div><div class="skel-slot"></div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skel-line wide"></div>
+          <div class="skel-line short"></div>
+          <div class="skel-slot"></div><div class="skel-slot"></div>
+          <div class="skel-slot"></div><div class="skel-slot"></div>
+        </div>
+      </div>
+
+      <!-- Actual days -->
+      <div class="days-grid" id="days-grid" style="display:none;"></div>
+    </div>
+
+    <!-- ── STEP 3: Request Panel ── -->
+    <div id="request-panel">
+      <div class="panel-inner">
+        <p class="section-label">03 — Confirm Request</p>
+
+        <div class="panel-summary" id="panel-summary">
+          <div class="summary-item">
+            <div class="summary-label">Session Type</div>
+            <div class="summary-value" id="sum-type">—</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Date</div>
+            <div class="summary-value" id="sum-date">—</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Window</div>
+            <div class="summary-value" id="sum-slot">—</div>
+          </div>
+        </div>
+
+        <form id="booking-form" onsubmit="submitRequest(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="input-name">Name <span class="required">*</span></label>
+              <input type="text" id="input-name" placeholder="Your full name" required autocomplete="name">
+            </div>
+            <div class="form-group">
+              <label for="input-email">Email <span class="required">*</span></label>
+              <input type="email" id="input-email" placeholder="your@email.com" required autocomplete="email">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="input-phone">Phone <span class="required">*</span></label>
+              <input type="tel" id="input-phone" placeholder="(555) 000-0000" required autocomplete="tel">
+            </div>
+            <div class="form-group">
+              <label for="input-contact">Preferred Contact <span class="required">*</span></label>
+              <select id="input-contact" required>
+                <option value="" disabled selected>— Select method —</option>
+                <option value="PHONE CALL">Phone Call</option>
+                <option value="TEXT">Text</option>
+                <option value="EMAIL">Email</option>
+                <option value="IN-PERSON">In-Person</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group full">
+              <label for="input-notes">Project Notes <span style="color:var(--faint)">(optional)</span></label>
+              <textarea id="input-notes" placeholder="Brief description of your project or goals..."></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-request" id="btn-submit">
+            <span class="btn-label">Request This Window</span>
+            <div class="btn-loading">
+              <div class="spinner"></div>
+            </div>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- keep old element for backward compat; it's hidden via CSS -->
+    <div id="confirmation"></div>
+
+  </main>
+
+  <footer>
+    NEWSONIC AGE &nbsp;/&nbsp; ALL SESSIONS SUBJECT TO APPROVAL &nbsp;/&nbsp; 2026
+  </footer>
+
+  <!-- ── CONFIRMATION MODAL ── -->
+  <div id="confirm-modal">
+    <div class="confirm-backdrop"></div>
+    <div class="confirm-card">
+      <div class="confirm-card-header">
+        <img src="assets/nsa-logo.png" alt="Newsonic Age">
+        <span style="font-family:var(--mono);font-size:0.6rem;letter-spacing:0.18em;color:rgba(0,168,255,0.7);text-transform:uppercase;">Newsonic Age</span>
+        <div class="confirm-card-header-dots">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+      <div class="confirm-card-body">
+        <div class="confirm-tag">Transmission Complete</div>
+        <h2 class="confirm-headline">Request Received.</h2>
+        <p class="confirm-msg">Be on the lookout for a confirmation on your booking via text or email. We'll reach out within 24–48 hours.</p>
+
+        <div class="confirm-terminal">
+          <div class="confirm-terminal-bar">
+            <span></span><span></span><span></span>
+            <span class="confirm-terminal-title">booking_request.log</span>
+          </div>
+          <div id="confirm-lines"></div>
+        </div>
+
+        <button class="confirm-back" onclick="closeConfirmModal()">← Back to Booking</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =============================================
+       NEWSONIC AGE — Booking App
+       ============================================= */
+
+    // ─── CURSOR ─────────────────────────────────
+    const cursor = document.getElementById('cursor');
+    const cursorRing = document.getElementById('cursor-ring');
+    let cx = 0, cy = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      cx = e.clientX; cy = e.clientY;
+      cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px';
+    });
+    (function animateRing() {
+      rx += (cx - rx) * 0.12; ry += (cy - ry) * 0.12;
+      cursorRing.style.left = rx + 'px'; cursorRing.style.top = ry + 'px';
+      requestAnimationFrame(animateRing);
+    })();
+    document.addEventListener('mouseleave', () => { cursor.style.opacity = '0'; cursorRing.style.opacity = '0'; });
+    document.addEventListener('mouseenter', () => { cursor.style.opacity = '1'; cursorRing.style.opacity = '1'; });
+
+    function addHoverListeners() {
+      document.querySelectorAll('button, .type-card, .slot-btn, a, input, textarea, select').forEach(el => {
+        el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+        el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+      });
+    }
+
+    // ─── FADE-IN ON SCROLL ───────────────────────
+    const revealObserver = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => revealObserver.observe(el));
+
+    // ─── STATE ───────────────────────────────────
+    let availability   = null; // { busy: [...], timezone: string }
+    let dayOffset      = 0;    // which set of 3 days we're viewing
+    let selectedType   = null; // 'SHOOT' | 'CONSULTATION'
+    let selectedDate   = null; // 'YYYY-MM-DD'
+    let selectedSlot   = null; // 'ALL_DAY' | 'EARLY_RISER' | 'MIDDAY_MOVER' | 'NIGHT_OWL'
+
+    // ─── SLOT CONFIG ─────────────────────────────
+    const SLOTS = [
+      { key: 'ALL_DAY',      label: 'All Day',      hours: '',           startH: 8,  endH: 22 },
+      { key: 'EARLY_RISER',  label: 'Early Riser',  hours: '8 – 10AM',   startH: 8,  endH: 10 },
+      { key: 'MIDDAY_MOVER', label: 'Midday Mover', hours: '1 – 3PM',    startH: 13, endH: 15 },
+      { key: 'NIGHT_OWL',    label: 'Night Owl',    hours: '8 – 10PM',   startH: 20, endH: 22 },
+    ];
+
+    // ─── BLOCKED DAYS ────────────────────────────
+    // 0 = Sunday, 1 = Monday, 5 = Friday
+    const BLOCKED_DAYS = new Set([0, 1, 5]);
+
+    // Returns an ordered array of available dateStrings (non-blocked, next ~60 days)
+    function getAvailableDates() {
+      const dates = [];
+      const d = new Date();
+      d.setDate(d.getDate() + 1); // start tomorrow
+      while (dates.length < 45) {
+        const iso = d.toISOString().split('T')[0];
+        const dow = new Date(iso + 'T12:00:00Z').getUTCDay();
+        if (!BLOCKED_DAYS.has(dow)) dates.push(iso);
+        d.setDate(d.getDate() + 1);
+      }
+      return dates;
+    }
+
+    // ─── TIMEZONE CONVERSION ─────────────────────
+    // Converts hour on dateStr from the server's timezone to a UTC Date.
+    // Uses noon UTC as a reference to determine the timezone offset for that day.
+    function localToUTC(dateStr, hour, timezone) {
+      const [y, mo, d] = dateStr.split('-').map(Number);
+      const refUTC = new Date(Date.UTC(y, mo - 1, d, 12, 0, 0));
+
+      const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone: timezone,
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', hour12: false,
+      }).formatToParts(refUTC);
+
+      const get = type => parseInt(parts.find(p => p.type === type)?.value || '0', 10);
+      const localAsUTC = Date.UTC(get('year'), get('month') - 1, get('day'), get('hour') % 24, get('minute'), 0);
+      const offsetMs = refUTC.getTime() - localAsUTC;
+
+      return new Date(Date.UTC(y, mo - 1, d, hour, 0, 0) + offsetMs);
+    }
+
+    // ─── AVAILABILITY CHECKING ───────────────────
+    function isSlotBusy(dateStr, startH, endH) {
+      if (!availability) return false;
+      const tz = availability.timezone || 'UTC';
+      const slotStart = localToUTC(dateStr, startH, tz);
+      const slotEnd   = localToUTC(dateStr, endH,   tz);
+
+      return availability.busy.some(period => {
+        const bStart = new Date(period.start);
+        const bEnd   = new Date(period.end);
+        return bStart < slotEnd && bEnd > slotStart;
+      });
+    }
+
+    // ALL_DAY is unavailable if ANY part of the working day (8am–10pm) is busy
+    function isAllDayBusy(dateStr) {
+      return isSlotBusy(dateStr, 8, 22);
+    }
+
+    // ─── DATE UTILITIES ──────────────────────────
+    function getDateStr(offsetDays) {
+      const d = new Date();
+      d.setDate(d.getDate() + offsetDays);
+      return d.toISOString().split('T')[0];
+    }
+
+    function formatDayName(dateStr) {
+      return new Date(dateStr + 'T12:00:00Z').toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' });
+    }
+    function formatDayNum(dateStr) {
+      return new Date(dateStr + 'T12:00:00Z').toLocaleDateString('en-US', { day: 'numeric', timeZone: 'UTC' });
+    }
+    function formatMonth(dateStr) {
+      return new Date(dateStr + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+    }
+    function formatFullDate(dateStr) {
+      return new Date(dateStr + 'T12:00:00Z').toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC'
+      });
+    }
+
+    // ─── STATUS BAR ──────────────────────────────
+    function showStatus(msg, type = 'error') {
+      const bar = document.getElementById('status-bar');
+      document.getElementById('status-text').textContent = msg;
+      bar.className = type;
+    }
+    function hideStatus() {
+      document.getElementById('status-bar').className = '';
+    }
+
+    // ─── SELECT TYPE ─────────────────────────────
+    function selectType(type) {
+      selectedType = type;
+      selectedDate = null;
+      selectedSlot = null;
+
+      document.querySelectorAll('.type-card').forEach(card => {
+        card.classList.toggle('active', card.dataset.type === type);
+      });
+
+      // Re-render days to clear slot selection highlighting
+      if (availability) renderDays();
+      updateRequestPanel();
+    }
+
+    // Keyboard support for type cards
+    document.querySelectorAll('.type-card').forEach(card => {
+      card.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectType(card.dataset.type); }
+      });
+    });
+
+    // ─── SELECT SLOT ─────────────────────────────
+    function selectSlot(dateStr, slotKey) {
+      if (!selectedType) {
+        showStatus('Please select a session type first.', 'error');
+        document.getElementById('type-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+      hideStatus();
+      selectedDate = dateStr;
+      selectedSlot = slotKey;
+
+      // Update slot button styles
+      document.querySelectorAll('.slot-btn').forEach(btn => {
+        const isSelected = btn.dataset.date === dateStr && btn.dataset.slot === slotKey;
+        if (!btn.classList.contains('busy')) {
+          btn.classList.toggle('selected', isSelected);
+          const badge = btn.querySelector('.slot-badge');
+          if (badge) badge.textContent = isSelected ? 'Selected' : '';
+        }
+      });
+
+      // Mark day card as having selection
+      document.querySelectorAll('.day-card').forEach(card => {
+        card.classList.toggle('has-selection', card.dataset.date === dateStr);
+      });
+
+      updateRequestPanel();
+    }
+
+    // ─── RENDER DAYS ─────────────────────────────
+    function renderDays() {
+      const grid = document.getElementById('days-grid');
+      grid.innerHTML = '';
+
+      const availDates = getAvailableDates();
+      const pageDates  = availDates.slice(dayOffset, dayOffset + 3);
+
+      // Update nav buttons
+      document.getElementById('btn-prev').disabled = dayOffset <= 0;
+      document.getElementById('btn-next').disabled = dayOffset + 3 >= availDates.length;
+
+      if (pageDates.length > 0) {
+        const s = pageDates[0], e = pageDates[pageDates.length - 1];
+        document.getElementById('nav-range').textContent =
+          `${formatMonth(s).split(' ')[0]} ${formatDayNum(s)} – ${formatDayNum(e)}`;
+      }
+
+      for (let i = 0; i < pageDates.length; i++) {
+        const dateStr = pageDates[i];
+        const allDayBusy = isAllDayBusy(dateStr);
+
+        const card = document.createElement('div');
+        card.className = 'day-card';
+        if (selectedDate === dateStr) card.classList.add('has-selection');
+        card.dataset.date = dateStr;
+
+        card.innerHTML = `
+          <div class="day-header">
+            <div class="day-name">${formatDayName(dateStr)}</div>
+            <div class="day-date">${formatDayNum(dateStr)}</div>
+            <div class="day-month">${formatMonth(dateStr)}</div>
+          </div>
+          <div class="day-slots" id="slots-${dateStr}"></div>
+        `;
+
+        grid.appendChild(card);
+
+        const slotsContainer = card.querySelector('.day-slots');
+
+        SLOTS.forEach(slot => {
+          // ALL_DAY is busy if any part of the working day is busy
+          const isBusy = slot.key === 'ALL_DAY'
+            ? allDayBusy
+            : isSlotBusy(dateStr, slot.startH, slot.endH);
+
+          const isSelected = selectedDate === dateStr && selectedSlot === slot.key;
+
+          const btn = document.createElement('button');
+          btn.className = 'slot-btn' + (isBusy ? ' busy' : '') + (isSelected ? ' selected' : '');
+          btn.dataset.date = dateStr;
+          btn.dataset.slot = slot.key;
+          btn.disabled = isBusy;
+          btn.setAttribute('aria-label', `${slot.label} on ${formatFullDate(dateStr)}: ${isBusy ? 'Unavailable' : 'Available'}`);
+
+          btn.innerHTML = `
+            <div class="slot-name">${slot.label}</div>
+            ${slot.hours ? `<div class="slot-hours">${slot.hours}</div>` : ''}
+            <span class="slot-badge">${isBusy ? 'Unavailable' : (isSelected ? 'Selected' : '')}</span>
+          `;
+
+          if (!isBusy) {
+            btn.onclick = () => selectSlot(dateStr, slot.key);
+          }
+
+          slotsContainer.appendChild(btn);
+        });
+      }
+
+      addHoverListeners();
+    }
+
+    // ─── NAVIGATE DAYS ───────────────────────────
+    function navigate(dir) {
+      const availDates = getAvailableDates();
+      dayOffset = Math.max(0, Math.min(availDates.length - 3, dayOffset + dir * 3));
+      // Clear selection if scrolled away from it
+      if (selectedDate) {
+        const inView = availDates.slice(dayOffset, dayOffset + 3).includes(selectedDate);
+        if (!inView) {
+          selectedDate = null;
+          selectedSlot = null;
+          updateRequestPanel();
+        }
+      }
+      renderDays();
+    }
+
+    // ─── REQUEST PANEL ───────────────────────────
+    function updateRequestPanel() {
+      const panel = document.getElementById('request-panel');
+
+      if (selectedDate && selectedSlot && selectedType) {
+        const slotMeta = SLOTS.find(s => s.key === selectedSlot);
+        document.getElementById('sum-type').textContent = selectedType === 'SHOOT' ? 'Shoot (Full Day)' : 'Consultation (15 min)';
+        document.getElementById('sum-date').textContent = formatFullDate(selectedDate);
+        document.getElementById('sum-slot').textContent = slotMeta
+          ? (slotMeta.hours ? `${slotMeta.label} — ${slotMeta.hours}` : slotMeta.label)
+          : '—';
+
+        panel.classList.add('open');
+        setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+      } else {
+        panel.classList.remove('open');
+      }
+    }
+
+    // ─── SUBMIT REQUEST ──────────────────────────
+    async function submitRequest(e) {
+      e.preventDefault();
+
+      const name          = document.getElementById('input-name').value.trim();
+      const email         = document.getElementById('input-email').value.trim();
+      const phone         = document.getElementById('input-phone').value.trim();
+      const contactMethod = document.getElementById('input-contact').value;
+      const notes         = document.getElementById('input-notes').value.trim();
+
+      if (!name || !email || !phone || !contactMethod) return;
+      if (!selectedDate || !selectedSlot || !selectedType) {
+        showStatus('Please select a session type, date, and time window.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('btn-submit');
+      btn.classList.add('loading');
+      btn.disabled = true;
+      hideStatus();
+
+      try {
+        const res = await fetch('/request-booking', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            date:          selectedDate,
+            timeSlot:      selectedSlot,
+            bookingType:   selectedType,
+            clientName:    name,
+            clientEmail:   email,
+            clientPhone:   phone,
+            contactMethod: contactMethod,
+            notes:         notes || undefined,
+          }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showStatus(data.error || `Error ${res.status}`, 'error');
+          if (res.status === 409) await fetchAvailability();
+          return;
+        }
+
+        // ── Success ──
+        showConfirmation({ name, email, phone, contactMethod });
+
+      } catch (err) {
+        showStatus('Connection error. Please check your network and try again.', 'error');
+      } finally {
+        btn.classList.remove('loading');
+        btn.disabled = false;
+      }
+    }
+
+    // ─── CONFIRMATION MODAL ──────────────────────
+    function showConfirmation({ name, email, phone, contactMethod }) {
+      const slotMeta   = SLOTS.find(s => s.key === selectedSlot);
+      const slotDisplay = slotMeta
+        ? (slotMeta.hours ? `${slotMeta.label} — ${slotMeta.hours}` : slotMeta.label)
+        : '—';
+      const typeDisplay = selectedType === 'SHOOT' ? 'Shoot — Full Day' : 'Consultation — 15 min';
+
+      document.getElementById('confirm-lines').innerHTML = [
+        ['Type',    typeDisplay],
+        ['Date',    formatFullDate(selectedDate)],
+        ['Window',  slotDisplay],
+        ['Client',  name],
+        ['Email',   email],
+        ['Phone',   phone],
+        ['Contact', contactMethod],
+      ].map(([k, v]) =>
+        `<div class="confirm-detail-row">${k.padEnd(8, '\u00a0')}: <span>${v}</span></div>`
+      ).join('');
+
+      document.getElementById('confirm-modal').classList.add('open');
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('confirm-modal').classList.remove('open');
+      resetApp();
+    }
+
+    // ─── RESET ───────────────────────────────────
+    function resetApp() {
+      selectedType = null; selectedDate = null; selectedSlot = null; dayOffset = 0;
+
+      document.querySelectorAll('.type-card').forEach(c => c.classList.remove('active'));
+      document.getElementById('request-panel').classList.remove('open');
+      document.getElementById('booking-form').reset();
+      hideStatus();
+
+      renderDays();
+    }
+
+    // ─── FETCH AVAILABILITY ──────────────────────
+    async function fetchAvailability() {
+      try {
+        const res = await fetch('/availability');
+
+        if (res.status === 401) {
+          showStatus('Booking calendar unavailable. Please try again later.', 'error');
+          document.getElementById('skeleton').style.display = 'none';
+          return;
+        }
+
+        if (!res.ok) throw new Error(`Server error ${res.status}`);
+
+        availability = await res.json();
+        hideStatus();
+
+        // Hide skeleton, show real grid
+        document.getElementById('skeleton').style.display = 'none';
+        const grid = document.getElementById('days-grid');
+        grid.style.display = 'grid';
+        renderDays();
+
+      } catch (err) {
+        showStatus('Could not load availability. Please refresh the page.', 'error');
+        document.getElementById('skeleton').style.display = 'none';
+        console.error('[Availability]', err);
+      }
+    }
+
+    // ─── INIT ────────────────────────────────────
+    fetchAvailability();
+    addHoverListeners();
+  </script>
+</body>
+</html>

@@ -7,6 +7,322 @@
   <title>Newsonic Age — Digital Experience Studio</title>
   <link rel="icon" type="image/png" href="assets/nsa-logo.png">
   <link rel="stylesheet" href="style.css">
+  <!-- Questrial body font + Space Grotesk (matching client portal) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Questrial&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══════════════════════════════════════════
+       NSA HOMEPAGE — Full Glassmorphic Redesign
+       Space Grotesk headings · Questrial body
+       NSA blue dominant · white accents
+       Hover sounds · glow cards everywhere
+    ══════════════════════════════════════════ */
+
+    /* ── GLOW OVERRIDES — tone down style.css defaults ── */
+    :root {
+      --glow-text-sm:  0 0 6px rgba(0,168,255,0.5), 0 0 14px rgba(0,168,255,0.2);
+      --glow-text-md:  0 0 8px rgba(0,168,255,0.4), 0 0 20px rgba(0,168,255,0.15);
+      --glow-text-lg:  0 0 12px rgba(0,168,255,0.45), 0 0 28px rgba(0,168,255,0.18);
+      --glass-bg:      rgba(255,255,255,0.025);
+      --glass-border:  rgba(255,255,255,0.09);
+      --glass-blur:    blur(14px);
+      --blue-border:   rgba(0,168,255,0.15);
+      --blue-glow-sm:  0 0 16px rgba(0,168,255,0.08), 0 0 40px rgba(0,168,255,0.04);
+      --white-border:  rgba(255,255,255,0.12);
+    }
+
+    /* ── FONTS ── */
+    body { font-family: 'Questrial', sans-serif; }
+
+    h1, h2, h3, h4, h5, h6,
+    .section-tag, .section-headline,
+    .stat-num, .price-name, .price-tier,
+    .service-label, .step-num,
+    .btn-cta, .btn-primary, .btn-secondary,
+    .tile-label { font-family: 'Space Grotesk', sans-serif; }
+
+    .tile-number, .tile-cta { font-family: 'Space Mono', monospace; }
+
+    .section-sub, .service-desc, .pain-text, .step-desc,
+    .price-tagline, .mgmt-card-desc {
+      font-family: 'Questrial', sans-serif;
+      line-height: 1.75;
+    }
+
+    /* ── CHOICE TILES — glass + rounded ── */
+    .choice-tile {
+      border-radius: 14px;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s, background 0.3s;
+    }
+    .choice-tile:hover {
+      background: rgba(255,255,255,0.045);
+      border-color: rgba(0,168,255,0.35);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(0,168,255,0.1), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    /* ── PAIN ITEMS — glass cards ── */
+    .pain-item {
+      border-radius: 16px;
+      border: 1px solid var(--blue-border);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      transition: background 0.3s, border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .pain-item::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    }
+    .pain-item:hover {
+      background: rgba(255,255,255,0.04);
+      border-color: rgba(0,168,255,0.3);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 56px rgba(0,0,0,0.45), 0 0 24px rgba(0,168,255,0.07), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .pain-item::after { display: none; }
+
+    /* ── STATS SECTION — glass strip ── */
+    #stats {
+      background: rgba(255,255,255,0.018);
+      border-top: 1px solid var(--white-border);
+      border-bottom: 1px solid var(--white-border);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    /* ── PRICING CARDS — glass + rounded ── */
+    .price-card {
+      border-radius: 20px;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--white-border);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.35s, border-color 0.35s, box-shadow 0.35s;
+    }
+    .price-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    }
+    .price-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(0,168,255,0.3);
+      box-shadow: 0 28px 72px rgba(0,0,0,0.5), 0 0 40px rgba(0,168,255,0.1), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .price-card.featured {
+      border-color: rgba(0,168,255,0.28);
+      background: rgba(0,168,255,0.04);
+    }
+    .price-card.featured::before {
+      background: linear-gradient(90deg, transparent, rgba(0,168,255,0.5), transparent);
+    }
+
+    /* ── MANAGEMENT CARDS — glass ── */
+    .mgmt-card {
+      border-radius: 16px;
+      border: 1px solid var(--white-border);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      padding: 36px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s, background 0.3s;
+    }
+    .mgmt-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+    }
+    .mgmt-card:hover {
+      border-color: rgba(0,168,255,0.3);
+      background: rgba(255,255,255,0.04);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 56px rgba(0,0,0,0.45), 0 0 28px rgba(0,168,255,0.07);
+    }
+
+    /* ── PROCESS STEPS — glass ── */
+    .process-step {
+      border-radius: 16px;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--white-border);
+      padding: 36px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s, background 0.3s;
+    }
+    .process-step::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
+    }
+    .process-step:hover {
+      border-color: rgba(0,168,255,0.28);
+      background: rgba(255,255,255,0.04);
+      transform: translateX(8px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 20px rgba(0,168,255,0.06);
+    }
+
+    /* ── SERVICE VISUAL — rounded ── */
+    .service-visual {
+      border-radius: 16px;
+      border: 1px solid var(--white-border);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    /* ── SERVICE BLOCK extra info grid ── */
+    #services > div:last-child > div[style*="border:1px"] {
+      border-radius: 16px !important;
+      backdrop-filter: blur(10px) !important;
+      -webkit-backdrop-filter: blur(10px) !important;
+      background: rgba(255,255,255,0.02) !important;
+      border-color: rgba(255,255,255,0.1) !important;
+    }
+
+    /* ── SERVICE FEATURES text ── */
+    .service-features li { font-family: 'Questrial', sans-serif; font-size: 0.92rem; }
+
+    /* ── SECTION TAG — softer glow ── */
+    .section-tag {
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.45);
+    }
+
+    /* ── ACCENT TEXT — toned down ── */
+    .accent {
+      color: var(--blue);
+      text-shadow: 0 0 10px rgba(0,168,255,0.35), 0 0 24px rgba(0,168,255,0.12);
+    }
+
+    /* ── HERO HEADLINE — soft glow ── */
+    .glow-text {
+      text-shadow: 0 0 8px rgba(0,168,255,0.35), 0 0 22px rgba(0,168,255,0.12);
+    }
+
+    /* ── DUAL CONTACT SECTION ── */
+    .contact-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto 20px;
+    }
+    @media (max-width: 640px) { .contact-split { grid-template-columns: 1fr; } }
+
+    .contact-card {
+      border: 1px solid var(--blue-border);
+      border-radius: 20px;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      padding: 36px 32px;
+      text-align: center;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s, background 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,168,255,0.4), transparent);
+    }
+    .contact-card:hover {
+      border-color: rgba(0,168,255,0.4);
+      background: rgba(255,255,255,0.04);
+      transform: translateY(-4px);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.45), 0 0 36px rgba(0,168,255,0.09);
+    }
+    .contact-card-type {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--blue);
+      text-shadow: 0 0 6px rgba(0,168,255,0.4);
+      margin-bottom: 12px;
+    }
+    .contact-card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+    .contact-card-desc {
+      font-family: 'Questrial', sans-serif;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .btn-book {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #04070d;
+      background: var(--blue);
+      border: none;
+      padding: 14px 32px;
+      border-radius: 100px;
+      cursor: none;
+      transition: background 0.25s, box-shadow 0.25s, transform 0.2s;
+      box-shadow: 0 0 20px rgba(0,168,255,0.3);
+      text-decoration: none;
+    }
+    .btn-book:hover {
+      background: #22b8ff;
+      box-shadow: 0 0 40px rgba(0,168,255,0.5), 0 0 80px rgba(0,168,255,0.15);
+      transform: translateY(-2px);
+    }
+
+    /* ── FOOTER GLASS ── */
+    footer {
+      background: rgba(255,255,255,0.015);
+      border-top: 1px solid var(--white-border);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    /* ── WHITE EYEBROWS ── */
+    .hero-eyebrow {
+      color: rgba(255,255,255,0.38);
+      letter-spacing: 0.22em;
+    }
+
+    /* ── STAT NUMBERS — crisp, no over-glow ── */
+    .stat-num {
+      text-shadow: 0 0 8px rgba(0,168,255,0.4);
+    }
+  </style>
 </head>
 <body>
 
@@ -468,8 +784,26 @@
       it converts, and it stays in people's minds long after they leave.
     </p>
 
-    <div class="cta-buttons reveal reveal-delay-3">
-      <button class="btn-primary" onclick="openTerminal()">Start a Project</button>
+    <!-- Two ways to get in touch -->
+    <div class="contact-split reveal reveal-delay-3">
+
+      <div class="contact-card">
+        <div class="contact-card-type">01 — Project Inquiry</div>
+        <div class="contact-card-title">Start a<br>Project</div>
+        <div class="contact-card-desc">Tell us about your brand and vision. We'll respond within 24–48 hours to discuss next steps.</div>
+        <button class="btn-cta" onclick="openTerminal()" style="border-radius:100px; padding:14px 32px;"><span>Open Intake Form</span></button>
+      </div>
+
+      <div class="contact-card" style="border-color:rgba(0,168,255,0.25);">
+        <div class="contact-card-type">02 — Book a Session</div>
+        <div class="contact-card-title">Request a<br>Session</div>
+        <div class="contact-card-desc">Ready to schedule a shoot or consultation? Browse availability and submit a booking request.</div>
+        <a href="booking.html" class="btn-book">Request Booking &nbsp;→</a>
+      </div>
+
+    </div>
+
+    <div class="cta-buttons reveal reveal-delay-4" style="margin-top:0;">
       <button class="btn-secondary" onclick="scrollToSection('pricing')">View Pricing</button>
     </div>
 
@@ -554,5 +888,51 @@
   </div>
 
   <script src="main.js"></script>
+
+  <script>
+    /* ── HOVER SOUND SYSTEM ─────────────────────────
+       Same 3-sound pool as the client portal.
+       80ms global cooldown prevents rapid-fire spam.
+    ─────────────────────────────────────────────── */
+    (function() {
+      const SOUNDS = ['assets/hover1.mp3', 'assets/hover2.mp3', 'assets/hover3.mp3'];
+      const audioPool = SOUNDS.map(src => {
+        const a = new Audio(src);
+        a.volume = 0.15;
+        a.preload = 'auto';
+        return a;
+      });
+      let lastPlay = 0;
+
+      function playHoverSound() {
+        const now = Date.now();
+        if (now - lastPlay < 80) return;
+        lastPlay = now;
+        const a = audioPool[Math.floor(Math.random() * audioPool.length)];
+        a.currentTime = 0;
+        a.play().catch(() => {});
+      }
+
+      function bindSounds() {
+        const targets = document.querySelectorAll(
+          '.choice-tile, .pain-item, .price-card, .mgmt-card, ' +
+          '.process-step, .contact-card, .service-block, ' +
+          'nav a, .btn-cta, .btn-book, .btn-secondary, .price-cta, ' +
+          '.footer-links a, .nav-links a'
+        );
+        targets.forEach(el => {
+          if (!el.dataset.sndBound) {
+            el.dataset.sndBound = '1';
+            el.addEventListener('mouseenter', playHoverSound, { passive: true });
+          }
+        });
+      }
+
+      // Bind on load and after any dynamic reveals
+      window.addEventListener('DOMContentLoaded', bindSounds);
+      // Re-bind after a short delay to catch elements added by main.js
+      setTimeout(bindSounds, 800);
+    })();
+  </script>
 </body>
 </html>
