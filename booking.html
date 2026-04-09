@@ -994,6 +994,14 @@
     </div>
   </div>
 
+  <!--
+    API_BASE_URL is injected by the Express server from process.env.API_BASE_URL.
+    • Local dev  → leave API_BASE_URL unset in .env → resolves to '' → relative URLs
+    • Production → set API_BASE_URL=https://newsonicage-backend.onrender.com in Render env vars
+    To switch: update API_BASE_URL in .env (local) or Render dashboard (production).
+  -->
+  <script src="/config.js"></script>
+
   <script>
     /* =============================================
        NEWSONIC AGE — Booking App
@@ -1313,7 +1321,7 @@
       hideStatus();
 
       try {
-        const res = await fetch('/request-booking', {
+        const res = await fetch((window.API_BASE_URL || '') + '/request-booking', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1390,7 +1398,7 @@
     // ─── FETCH AVAILABILITY ──────────────────────
     async function fetchAvailability() {
       try {
-        const res = await fetch('/availability');
+        const res = await fetch((window.API_BASE_URL || '') + '/availability');
 
         if (res.status === 401) {
           showStatus('Booking calendar unavailable. Please try again later.', 'error');

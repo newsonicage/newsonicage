@@ -3,7 +3,9 @@
     "allow": [
       "Bash(node --check server.js)",
       "Bash(node:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(ls C:/Users/brade/Documents/newsonicage/*.html)",
+      "Bash(ls C:/Users/brade/Documents/newsonicage/*.js)"
     ]
   }
 }

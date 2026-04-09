@@ -140,6 +140,20 @@ app.get('/', (req, res) => {
 });
 
 /* ─────────────────────────────────────────────
+   FRONTEND CONFIG
+   Injects API_BASE_URL from environment into the
+   browser as window.API_BASE_URL.
+
+   Local dev  → API_BASE_URL not set → empty string → relative URLs
+   Production → API_BASE_URL=https://newsonicage-backend.onrender.com
+   ───────────────────────────────────────────── */
+app.get('/config.js', (req, res) => {
+  const apiBase = process.env.API_BASE_URL || '';
+  res.setHeader('Content-Type', 'application/javascript');
+  res.send(`window.API_BASE_URL = ${JSON.stringify(apiBase)};`);
+});
+
+/* ─────────────────────────────────────────────
    AUTH ROUTES
    ───────────────────────────────────────────── */
 
