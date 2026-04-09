@@ -8,7 +8,6 @@ const express      = require('express');
 const cors         = require('cors');
 const { google }   = require('googleapis');
 const path         = require('path');
-const fs           = require('fs');
 const nodemailer   = require('nodemailer');
 
 const app = express();
@@ -34,46 +33,17 @@ const TIME_SLOTS = {
   NIGHT_OWL:    { label: 'Night Owl (8–10PM)',   startH: 20, endH: 22 },
 };
 
-// ─── TOKEN PERSISTENCE ────────────────────────
-const TOKEN_FILE = path.join(__dirname, '.tokens.json');
-let tokens = null;
-
-/**
- * saveTokens — writes tokens to .tokens.json and updates the OAuth client.
- * Called both after initial auth AND on every token refresh.
- * @param {object} newTokens — token object from googleapis
- */
-function saveTokens(newTokens) {
-  // Merge with existing (preserves refresh_token across access_token refreshes)
-  tokens = { ...(tokens || {}), ...newTokens };
-  oauth2Client.setCredentials(tokens);
-
-  fs.writeFileSync(TOKEN_FILE, JSON.stringify(tokens, null, 2), 'utf8');
-  console.log('  ✅ Tokens saved to .tokens.json');
-}
-
 // ─── OAUTH2 CLIENT ────────────────────────────
+const REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN;
+
 const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
-// Whenever googleapis auto-refreshes an expiring access_token, persist it
-oauth2Client.on('tokens', (refreshed) => {
-  console.log('[Auth] Access token refreshed — saving to disk');
-  saveTokens(refreshed);
-});
-
-// ─── LOAD SAVED TOKENS ON STARTUP ─────────────
-if (fs.existsSync(TOKEN_FILE)) {
-  try {
-    const raw = fs.readFileSync(TOKEN_FILE, 'utf8');
-    tokens = JSON.parse(raw);
-    oauth2Client.setCredentials(tokens);
-    console.log('  ✅ Tokens loaded from .tokens.json — calendar ready');
-  } catch (err) {
-    console.warn('  ⚠  Could not parse .tokens.json:', err.message);
-    tokens = null;
-  }
+// ─── INITIALIZE FROM ENV REFRESH TOKEN ────────
+if (REFRESH_TOKEN) {
+  oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+  console.log('  ✅ Google Calendar connected via refresh token');
 } else {
-  console.log('  ℹ  No .tokens.json found — visit /auth/google to authenticate');
+  console.warn('  ⚠  GOOGLE_REFRESH_TOKEN not set — calendar unavailable');
 }
 
 // ─── EMAIL NOTIFICATIONS ──────────────────────
@@ -154,12 +124,11 @@ function localToUTC(dateStr, hour, minute = 0) {
 
 // ─── AUTH MIDDLEWARE ──────────────────────────
 function requireAuth(req, res, next) {
-  if (!tokens) {
+  if (!REFRESH_TOKEN) {
     return res.status(401).json({
-      error: 'Calendar not connected. Visit /auth/google to authenticate.',
+      error: 'Calendar not connected. Set GOOGLE_REFRESH_TOKEN in environment variables.',
     });
   }
-  oauth2Client.setCredentials(tokens);
   next();
 }
 
@@ -204,11 +173,10 @@ app.get('/auth/google/callback', async (req, res) => {
     console.log('[Auth] Exchanging code for tokens...');
     const { tokens: newTokens } = await oauth2Client.getToken(code);
 
-    // Explicitly set credentials AND save to disk
     oauth2Client.setCredentials(newTokens);
-    saveTokens(newTokens);  // ← guaranteed write, does not rely on event listener
-
-    console.log('[Auth] ✅ Authentication successful — calendar connected');
+    console.log('[Auth] ✅ Tokens received. Copy the refresh_token below to GOOGLE_REFRESH_TOKEN:');
+    console.log('[Auth] refresh_token:', newTokens.refresh_token || '(not returned — already issued)');
+    console.log('[Auth] Authentication successful');
 
     return res.send(authPage(`
       <p style="color:#00a8ff;letter-spacing:0.2em;font-size:1.1rem">CALENDAR CONNECTED</p>
@@ -225,7 +193,7 @@ app.get('/auth/google/callback', async (req, res) => {
 
 // Auth status — polled by booking.html
 app.get('/auth/status', (req, res) => {
-  res.json({ authenticated: !!tokens, timezone: TIMEZONE });
+  res.json({ authenticated: !!REFRESH_TOKEN, timezone: TIMEZONE });
 });
 
 /* ─────────────────────────────────────────────
@@ -352,7 +320,7 @@ app.post('/request-booking', requireAuth, async (req, res) => {
    HEALTH CHECK
    ───────────────────────────────────────────── */
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', authenticated: !!tokens, timezone: TIMEZONE });
+  res.json({ status: 'ok', authenticated: !!REFRESH_TOKEN, timezone: TIMEZONE });
 });
 
 /* ─────────────────────────────────────────────
@@ -375,15 +343,13 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log('  ╚══════════════════════════════════════╝\n');
   console.log(`  Local:      http://localhost:${PORT}`);
   console.log(`  Booking UI: http://localhost:${PORT}/booking.html`);
-  console.log(`  Auth:       http://localhost:${PORT}/auth/google`);
   console.log(`  Timezone:   ${TIMEZONE}`);
-  console.log(`  Calendar:   ${CALENDAR_ID}`);
-  console.log(`  Token file: ${TOKEN_FILE}\n`);
+  console.log(`  Calendar:   ${CALENDAR_ID}\n`);
 
   if (!CLIENT_ID || !CLIENT_SECRET) {
-    console.warn('  ⚠  CLIENT_ID or CLIENT_SECRET not set in .env\n');
-  } else {
-    const authed = fs.existsSync(TOKEN_FILE) ? '✅ tokens on disk' : '⚠  not authenticated yet — visit /auth/google';
-    console.log(`  Auth status: ${authed}\n`);
+    console.warn('  ⚠  GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET not set in environment\n');
+  }
+  if (!REFRESH_TOKEN) {
+    console.warn('  ⚠  GOOGLE_REFRESH_TOKEN not set — /availability will return 401\n');
   }
 });
