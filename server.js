@@ -13,6 +13,16 @@ const nodemailer   = require('nodemailer');
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// ─── FRONTEND CONFIG — must be before express.static ──
+// Serves window.API_BASE_URL to the browser from process.env.
+// Registered first so a stale config.js file on disk never shadows it.
+app.get('/config.js', (req, res) => {
+  const apiBase = process.env.API_BASE_URL || '';
+  res.setHeader('Content-Type', 'application/javascript');
+  res.send(`window.API_BASE_URL = ${JSON.stringify(apiBase)};`);
+});
+
 app.use(express.static(path.join(__dirname)));
 
 // ─── CONFIG ───────────────────────────────────
@@ -23,7 +33,7 @@ const CALENDAR_ID = process.env.CALENDAR_ID || 'primary';
 // Support both CLIENT_ID / GOOGLE_CLIENT_ID naming conventions
 const CLIENT_ID     = process.env.CLIENT_ID     || process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET || process.env.GOOGLE_CLIENT_SECRET;
-const REDIRECT_URI  = process.env.REDIRECT_URI  || `http://localhost:${PORT}/auth/google/callback`;
+const REDIRECT_URI  = process.env.REDIRECT_URI  || process.env.GOOGLE_REDIRECT_URI || `http://localhost:${PORT}/auth/google/callback`;
 
 // ─── TIME SLOT DEFINITIONS ────────────────────
 const TIME_SLOTS = {
@@ -140,20 +150,6 @@ app.get('/', (req, res) => {
 });
 
 /* ─────────────────────────────────────────────
-   FRONTEND CONFIG
-   Injects API_BASE_URL from environment into the
-   browser as window.API_BASE_URL.
-
-   Local dev  → API_BASE_URL not set → empty string → relative URLs
-   Production → API_BASE_URL=https://newsonicage-backend.onrender.com
-   ───────────────────────────────────────────── */
-app.get('/config.js', (req, res) => {
-  const apiBase = process.env.API_BASE_URL || '';
-  res.setHeader('Content-Type', 'application/javascript');
-  res.send(`window.API_BASE_URL = ${JSON.stringify(apiBase)};`);
-});
-
-/* ─────────────────────────────────────────────
    AUTH ROUTES
    ───────────────────────────────────────────── */
 
@@ -232,8 +228,10 @@ app.get('/availability', requireAuth, async (req, res) => {
     const busy = response.data.calendars[CALENDAR_ID]?.busy || [];
     res.json({ busy, timezone: TIMEZONE });
   } catch (err) {
-    console.error('[Availability] Error:', err.message);
-    res.status(500).json({ error: err.message });
+    // Log full Google API error so Render logs show the root cause
+    const detail = err.response?.data || err.errors || err.message;
+    console.error('[Availability] Error:', JSON.stringify(detail, null, 2));
+    res.status(500).json({ error: err.message, detail });
   }
 });
 

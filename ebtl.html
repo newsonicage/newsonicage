@@ -389,7 +389,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-top: -16px;
+      margin-top: 8px;
       margin-bottom: 24px;
       padding: 8px 12px;
       border-radius: 6px;
@@ -1727,7 +1727,7 @@
         <!-- Client standing indicator — controlled by CLIENT_STATUS constant below -->
         <div class="standing-row" id="standing-row">
           <div class="standing-led"></div>
-          <div class="standing-label" id="standing-label">Active</div>
+          <div class="standing-label" id="standing-label">Active Client</div>
         </div>
 
         <button class="btn-unlock" onclick="tryUnlock()">
@@ -2337,7 +2337,7 @@
         row.classList.add('terminated');
         label.textContent = 'Terminated';
       } else {
-        label.textContent = 'Active';
+        label.textContent = 'Active Client';
       }
     })();
 
