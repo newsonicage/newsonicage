@@ -5,12 +5,14 @@
 
 require('dotenv').config();
 const express      = require('express');
+const cors         = require('cors');
 const { google }   = require('googleapis');
 const path         = require('path');
 const fs           = require('fs');
 const nodemailer   = require('nodemailer');
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
@@ -77,7 +79,7 @@ if (fs.existsSync(TOKEN_FILE)) {
 // ─── EMAIL NOTIFICATIONS ──────────────────────
 // Uses Gmail SMTP + an App Password (set in .env).
 // If credentials are missing, notifications are skipped gracefully.
-const GMAIL_USER = process.env.GMAIL_USER || 'newsonicage@gmail.com';
+const GMAIL_USER = process.env.GMAIL_USER;
 const GMAIL_PASS = process.env.GMAIL_APP_PASSWORD;
 
 let mailer = null;
@@ -161,13 +163,11 @@ function requireAuth(req, res, next) {
   next();
 }
 
-// ─── CORS (dev convenience) ───────────────────
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  if (req.method === 'OPTIONS') return res.sendStatus(204);
-  next();
+/* ─────────────────────────────────────────────
+   ROOT
+   ───────────────────────────────────────────── */
+app.get('/', (req, res) => {
+  res.send('Server running');
 });
 
 /* ─────────────────────────────────────────────
@@ -369,7 +369,7 @@ function authPage(inner) {
 /* ─────────────────────────────────────────────
    START SERVER
    ───────────────────────────────────────────── */
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log('\n  ╔══════════════════════════════════════╗');
   console.log('  ║     NEWSONIC AGE — Booking Server    ║');
   console.log('  ╚══════════════════════════════════════╝\n');
