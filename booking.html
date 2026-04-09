@@ -994,13 +994,16 @@
     </div>
   </div>
 
-  <!--
-    API_BASE_URL is injected by the Express server from process.env.API_BASE_URL.
-    • Local dev  → leave API_BASE_URL unset in .env → resolves to '' → relative URLs
-    • Production → set API_BASE_URL=https://newsonicage-backend.onrender.com in Render env vars
-    To switch: update API_BASE_URL in .env (local) or Render dashboard (production).
-  -->
-  <script src="/config.js"></script>
+  <!-- API_BASE_URL: set by /config.js when served from backend; falls back to Render URL otherwise -->
+  <script src="/config.js" onerror="void 0"></script>
+  <script>
+    // Guarantee API_BASE_URL is always set regardless of which host serves this page.
+    // Priority: /config.js (backend-injected) → hardcoded Render URL → relative (localhost dev)
+    if (!window.API_BASE_URL) {
+      window.API_BASE_URL = 'https://newsonicage-backend.onrender.com';
+    }
+    console.log('API BASE URL:', window.API_BASE_URL);
+  </script>
 
   <script>
     /* =============================================
@@ -1043,6 +1046,9 @@
     let selectedType   = null; // 'SHOOT' | 'CONSULTATION'
     let selectedDate   = null; // 'YYYY-MM-DD'
     let selectedSlot   = null; // 'ALL_DAY' | 'EARLY_RISER' | 'MIDDAY_MOVER' | 'NIGHT_OWL'
+
+    // ─── API HELPER ──────────────────────────────
+    function api(path) { return window.API_BASE_URL + path; }
 
     // ─── SLOT CONFIG ─────────────────────────────
     const SLOTS = [
@@ -1321,7 +1327,7 @@
       hideStatus();
 
       try {
-        const res = await fetch((window.API_BASE_URL || '') + '/request-booking', {
+        const res = await fetch(api('/request-booking'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1398,7 +1404,7 @@
     // ─── FETCH AVAILABILITY ──────────────────────
     async function fetchAvailability() {
       try {
-        const res = await fetch((window.API_BASE_URL || '') + '/availability');
+        const res = await fetch(api('/availability'));
 
         if (res.status === 401) {
           showStatus('Booking calendar unavailable. Please try again later.', 'error');
