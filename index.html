@@ -322,6 +322,268 @@
     .stat-num {
       text-shadow: 0 0 8px rgba(0,168,255,0.4);
     }
+
+    /* ══════════════════════════════════════════
+       HERO TILE CTA BUTTONS
+    ══════════════════════════════════════════ */
+    .tile-cta-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+    .tile-btn-primary {
+      flex: 1;
+      min-width: 130px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #04070d;
+      background: #00a8ff;
+      border: none;
+      padding: 12px 14px;
+      border-radius: 100px;
+      cursor: none;
+      font-weight: 700;
+      transition: background 0.25s, box-shadow 0.25s, transform 0.2s;
+      box-shadow: 0 0 18px rgba(0,168,255,0.4), 0 0 36px rgba(0,168,255,0.12);
+      white-space: nowrap;
+    }
+    .tile-btn-primary:hover {
+      background: #22b8ff;
+      box-shadow: 0 0 28px rgba(0,168,255,0.6), 0 0 56px rgba(0,168,255,0.2);
+      transform: translateY(-2px);
+    }
+    .tile-btn-secondary {
+      flex: 1;
+      min-width: 130px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #00a8ff;
+      background: rgba(0,168,255,0.07);
+      border: 1px solid rgba(0,168,255,0.28);
+      padding: 12px 14px;
+      border-radius: 100px;
+      cursor: none;
+      transition: all 0.25s;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      white-space: nowrap;
+      text-decoration: none;
+    }
+    .tile-btn-secondary:hover {
+      background: rgba(0,168,255,0.14);
+      border-color: rgba(0,168,255,0.55);
+      box-shadow: 0 0 20px rgba(0,168,255,0.18);
+      transform: translateY(-2px);
+    }
+
+    /* ══════════════════════════════════════════
+       SERVICE SECTION CTA ROW
+    ══════════════════════════════════════════ */
+    .service-cta-row {
+      display: flex;
+      gap: 14px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .btn-glass-session {
+      display: inline-flex;
+      align-items: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #00a8ff;
+      background: rgba(0,168,255,0.07);
+      border: 1px solid rgba(0,168,255,0.28);
+      padding: 10px 24px;
+      border-radius: 100px;
+      cursor: none;
+      transition: all 0.25s;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      text-decoration: none;
+      overflow: hidden;
+      position: relative;
+    }
+    .btn-glass-session:hover {
+      background: rgba(0,168,255,0.14);
+      border-color: rgba(0,168,255,0.55);
+      box-shadow: 0 0 24px rgba(0,168,255,0.18);
+      transform: translateY(-2px);
+    }
+
+    /* ══════════════════════════════════════════
+       CONTENT DECISION FLOW
+    ══════════════════════════════════════════ */
+    .content-decision {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 36px;
+    }
+    .content-decision-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.28em;
+      color: rgba(255,255,255,0.32);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .content-choice-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,168,255,0.22);
+      background: rgba(0,168,255,0.04);
+      color: rgba(255,255,255,0.65);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      cursor: none;
+      transition: all 0.3s;
+      text-decoration: none;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .content-choice-btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    }
+    .content-choice-btn:hover {
+      background: rgba(0,168,255,0.1);
+      border-color: rgba(0,168,255,0.45);
+      color: #ffffff;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 20px rgba(0,168,255,0.1);
+      transform: translateY(-2px);
+    }
+    .content-choice-btn.become-client {
+      background: rgba(0,168,255,0.1);
+      border-color: rgba(0,168,255,0.45);
+      color: #00a8ff;
+      box-shadow: 0 0 20px rgba(0,168,255,0.18), inset 0 1px 0 rgba(255,255,255,0.07);
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      padding: 17px 28px;
+      margin-top: 4px;
+    }
+    .content-choice-btn.become-client::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(0,168,255,0.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .content-choice-btn.become-client:hover {
+      background: rgba(0,168,255,0.18);
+      border-color: rgba(0,168,255,0.75);
+      box-shadow: 0 0 40px rgba(0,168,255,0.32), 0 0 80px rgba(0,168,255,0.1), inset 0 1px 0 rgba(255,255,255,0.12);
+      transform: translateY(-2px);
+      color: #ffffff;
+    }
+
+    /* ══════════════════════════════════════════
+       EXPANDED LEAD FORM
+    ══════════════════════════════════════════ */
+    .t-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 560px) { .t-grid-2 { grid-template-columns: 1fr; } }
+
+    .t-budget-toggle {
+      display: flex;
+      border: 1px solid rgba(0,168,255,0.3);
+      border-radius: 6px;
+      overflow: hidden;
+      width: fit-content;
+      margin-bottom: 10px;
+    }
+    .t-budget-toggle button {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 7px 18px;
+      background: transparent;
+      color: #888;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .t-budget-toggle button.active {
+      background: #00a8ff;
+      color: #04070d;
+      font-weight: 700;
+    }
+
+    .t-checkbox-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    @media (max-width: 560px) { .t-checkbox-grid { grid-template-columns: 1fr; } }
+
+    .t-checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: #666;
+      cursor: pointer;
+      padding: 7px 10px;
+      border: 1px solid rgba(0,168,255,0.18);
+      border-radius: 6px;
+      transition: all 0.2s;
+      user-select: none;
+      line-height: 1.3;
+    }
+    .t-checkbox-item:hover {
+      border-color: rgba(0,168,255,0.45);
+      background: rgba(0,168,255,0.05);
+      color: #333;
+    }
+    .t-checkbox-item input[type="checkbox"] {
+      width: 13px;
+      height: 13px;
+      accent-color: #00a8ff;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .t-checkbox-item.checked {
+      border-color: rgba(0,168,255,0.55);
+      background: rgba(0,168,255,0.09);
+      color: #0070cc;
+      font-weight: 600;
+    }
+    .t-checkbox-full { grid-column: span 2; }
+    @media (max-width: 560px) { .t-checkbox-full { grid-column: span 1; } }
+
+    .t-section-divider {
+      border: none;
+      border-top: 1px solid rgba(0,168,255,0.12);
+      margin: 4px 0;
+    }
   </style>
 </head>
 <body>
@@ -400,7 +662,10 @@
         </div>
         <div class="tile-label">WEBSITE CREATION<br>&amp; MAINTENANCE</div>
         <div class="tile-desc">Fully custom-coded digital experiences engineered to engage, convert, and grow with your brand.</div>
-        <div class="tile-cta">EXPLORE SERVICE <span class="arrow">→</span></div>
+        <div class="tile-cta-row">
+          <button class="tile-btn-primary" onclick="openTerminal('web'); event.stopPropagation()">START A PROJECT</button>
+          <a href="booking.html" class="tile-btn-secondary" onclick="event.stopPropagation()">REQUEST A SESSION</a>
+        </div>
       </div>
 
       <div class="choice-tile" onclick="scrollToSection('content-section')">
@@ -418,7 +683,10 @@
         </div>
         <div class="tile-label">CONTENT<br>CREATION</div>
         <div class="tile-desc">Cinematic video, brand photography, and social content that stops the scroll and builds desire.</div>
-        <div class="tile-cta">EXPLORE SERVICE <span class="arrow">→</span></div>
+        <div class="tile-cta-row">
+          <button class="tile-btn-primary" onclick="openTerminal('content'); event.stopPropagation()">START A PROJECT</button>
+          <a href="booking.html" class="tile-btn-secondary" onclick="event.stopPropagation()">REQUEST A SESSION</a>
+        </div>
       </div>
 
     </div>
@@ -525,7 +793,10 @@
           <li>Ongoing hosting, updates, and technical support</li>
         </ul>
         <div class="glow-line" style="margin-top:36px;"></div>
-        <button class="btn-cta" onclick="openTerminal('web')" style="margin-top:4px;"><span>Start a Web Project</span></button>
+        <div class="service-cta-row">
+          <button class="btn-cta" onclick="openTerminal('web')"><span>START A PROJECT</span></button>
+          <a href="booking.html" class="btn-glass-session">REQUEST A SESSION</a>
+        </div>
       </div>
       <div class="service-visual">
         <div class="corner tl"></div>
@@ -574,7 +845,12 @@
           <li>Content calendars and campaign planning</li>
         </ul>
         <div class="glow-line" style="margin-top:36px;"></div>
-        <button class="btn-cta" onclick="openTerminal('content')" style="margin-top:4px;"><span>Start a Content Project</span></button>
+        <div class="content-decision">
+          <div class="content-decision-label">How would you like to begin?</div>
+          <a href="booking.html" class="content-choice-btn">SCHEDULE A CALL</a>
+          <a href="booking.html" class="content-choice-btn">REQUEST A SHOOT</a>
+          <button class="content-choice-btn become-client" onclick="openTerminal('content')">BECOME A CLIENT</button>
+        </div>
       </div>
       <div class="service-visual">
         <div class="corner tl"></div>
@@ -610,6 +886,12 @@
           <div class="service-label" style="margin-bottom:12px;">ONGOING MANAGEMENT</div>
           <p style="font-size:0.88rem;color:var(--white-dim);line-height:1.6;">Hosting, monitoring, continuous updates, and growth optimization. Your site gets better over time, not stale.</p>
         </div>
+      </div>
+
+      <!-- ── WHAT WE DO — Reinforcement CTAs ── -->
+      <div class="reveal" style="max-width:1200px;margin:60px auto 0;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn-cta" onclick="openTerminal()" style="border-radius:100px;padding:14px 36px;"><span>START A PROJECT</span></button>
+        <a href="booking.html" class="btn-glass-session" style="padding:14px 36px;border-radius:100px;">REQUEST A SESSION</a>
       </div>
     </div>
   </section>
@@ -848,37 +1130,89 @@
         <div class="t-output" id="t-output"></div>
 
         <form id="terminal-form" onsubmit="submitForm(event)" style="display:flex;flex-direction:column;">
-          <div class="t-field">
-            <label class="t-label" for="t-name">&gt; name</label>
-            <input class="t-input" id="t-name" name="name" type="text" placeholder="your full name" autocomplete="off" spellcheck="false">
+
+          <!-- Row 1: Name + Company -->
+          <div class="t-grid-2">
+            <div class="t-field">
+              <label class="t-label" for="t-name">&gt; name</label>
+              <input class="t-input" id="t-name" name="name" type="text" placeholder="your full name" autocomplete="off" spellcheck="false">
+            </div>
+            <div class="t-field">
+              <label class="t-label" for="t-company">&gt; company</label>
+              <input class="t-input" id="t-company" name="company" type="text" placeholder="company name" autocomplete="off" spellcheck="false">
+            </div>
           </div>
-          <div class="t-field">
-            <label class="t-label" for="t-email">&gt; email</label>
-            <input class="t-input" id="t-email" name="email" type="email" placeholder="your@email.com" autocomplete="off" spellcheck="false">
+
+          <!-- Row 2: Email + Phone -->
+          <div class="t-grid-2">
+            <div class="t-field">
+              <label class="t-label" for="t-email">&gt; email</label>
+              <input class="t-input" id="t-email" name="email" type="email" placeholder="your@email.com" autocomplete="off" spellcheck="false">
+            </div>
+            <div class="t-field">
+              <label class="t-label" for="t-phone">&gt; phone</label>
+              <input class="t-input" id="t-phone" name="phone" type="tel" placeholder="+1 (000) 000-0000" autocomplete="off" spellcheck="false">
+            </div>
           </div>
-          <div class="t-field">
-            <label class="t-label" for="t-service">&gt; service</label>
-            <select class="t-select" id="t-service" name="service">
-              <option value="">— select service —</option>
-              <option value="web">Website Creation &amp; Maintenance</option>
-              <option value="content">Content Creation</option>
-              <option value="both">Both Services</option>
-            </select>
+
+          <!-- Row 3: Location + What are you selling -->
+          <div class="t-grid-2">
+            <div class="t-field">
+              <label class="t-label" for="t-location">&gt; location</label>
+              <input class="t-input" id="t-location" name="location" type="text" placeholder="city, state / country" autocomplete="off" spellcheck="false">
+            </div>
+            <div class="t-field">
+              <label class="t-label" for="t-selling">&gt; what are you selling?</label>
+              <input class="t-input" id="t-selling" name="selling" type="text" placeholder="products, services, or both" autocomplete="off" spellcheck="false">
+            </div>
           </div>
+
+          <hr class="t-section-divider">
+
+          <!-- Budget Range -->
           <div class="t-field">
-            <label class="t-label" for="t-budget">&gt; tier interest</label>
+            <label class="t-label">&gt; budget range</label>
+            <div class="t-budget-toggle">
+              <button type="button" class="active" id="t-toggle-monthly" onclick="setBudgetType('monthly')">monthly</button>
+              <button type="button" id="t-toggle-yearly" onclick="setBudgetType('yearly')">yearly</button>
+            </div>
             <select class="t-select" id="t-budget" name="budget">
-              <option value="">— select tier —</option>
-              <option value="lite">Lite</option>
-              <option value="pro">Pro</option>
-              <option value="elite">Elite</option>
-              <option value="management">Monthly Management</option>
+              <option value="">— select range —</option>
+              <option value="under-1k">under $1,000 / mo</option>
+              <option value="1k-3k">$1,000 – $3,000 / mo</option>
+              <option value="3k-7k">$3,000 – $7,000 / mo</option>
+              <option value="7k-15k">$7,000 – $15,000 / mo</option>
+              <option value="15k+">$15,000+ / mo</option>
+              <option value="custom">custom / let's talk</option>
             </select>
           </div>
+
+          <!-- Services Multi-Select -->
           <div class="t-field">
-            <label class="t-label" for="t-message">&gt; vision</label>
+            <label class="t-label">&gt; what are you looking to build or improve?</label>
+            <div class="t-checkbox-grid" id="t-services-grid">
+              <label class="t-checkbox-item"><input type="checkbox" name="services" value="ecommerce"> E-commerce</label>
+              <label class="t-checkbox-item"><input type="checkbox" name="services" value="lead-forms"> Multiple Lead Forms</label>
+              <label class="t-checkbox-item"><input type="checkbox" name="services" value="automations"> Automations</label>
+              <label class="t-checkbox-item"><input type="checkbox" name="services" value="client-portals"> Client Portals</label>
+              <label class="t-checkbox-item"><input type="checkbox" name="services" value="uiux"> Advanced UI/UX Design</label>
+              <label class="t-checkbox-item"><input type="checkbox" name="services" value="app-dev"> App Development</label>
+              <label class="t-checkbox-item"><input type="checkbox" name="services" value="content"> Content Creation</label>
+              <label class="t-checkbox-item"><input type="checkbox" name="services" value="booking"> Booking System</label>
+              <label class="t-checkbox-item"><input type="checkbox" name="services" value="email-setup"> Custom Email Setup</label>
+              <label class="t-checkbox-item"><input type="checkbox" name="services" value="email-mktg"> Email Marketing</label>
+              <label class="t-checkbox-item t-checkbox-full"><input type="checkbox" name="services" value="ads"> Ad Services (creative, strategy, optimization)</label>
+            </div>
+          </div>
+
+          <hr class="t-section-divider">
+
+          <!-- Vision -->
+          <div class="t-field">
+            <label class="t-label" for="t-message">&gt; your vision</label>
             <textarea class="t-textarea" id="t-message" name="message" placeholder="tell us about your brand and goals_"></textarea>
           </div>
+
           <button type="submit" class="t-submit"><span>&gt; TRANSMIT MESSAGE_</span></button>
         </form>
 
@@ -918,7 +1252,8 @@
           '.choice-tile, .pain-item, .price-card, .mgmt-card, ' +
           '.process-step, .contact-card, .service-block, ' +
           'nav a, .btn-cta, .btn-book, .btn-secondary, .price-cta, ' +
-          '.footer-links a, .nav-links a'
+          '.footer-links a, .nav-links a, ' +
+          '.tile-btn-primary, .tile-btn-secondary, .btn-glass-session, .content-choice-btn'
         );
         targets.forEach(el => {
           if (!el.dataset.sndBound) {

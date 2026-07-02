@@ -1187,7 +1187,7 @@ footer {
 
 .terminal-window {
   width: 100%;
-  max-width: 640px;
+  max-width: 720px;
   background: #ffffff;
   border: 1px solid var(--blue);
   box-shadow: var(--glow-lg), 0 40px 120px rgba(0,0,0,0.8);

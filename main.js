@@ -25,7 +25,7 @@ function animateRing() {
 animateRing();
 
 // Hover state for interactive elements
-const hoverEls = document.querySelectorAll('a, button, .choice-tile, .price-cta, .btn-primary, .btn-secondary, .btn-cta');
+const hoverEls = document.querySelectorAll('a, button, .choice-tile, .price-cta, .btn-primary, .btn-secondary, .btn-cta, .tile-btn-primary, .tile-btn-secondary, .btn-glass-session, .content-choice-btn');
 hoverEls.forEach(el => {
   el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
   el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
@@ -255,6 +255,46 @@ function submitForm(e) {
     setTimeout(closeTerminal, 6000);
   }, 1200);
 }
+
+// ─── BUDGET TYPE TOGGLE ───
+function setBudgetType(type) {
+  const monthly = document.getElementById('t-toggle-monthly');
+  const yearly  = document.getElementById('t-toggle-yearly');
+  const sel     = document.getElementById('t-budget');
+  if (!monthly || !yearly || !sel) return;
+
+  if (type === 'monthly') {
+    monthly.classList.add('active');
+    yearly.classList.remove('active');
+    sel.innerHTML = `
+      <option value="">— select range —</option>
+      <option value="under-1k">under $1,000 / mo</option>
+      <option value="1k-3k">$1,000 – $3,000 / mo</option>
+      <option value="3k-7k">$3,000 – $7,000 / mo</option>
+      <option value="7k-15k">$7,000 – $15,000 / mo</option>
+      <option value="15k+">$15,000+ / mo</option>
+      <option value="custom">custom / let's talk</option>`;
+  } else {
+    yearly.classList.add('active');
+    monthly.classList.remove('active');
+    sel.innerHTML = `
+      <option value="">— select range —</option>
+      <option value="under-12k">under $12,000 / yr</option>
+      <option value="12k-36k">$12,000 – $36,000 / yr</option>
+      <option value="36k-84k">$36,000 – $84,000 / yr</option>
+      <option value="84k-180k">$84,000 – $180,000 / yr</option>
+      <option value="180k+">$180,000+ / yr</option>
+      <option value="custom">custom / let's talk</option>`;
+  }
+}
+
+// ─── CHECKBOX VISUAL TOGGLE ───
+document.addEventListener('change', function(e) {
+  if (e.target.type === 'checkbox' && e.target.name === 'services') {
+    const label = e.target.closest('.t-checkbox-item');
+    if (label) label.classList.toggle('checked', e.target.checked);
+  }
+});
 
 // ─── PARALLAX on hero ───
 window.addEventListener('scroll', () => {
