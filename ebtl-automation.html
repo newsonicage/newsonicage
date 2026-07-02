@@ -1,0 +1,2789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Executive Branch Tree & Landscape — Automation System Demonstration">
+  <title>EBTL | Automation System Demo</title>
+  <link rel="icon" type="image/png" href="assets/ebtl-icon.png">
+
+  <!-- Fonts: Space Grotesk (headings/UI) + Questrial (body) + Space Mono (labels/code) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Questrial&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==============================================
+       EBTL AUTOMATION SYSTEM DEMO  ·  Newsonic Age
+       Login: NSA blue tones + glassmorphism
+       Content: EBTL green (#68943E) + soft accents
+       A scrolling product-film in nine scenes.
+    =============================================== */
+
+    :root {
+      /* Login palette */
+      --blue:         #00a8ff;
+      --blue-dim:     rgba(0,168,255,0.12);
+      --blue-mid:     rgba(0,168,255,0.35);
+
+      /* Content palette */
+      --green:        #68943E;
+      --green-bright: #8fc45e;
+      --green-dim:    rgba(104,148,62,0.12);
+      --green-mid:    rgba(104,148,62,0.35);
+
+      /* Shared */
+      --red:          #e03050;
+      --amber:        #febc2e;
+      --ok:           #4cff91;
+      --bg:           #04070d;
+      --bg2:          #070d15;
+      --bg3:          #0b1422;
+      --white:        #ffffff;
+      --white-dim:    rgba(255,255,255,0.55);
+      --white-faint:  rgba(255,255,255,0.05);
+
+      --glow-blue:    0 0 12px rgba(0,168,255,0.35), 0 0 32px rgba(0,168,255,0.15);
+      --glow-green:   0 0 12px rgba(104,148,62,0.4),  0 0 32px rgba(104,148,62,0.15);
+      --glow-red:     0 0 12px rgba(224,48,80,0.45),  0 0 28px rgba(224,48,80,0.15);
+    }
+
+    /* ── CUSTOM CURSOR ── */
+    #cursor {
+      position: fixed;
+      width: 10px; height: 10px;
+      background: var(--blue);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      transition: width .15s ease, height .15s ease, opacity .2s ease;
+      box-shadow: 0 0 8px var(--blue), 0 0 20px rgba(0,168,255,0.4);
+    }
+    #cursor-ring {
+      position: fixed;
+      width: 32px; height: 32px;
+      border: 1px solid rgba(0,168,255,0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99998;
+      transform: translate(-50%, -50%);
+      transition: opacity .2s ease;
+    }
+    body.cursor-hover #cursor { width: 18px; height: 18px; }
+    body.cursor-hover #cursor-ring { width: 50px; height: 50px; border-color: var(--blue); }
+    body { cursor: none; }
+    button, a, input, [role="button"] { cursor: none; }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; overscroll-behavior: none; }
+
+    body {
+      font-family: 'Questrial', sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a   { text-decoration: none; color: inherit; }
+    img { display: block; max-width: 100%; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--green); border-radius: 2px; }
+
+
+    /* ══════════════════════════════════════════
+       NAV
+    ══════════════════════════════════════════ */
+    #portal-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(4,7,13,0.88);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(0,168,255,0.18);
+    }
+    .nav-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 24px;
+    }
+    .nav-logo img {
+      height: 32px;
+      filter: brightness(1) drop-shadow(0 0 6px rgba(0,168,255,0.3));
+    }
+    .nav-center { flex: 1; text-align: center; }
+    .nav-center-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.5rem, 1.3vw, 0.7rem);
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--blue);
+      line-height: 1.4;
+    }
+    .nav-center-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      margin-top: 2px;
+      display: none;
+    }
+    @media (min-width: 640px) { .nav-center-sub { display: block; } }
+
+    .nav-icon {
+      width: 38px; height: 38px;
+      border-radius: 8px;
+      border: 1px solid rgba(0,168,255,0.25);
+      background: rgba(0,168,255,0.06);
+      padding: 5px;
+      flex-shrink: 0;
+    }
+    .nav-icon img { width: 100%; height: 100%; object-fit: contain; }
+
+    .nav-back {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      border-radius: 8px;
+      padding: 9px 14px;
+      white-space: nowrap;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+      flex-shrink: 0;
+    }
+    .nav-back:hover {
+      color: var(--white);
+      border-color: rgba(0,168,255,0.4);
+      background: rgba(0,168,255,0.08);
+    }
+
+
+    /* ══════════════════════════════════════════
+       GATE SECTION  (full-screen login)
+    ══════════════════════════════════════════ */
+    #gate-section {
+      min-height: 100dvh;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 84px 20px 40px;
+      overflow: hidden;
+    }
+    .gate-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,168,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,168,255,0.04) 1px, transparent 1px);
+      background-size: 56px 56px;
+      pointer-events: none;
+    }
+    .gate-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 48%,
+        rgba(0,168,255,0.07) 0%,
+        transparent 70%);
+      pointer-events: none;
+    }
+    .gate-particles { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--blue);
+      opacity: 0;
+      animation: rise linear infinite;
+    }
+    @keyframes rise {
+      0%   { transform: translateY(110vh); opacity: 0; }
+      8%   { opacity: 0.5; }
+      92%  { opacity: 0.4; }
+      100% { transform: translateY(-60px); opacity: 0; }
+    }
+
+    .terminal-card {
+      position: relative;
+      width: 100%;
+      max-width: 520px;
+      background: rgba(6, 14, 28, 0.72);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border-radius: 16px;
+      border: 1px solid rgba(0,168,255,0.28);
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(0,168,255,0.1),
+        0 0 40px rgba(0,168,255,0.12),
+        0 40px 100px rgba(0,0,0,0.7);
+      transition: box-shadow 0.4s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1), opacity 0.5s ease;
+      will-change: transform, opacity;
+    }
+    .terminal-card.gate-open {
+      transform: scale(1.02) translateY(-8px);
+      opacity: 0;
+      box-shadow:
+        0 0 0 2px var(--blue),
+        0 0 60px rgba(0,168,255,0.5),
+        0 0 120px rgba(0,168,255,0.2);
+    }
+    .terminal-header {
+      background: rgba(0,168,255,0.07);
+      border-bottom: 1px solid rgba(0,168,255,0.2);
+      padding: 13px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .terminal-dots { display: flex; gap: 6px; }
+    .tdot { width: 11px; height: 11px; border-radius: 50%; }
+    .tdot-r { background: #ff5f57; }
+    .tdot-y { background: #febc2e; }
+    .tdot-g { background: var(--blue); box-shadow: 0 0 6px var(--blue); }
+    .th-icon { width: 24px; height: 24px; flex-shrink: 0; margin-left: 4px; }
+    .th-icon img { width: 100%; height: 100%; object-fit: contain; }
+    .th-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.52rem, 1.4vw, 0.65rem);
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--blue);
+      flex: 1;
+      text-align: center;
+    }
+    .terminal-body { padding: 36px 32px 40px; }
+    @media (max-width: 420px) { .terminal-body { padding: 28px 20px 32px; } }
+
+    .t-prompt {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(0,168,255,0.45);
+      letter-spacing: 0.08em;
+      margin-bottom: 28px;
+    }
+    .t-prompt em { color: var(--blue); font-style: normal; }
+    .t-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 8vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .t-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 32px;
+    }
+    .input-label {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(0,168,255,0.6);
+      margin-bottom: 8px;
+    }
+    #pw {
+      width: 100%;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      color: var(--white);
+      background: rgba(0,168,255,0.06);
+      border: 1.5px solid rgba(0,168,255,0.25);
+      border-radius: 10px;
+      padding: 15px 16px;
+      outline: none;
+      margin-bottom: 20px;
+      -webkit-appearance: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      touch-action: manipulation;
+    }
+    #pw::placeholder { color: rgba(255,255,255,0.2); }
+    #pw:focus {
+      border-color: var(--blue);
+      box-shadow:
+        0 0 0 3px rgba(0,168,255,0.12),
+        0 0 20px rgba(0,168,255,0.15);
+      background: rgba(0,168,255,0.09);
+    }
+    #pw.shake {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(224,48,80,0.15);
+      animation: shake 0.38s ease;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-7px); }
+      40%      { transform: translateX(7px); }
+      60%      { transform: translateX(-4px); }
+      80%      { transform: translateX(4px); }
+    }
+    .led-row { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+    .led {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--blue);
+      flex-shrink: 0;
+      box-shadow: 0 0 6px var(--blue), 0 0 14px rgba(0,168,255,0.4);
+      animation: led-breathe 2s ease-in-out infinite;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .led.led-error {
+      background: var(--red);
+      box-shadow: 0 0 6px var(--red), 0 0 14px rgba(224,48,80,0.4);
+      animation: led-flash 0.35s ease-in-out 4;
+    }
+    .led.led-ok {
+      background: var(--ok);
+      box-shadow: 0 0 6px var(--ok), 0 0 14px rgba(76,255,145,0.4);
+      animation: led-flash 0.25s ease-in-out 6;
+    }
+    @keyframes led-breathe { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+    @keyframes led-flash   { 0%,100% { opacity: 1; } 50% { opacity: 0.1; } }
+    .led-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(0,168,255,0.5);
+      transition: color 0.3s;
+    }
+    .led-label.is-error { color: var(--red); }
+    .led-label.is-ok    { color: var(--ok); }
+
+    .btn-unlock {
+      width: 100%;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.75rem, 2.5vw, 0.88rem);
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--white);
+      background: transparent;
+      border: 1.5px solid var(--blue);
+      border-radius: 10px;
+      padding: 18px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.25s, box-shadow 0.25s, transform 0.2s;
+      box-shadow: 0 0 18px rgba(0,168,255,0.2), inset 0 0 18px rgba(0,168,255,0.04);
+      touch-action: manipulation;
+    }
+    .btn-unlock::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,168,255,0.06);
+    }
+    .btn-unlock:hover {
+      background: rgba(0,168,255,0.1);
+      box-shadow: 0 0 30px rgba(0,168,255,0.35), 0 0 60px rgba(0,168,255,0.12), inset 0 0 24px rgba(0,168,255,0.08);
+      transform: translateY(-1px);
+    }
+    .btn-unlock:active { transform: scale(0.99); }
+
+    #err {
+      display: none;
+      margin-top: 12px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--red);
+      text-align: center;
+      animation: fade-up 0.25s ease both;
+    }
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .gate-note {
+      margin-top: 24px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.12);
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+
+    /* ══════════════════════════════════════════
+       ACCESS GRANTED BANNER
+    ══════════════════════════════════════════ */
+    #granted-banner {
+      display: none;
+      position: fixed;
+      top: 76px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3000;
+      background: var(--ok);
+      color: #04070d;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 12px 32px;
+      border-radius: 100px;
+      white-space: nowrap;
+      box-shadow: 0 0 24px rgba(76,255,145,0.5), 0 0 60px rgba(76,255,145,0.15);
+      animation: banner-in 0.45s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    @keyframes banner-in {
+      from { opacity: 0; transform: translateX(-50%) translateY(-12px) scale(0.92); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+    }
+    #granted-banner.fade-out { animation: banner-out 0.5s ease forwards; }
+    @keyframes banner-out { to { opacity: 0; transform: translateX(-50%) translateY(-10px); } }
+
+
+    /* ══════════════════════════════════════════
+       MAIN CONTENT (hidden until unlock)
+    ══════════════════════════════════════════ */
+    #main-content {
+      display: none;
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+    #main-content.visible { opacity: 1; transform: translateY(0); }
+
+
+    /* ══════════════════════════════════════════
+       SHARED LAYOUT
+    ══════════════════════════════════════════ */
+    .section    { padding: 110px 24px; position: relative; }
+    .section-sm { padding: 72px 24px; position: relative; }
+    .inner      { max-width: 1120px; margin: 0 auto; }
+    .inner-slim { max-width: 820px;  margin: 0 auto; }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(104,148,62,0.25), rgba(0,168,255,0.15), transparent);
+    }
+
+    .eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .eyebrow::before {
+      content: '';
+      width: 32px; height: 1px;
+      background: var(--green);
+      opacity: 0.6;
+      flex-shrink: 0;
+    }
+    .eyebrow.center { justify-content: center; }
+    .eyebrow.center::after {
+      content: '';
+      width: 32px; height: 1px;
+      background: var(--green);
+      opacity: 0.6;
+      flex-shrink: 0;
+    }
+
+    .h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      line-height: 1.02;
+      color: var(--white);
+      margin-bottom: 20px;
+    }
+    .h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.9rem, 4vw, 3rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      line-height: 1.05;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+    .h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .accent-green { color: var(--green-bright); }
+    .accent-blue  { color: var(--blue); }
+    .accent-red   { color: var(--red); }
+
+    .body-text {
+      font-family: 'Questrial', sans-serif;
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      line-height: 1.75;
+      color: var(--white-dim);
+      max-width: 680px;
+    }
+    .body-text strong { color: var(--white); font-weight: 400; }
+
+    .mono-note {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+    .card-g { border-color: rgba(104,148,62,0.2); }
+    .card-b { border-color: rgba(0,168,255,0.2); }
+    .card-r { border-color: rgba(224,48,80,0.22); }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+    }
+    .card-g::before { background: linear-gradient(90deg, transparent, rgba(104,148,62,0.4), transparent); }
+    .card-b::before { background: linear-gradient(90deg, transparent, rgba(0,168,255,0.4), transparent); }
+    .card-r::before { background: linear-gradient(90deg, transparent, rgba(224,48,80,0.45), transparent); }
+    .card:hover   { transform: translateY(-3px); }
+    .card-g:hover { border-color: rgba(104,148,62,0.4); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+    .card-b:hover { border-color: rgba(0,168,255,0.4);  box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+    .card-r:hover { border-color: rgba(224,48,80,0.45); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    @media (min-width: 860px) { .two-col { grid-template-columns: 1fr 1fr; } }
+
+    .three-col {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 640px)  { .three-col { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1000px) { .three-col { grid-template-columns: 1fr 1fr 1fr; } }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1), transform 0.8s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal.on { opacity: 1; transform: translateY(0); }
+    .reveal.d1 { transition-delay: 0.12s; }
+    .reveal.d2 { transition-delay: 0.24s; }
+    .reveal.d3 { transition-delay: 0.36s; }
+    .reveal.d4 { transition-delay: 0.48s; }
+
+    /* Scene tag */
+    .scene-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.56rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 100px;
+      padding: 7px 16px;
+      margin-bottom: 24px;
+    }
+    .scene-tag i {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      font-style: normal;
+      box-shadow: 0 0 6px var(--green);
+    }
+
+
+    /* ══════════════════════════════════════════
+       HERO
+    ══════════════════════════════════════════ */
+    #demo-hero {
+      min-height: 92vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 180px 24px 100px;
+    }
+    .hero-haze {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 25% 30%, rgba(104,148,62,0.08) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 45% at 80% 70%, rgba(0,168,255,0.05) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-line {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.8rem, 7vw, 5.4rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      line-height: 0.98;
+      margin-bottom: 28px;
+    }
+    .scroll-cue {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+    }
+    .scroll-cue::after {
+      content: '';
+      width: 1px; height: 44px;
+      background: linear-gradient(180deg, var(--green), transparent);
+      animation: cue-drop 2s ease-in-out infinite;
+    }
+    @keyframes cue-drop {
+      0%   { transform: scaleY(0); transform-origin: top; opacity: 0; }
+      35%  { transform: scaleY(1); opacity: 1; }
+      100% { transform: scaleY(1); transform-origin: top; opacity: 0; }
+    }
+
+
+    /* ══════════════════════════════════════════
+       PHONE FRAME (shared by scenes 1 & 8)
+    ══════════════════════════════════════════ */
+    .phone {
+      width: 265px;
+      border-radius: 40px;
+      border: 1.5px solid rgba(255,255,255,0.14);
+      background: linear-gradient(165deg, #0a1220 0%, #060b14 100%);
+      padding: 12px;
+      position: relative;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.06);
+      margin: 0 auto;
+    }
+    .phone-notch {
+      width: 88px; height: 22px;
+      background: #04070d;
+      border-radius: 100px;
+      margin: 4px auto 10px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .phone-screen {
+      border-radius: 28px;
+      background: #05090f;
+      border: 1px solid rgba(255,255,255,0.05);
+      min-height: 430px;
+      padding: 16px 12px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .phone-time {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      text-align: center;
+      color: rgba(255,255,255,0.85);
+      margin: 6px 0 2px;
+    }
+    .phone-date {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-align: center;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 10px;
+    }
+
+    /* chaos phone ring effect */
+    .phone.ringing::before,
+    .phone.ringing::after {
+      content: '';
+      position: absolute;
+      inset: -14px;
+      border-radius: 52px;
+      border: 1px solid rgba(224,48,80,0.5);
+      animation: ring-out 2.2s ease-out infinite;
+      pointer-events: none;
+    }
+    .phone.ringing::after { animation-delay: 1.1s; }
+    @keyframes ring-out {
+      0%   { transform: scale(0.98); opacity: 0.9; }
+      100% { transform: scale(1.12); opacity: 0; }
+    }
+
+    /* notification cards inside chaos phone */
+    .notif {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-left: 3px solid var(--red);
+      border-radius: 12px;
+      padding: 10px 12px;
+      opacity: 0;
+    }
+    .play .notif { animation: notif-pop 9s ease infinite; }
+    .play .notif:nth-child(1) { animation-delay: 0s;   }
+    .play .notif:nth-child(2) { animation-delay: 1.4s; }
+    .play .notif:nth-child(3) { animation-delay: 2.8s; }
+    .play .notif:nth-child(4) { animation-delay: 4.2s; }
+    .play .notif:nth-child(5) { animation-delay: 5.6s; }
+    @keyframes notif-pop {
+      0%    { opacity: 0; transform: translateY(-14px) scale(0.96); }
+      4%    { opacity: 1; transform: translateY(0) scale(1); }
+      82%   { opacity: 1; }
+      95%   { opacity: 0; }
+      100%  { opacity: 0; }
+    }
+    .notif-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .notif-title span:last-child {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.5rem;
+      color: rgba(255,255,255,0.28);
+      font-weight: 400;
+      flex-shrink: 0;
+    }
+    .notif-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.54rem;
+      letter-spacing: 0.04em;
+      color: rgba(255,255,255,0.38);
+      margin-top: 3px;
+    }
+    .notif.missed { border-left-color: var(--red); }
+    .notif.vm     { border-left-color: var(--amber); }
+
+    .badge-17 {
+      position: absolute;
+      top: -12px; right: -12px;
+      background: var(--red);
+      color: var(--white);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--glow-red);
+      animation: badge-pulse 1.6s ease-in-out infinite;
+      z-index: 2;
+    }
+    @keyframes badge-pulse {
+      0%,100% { transform: scale(1); }
+      50%      { transform: scale(1.12); }
+    }
+
+    /* chaos stat chips */
+    .stat-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+    .stat-chip {
+      border: 1px solid rgba(224,48,80,0.25);
+      background: rgba(224,48,80,0.05);
+      border-radius: 100px;
+      padding: 9px 18px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+    }
+    .stat-chip b { color: var(--red); font-weight: 700; }
+
+    .chaos-caption {
+      margin-top: 56px;
+      text-align: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.1rem, 2.6vw, 1.5rem);
+      font-weight: 600;
+      color: rgba(255,255,255,0.75);
+      letter-spacing: 0.02em;
+    }
+    .chaos-caption em {
+      font-style: normal;
+      color: var(--red);
+    }
+
+
+    /* ══════════════════════════════════════════
+       SCENE 2 — CALL FLOW INTO SYSTEM
+    ══════════════════════════════════════════ */
+    .flow-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 56px;
+    }
+    .call-card {
+      width: 100%;
+      max-width: 380px;
+      background: rgba(6,14,28,0.8);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 20px 22px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      opacity: 0;
+      transform: translateY(-16px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .play .call-card { opacity: 1; transform: translateY(0); }
+    .call-icon {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: rgba(76,255,145,0.12);
+      border: 1px solid rgba(76,255,145,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      animation: call-buzz 1.4s ease-in-out infinite;
+    }
+    @keyframes call-buzz {
+      0%,100% { transform: rotate(0deg); }
+      10% { transform: rotate(-10deg); }
+      20% { transform: rotate(10deg); }
+      30% { transform: rotate(-6deg); }
+      40% { transform: rotate(0deg); }
+    }
+    .call-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--ok);
+      margin-bottom: 4px;
+    }
+    .call-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--white);
+    }
+    .flow-beam {
+      width: 1px;
+      height: 130px;
+      position: relative;
+      background: linear-gradient(180deg, rgba(76,255,145,0.4), rgba(104,148,62,0.5));
+      margin: 8px 0;
+    }
+    .flow-beam::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--ok);
+      box-shadow: 0 0 10px var(--ok), 0 0 24px rgba(76,255,145,0.5);
+      transform: translateX(-50%);
+      opacity: 0;
+    }
+    .play .flow-beam::after { animation: beam-travel 2.4s ease-in-out infinite; }
+    @keyframes beam-travel {
+      0%   { top: 0;    opacity: 0; }
+      12%  { opacity: 1; }
+      88%  { opacity: 1; }
+      100% { top: 100%; opacity: 0; }
+    }
+    .hub-node {
+      position: relative;
+      width: 210px; height: 210px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .hub-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(104,148,62,0.4);
+    }
+    .hub-ring.r2 { inset: 18px; border-color: rgba(104,148,62,0.25); }
+    .hub-ring.r3 { inset: 36px; border-color: rgba(104,148,62,0.15); }
+    .play .hub-ring    { animation: hub-spin 14s linear infinite; }
+    .play .hub-ring.r2 { animation: hub-spin 10s linear infinite reverse; }
+    .hub-ring::before {
+      content: '';
+      position: absolute;
+      top: -3px; left: 50%;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green-bright);
+      box-shadow: 0 0 8px var(--green-bright);
+    }
+    @keyframes hub-spin { to { transform: rotate(360deg); } }
+    .hub-core {
+      width: 96px; height: 96px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(104,148,62,0.28) 0%, rgba(104,148,62,0.06) 70%);
+      border: 1px solid rgba(104,148,62,0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--glow-green);
+      animation: core-breathe 3s ease-in-out infinite;
+    }
+    @keyframes core-breathe {
+      0%,100% { box-shadow: 0 0 12px rgba(104,148,62,0.4), 0 0 32px rgba(104,148,62,0.15); }
+      50%      { box-shadow: 0 0 20px rgba(104,148,62,0.6), 0 0 52px rgba(104,148,62,0.25); }
+    }
+    .hub-label {
+      position: absolute;
+      bottom: -44px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      white-space: nowrap;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--green-bright);
+    }
+    .hub-sublabel {
+      position: absolute;
+      bottom: -66px;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+    }
+
+
+    /* ══════════════════════════════════════════
+       SCENE 3 — AI RECEPTIONIST CHAT
+    ══════════════════════════════════════════ */
+    .chat-window {
+      max-width: 540px;
+      margin: 48px auto 0;
+      background: rgba(6,14,28,0.72);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(104,148,62,0.28);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 0 40px rgba(104,148,62,0.08), 0 40px 100px rgba(0,0,0,0.6);
+    }
+    .chat-header {
+      background: rgba(104,148,62,0.08);
+      border-bottom: 1px solid rgba(104,148,62,0.2);
+      padding: 13px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-header .th-title { color: var(--green-bright); }
+    .chat-body {
+      padding: 28px 24px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 300px;
+    }
+    .bubble {
+      max-width: 82%;
+      padding: 13px 16px;
+      border-radius: 14px;
+      font-family: 'Questrial', sans-serif;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    .bubble.ai {
+      align-self: flex-start;
+      background: rgba(104,148,62,0.12);
+      border: 1px solid rgba(104,148,62,0.3);
+      border-bottom-left-radius: 4px;
+      color: rgba(255,255,255,0.85);
+    }
+    .bubble.caller {
+      align-self: flex-end;
+      background: rgba(0,168,255,0.1);
+      border: 1px solid rgba(0,168,255,0.28);
+      border-bottom-right-radius: 4px;
+      color: rgba(255,255,255,0.85);
+    }
+    .bubble-tag {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.48rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .bubble.ai .bubble-tag     { color: var(--green-bright); }
+    .bubble.caller .bubble-tag { color: var(--blue); }
+    .play .bubble { animation: bubble-in 0.5s cubic-bezier(0.22,1,0.36,1) forwards; }
+    .play .bubble:nth-child(1) { animation-delay: 0.3s; }
+    .play .bubble:nth-child(2) { animation-delay: 1.3s; }
+    .play .bubble:nth-child(3) { animation-delay: 2.3s; }
+    @keyframes bubble-in {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .captured-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 32px;
+    }
+    .captured-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(104,148,62,0.35);
+      background: rgba(104,148,62,0.07);
+      border-radius: 100px;
+      padding: 9px 18px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    .captured-chip::before {
+      content: '✓';
+      color: var(--ok);
+      font-weight: 700;
+    }
+    .play .captured-chip { animation: chip-in 0.4s cubic-bezier(0.22,1,0.36,1) forwards; }
+    .play .captured-chip:nth-child(1) { animation-delay: 3.3s; }
+    .play .captured-chip:nth-child(2) { animation-delay: 3.5s; }
+    .play .captured-chip:nth-child(3) { animation-delay: 3.7s; }
+    .play .captured-chip:nth-child(4) { animation-delay: 3.9s; }
+    @keyframes chip-in { to { opacity: 1; transform: scale(1); } }
+
+
+    /* ══════════════════════════════════════════
+       SCENE 4 — DECISION ENGINE
+    ══════════════════════════════════════════ */
+    .engine-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 56px;
+    }
+    .engine-node {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(6,14,28,0.85);
+      border: 1px solid rgba(104,148,62,0.5);
+      border-radius: 12px;
+      padding: 16px 30px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--white);
+      box-shadow: var(--glow-green);
+    }
+    .engine-node i {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--green-bright);
+      box-shadow: 0 0 8px var(--green-bright);
+      font-style: normal;
+      animation: led-breathe 1.8s ease-in-out infinite;
+    }
+    .branch-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      width: 100%;
+      margin-top: 0;
+    }
+    @media (min-width: 800px) { .branch-grid { grid-template-columns: 1fr 1fr 1fr; } }
+    .branch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .branch-line {
+      width: 1px;
+      height: 72px;
+      position: relative;
+      background: rgba(255,255,255,0.12);
+    }
+    .branch-line::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+    }
+    .branch.b-red   .branch-line::after { background: var(--red);   box-shadow: 0 0 8px var(--red); }
+    .branch.b-green .branch-line::after { background: var(--green-bright); box-shadow: 0 0 8px var(--green-bright); }
+    .branch.b-blue  .branch-line::after { background: var(--blue);  box-shadow: 0 0 8px var(--blue); }
+    .play .branch-line::after { animation: beam-travel 2.1s ease-in-out infinite; }
+    .play .branch.b-red   .branch-line::after { animation-delay: 0s; }
+    .play .branch.b-green .branch-line::after { animation-delay: 0.7s; }
+    .play .branch.b-blue  .branch-line::after { animation-delay: 1.4s; }
+
+    .branch .card { width: 100%; text-align: center; padding: 28px 24px; }
+    .branch-badge {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      border-radius: 100px;
+      padding: 6px 14px;
+      margin-bottom: 16px;
+    }
+    .b-red   .branch-badge { color: var(--red);   border: 1px solid rgba(224,48,80,0.4);  background: rgba(224,48,80,0.07); }
+    .b-green .branch-badge { color: var(--green-bright); border: 1px solid rgba(104,148,62,0.45); background: rgba(104,148,62,0.08); }
+    .b-blue  .branch-badge { color: var(--blue);  border: 1px solid rgba(0,168,255,0.4);  background: rgba(0,168,255,0.07); }
+    .branch-desc {
+      font-family: 'Questrial', sans-serif;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--white-dim);
+    }
+    .branch-desc strong { color: var(--white); font-weight: 400; }
+
+
+    /* ══════════════════════════════════════════
+       SCENE 5 — AUTOMATIC BOOKING
+    ══════════════════════════════════════════ */
+    .slot-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .slot-btn {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.03);
+      border-radius: 10px;
+      padding: 15px 10px;
+      text-align: center;
+      transition: border-color 0.3s, background 0.3s, color 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+    .slot-btn.selected {
+      border-color: var(--green-bright);
+      background: rgba(104,148,62,0.14);
+      color: var(--white);
+      box-shadow: var(--glow-green);
+    }
+    .slot-btn.selected::after {
+      content: '✓';
+      position: absolute;
+      top: -9px; right: -8px;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--green-bright);
+      color: #04070d;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px rgba(143,196,94,0.6);
+      animation: chip-in 0.3s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .booking-confirm {
+      margin-top: 20px;
+      border: 1px solid rgba(76,255,145,0.3);
+      background: rgba(76,255,145,0.05);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .booking-confirm.on { opacity: 1; transform: translateY(0); }
+    .confirm-dot {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: rgba(76,255,145,0.14);
+      border: 1px solid rgba(76,255,145,0.5);
+      color: var(--ok);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .confirm-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--white);
+    }
+    .confirm-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.4);
+      margin-top: 3px;
+    }
+
+    /* sync chain */
+    .sync-chain {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      max-width: 360px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .sync-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border: 1px solid rgba(255,255,255,0.09);
+      background: rgba(255,255,255,0.025);
+      border-radius: 12px;
+      padding: 15px 18px;
+      opacity: 0.35;
+      transition: opacity 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, background 0.5s ease;
+    }
+    .sync-item.lit {
+      opacity: 1;
+      border-color: rgba(104,148,62,0.5);
+      background: rgba(104,148,62,0.07);
+      box-shadow: 0 0 20px rgba(104,148,62,0.12);
+    }
+    .sync-check {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: transparent;
+      flex-shrink: 0;
+      transition: all 0.4s ease;
+    }
+    .sync-item.lit .sync-check {
+      background: var(--green-bright);
+      border-color: var(--green-bright);
+      color: #04070d;
+      box-shadow: 0 0 12px rgba(143,196,94,0.5);
+    }
+    .sync-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--white);
+    }
+    .sync-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-top: 2px;
+    }
+    .sync-connector {
+      width: 1px;
+      height: 26px;
+      margin-left: 31px;
+      background: rgba(255,255,255,0.1);
+      transition: background 0.5s ease;
+    }
+    .sync-connector.lit { background: linear-gradient(180deg, var(--green-bright), rgba(104,148,62,0.4)); }
+    .sync-caption {
+      text-align: center;
+      margin-top: 28px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .sync-caption.on { opacity: 1; }
+    .sync-caption em { color: var(--green-bright); font-style: normal; }
+
+
+    /* ══════════════════════════════════════════
+       SCENE 6 — QUIET SYSTEM VIEW (boring on purpose)
+    ══════════════════════════════════════════ */
+    .quiet-panel {
+      max-width: 780px;
+      margin: 48px auto 0;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.015);
+      overflow: hidden;
+    }
+    .quiet-topbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.015);
+    }
+    .quiet-topbar .tdot { width: 9px; height: 9px; background: rgba(255,255,255,0.12); box-shadow: none; }
+    .quiet-topbar-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      flex: 1;
+      text-align: center;
+    }
+    .quiet-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 640px) { .quiet-grid { grid-template-columns: 200px 1fr; } }
+    .quiet-side {
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 20px 0;
+    }
+    @media (max-width: 639px) {
+      .quiet-side {
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        display: flex;
+        flex-wrap: wrap;
+        padding: 12px;
+        gap: 4px;
+      }
+    }
+    .quiet-nav-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+    }
+    .quiet-nav-item span:last-child { color: rgba(255,255,255,0.25); }
+    .quiet-nav-item.active {
+      color: rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.03);
+      border-left: 2px solid rgba(104,148,62,0.5);
+    }
+    @media (max-width: 639px) {
+      .quiet-nav-item { padding: 7px 12px; border-radius: 8px; }
+      .quiet-nav-item.active { border-left: none; border: 1px solid rgba(104,148,62,0.35); }
+    }
+    .quiet-main { padding: 22px; }
+    .quiet-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 14px;
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      background: rgba(255,255,255,0.012);
+    }
+    .quiet-row-name {
+      font-family: 'Questrial', sans-serif;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.6);
+    }
+    .quiet-row-meta {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.25);
+      margin-top: 2px;
+    }
+    .quiet-pill {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      border-radius: 100px;
+      padding: 5px 12px;
+      flex-shrink: 0;
+    }
+    .quiet-pill.auto {
+      color: rgba(143,196,94,0.7);
+      border: 1px solid rgba(104,148,62,0.3);
+      background: rgba(104,148,62,0.05);
+    }
+    .quiet-pill.booked {
+      color: rgba(255,255,255,0.4);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .quiet-footnote {
+      text-align: center;
+      padding: 16px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.22);
+    }
+    .quiet-lines {
+      text-align: center;
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .quiet-lines p {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.95rem, 2.2vw, 1.2rem);
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 0.03em;
+    }
+    .quiet-lines p strong { color: var(--white); font-weight: 600; }
+
+
+    /* ══════════════════════════════════════════
+       SCENE 7 — OPTIONAL PHOTOS
+    ══════════════════════════════════════════ */
+    .photo-options {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 760px;
+      margin: 48px auto 0;
+    }
+    @media (min-width: 720px) { .photo-options { grid-template-columns: 1fr 1fr; } }
+    .option-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .option-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+    }
+    .thumb-row { display: flex; gap: 8px; margin-top: 4px; }
+    .thumb {
+      flex: 1;
+      aspect-ratio: 1;
+      border-radius: 10px;
+      border: 1px solid rgba(104,148,62,0.3);
+      background:
+        radial-gradient(circle at 30% 70%, rgba(104,148,62,0.25) 0%, transparent 60%),
+        linear-gradient(160deg, rgba(104,148,62,0.12), rgba(0,0,0,0.3));
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: scale(0.92);
+    }
+    .thumb::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.07) 50%, transparent 60%);
+      transform: translateX(-100%);
+    }
+    .play .thumb { animation: chip-in 0.45s cubic-bezier(0.22,1,0.36,1) forwards; }
+    .play .thumb:nth-child(1) { animation-delay: 0.4s; }
+    .play .thumb:nth-child(2) { animation-delay: 0.6s; }
+    .play .thumb:nth-child(3) { animation-delay: 0.8s; }
+    .play .thumb::after { animation: thumb-shine 3.5s ease infinite 1.4s; }
+    @keyframes thumb-shine {
+      0% { transform: translateX(-100%); }
+      35%, 100% { transform: translateX(100%); }
+    }
+    .skip-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 96px;
+      border: 1px dashed rgba(255,255,255,0.15);
+      border-radius: 10px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-top: 4px;
+    }
+    .converge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 36px;
+    }
+    .converge-lines {
+      display: flex;
+      gap: 120px;
+    }
+    .converge-lines i {
+      width: 1px; height: 40px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(104,148,62,0.5));
+      transform-origin: top;
+      font-style: normal;
+    }
+    .converge-lines i:first-child { transform: rotate(38deg); }
+    .converge-lines i:last-child  { transform: rotate(-38deg); }
+    .converge-result {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid rgba(76,255,145,0.35);
+      background: rgba(76,255,145,0.05);
+      border-radius: 100px;
+      padding: 13px 26px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--white);
+    }
+    .converge-result::before {
+      content: '✓';
+      color: var(--ok);
+      font-weight: 700;
+    }
+
+
+    /* ══════════════════════════════════════════
+       SCENE 8 — OWNER EXPERIENCE
+    ══════════════════════════════════════════ */
+    .before-after {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 64px;
+      margin-top: 56px;
+      align-items: start;
+    }
+    @media (min-width: 860px) { .before-after { grid-template-columns: 1fr 1fr; gap: 40px; } }
+    .ba-col { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+    .ba-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      border-radius: 100px;
+    }
+    .ba-label.before {
+      color: var(--red);
+      border: 1px solid rgba(224,48,80,0.35);
+      background: rgba(224,48,80,0.06);
+    }
+    .ba-label.after {
+      color: var(--green-bright);
+      border: 1px solid rgba(104,148,62,0.45);
+      background: rgba(104,148,62,0.08);
+    }
+
+    /* calm phone entries */
+    .calm-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-left: 3px solid var(--green);
+      border-radius: 12px;
+      padding: 10px 12px;
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    .play .calm-item { animation: calm-in 0.5s ease forwards; }
+    .play .calm-item:nth-child(4) { animation-delay: 0.4s; }
+    .play .calm-item:nth-child(5) { animation-delay: 0.7s; }
+    .play .calm-item:nth-child(6) { animation-delay: 1.0s; }
+    .play .calm-item:nth-child(7) { animation-delay: 1.3s; }
+    @keyframes calm-in { to { opacity: 1; transform: translateY(0); } }
+    .calm-item.emergency {
+      border-left-color: var(--red);
+      background: rgba(224,48,80,0.06);
+    }
+    .calm-item .notif-title span:first-child { color: rgba(255,255,255,0.85); }
+
+    .ba-points {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      max-width: 320px;
+    }
+    .ba-points li {
+      font-family: 'Questrial', sans-serif;
+      font-size: 0.9rem;
+      color: var(--white-dim);
+      display: flex;
+      gap: 10px;
+      align-items: baseline;
+    }
+    .ba-points li::before {
+      content: '·';
+      color: var(--red);
+      font-weight: 700;
+      font-size: 1.3rem;
+      line-height: 0.8;
+    }
+    .ba-points.good li::before { content: '✓'; color: var(--green-bright); font-size: 0.85rem; }
+
+    .closing-statement {
+      text-align: center;
+      margin-top: 110px;
+    }
+    .closing-statement .line1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.6rem, 4.4vw, 3rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+      color: rgba(255,255,255,0.85);
+    }
+    .closing-statement .line2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 6vw, 4.4rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      line-height: 1.05;
+      color: var(--green-bright);
+      text-shadow: 0 0 32px rgba(104,148,62,0.4);
+      margin-top: 10px;
+    }
+
+
+    /* ══════════════════════════════════════════
+       SCENE 9 — ROADMAP
+    ══════════════════════════════════════════ */
+    .roadmap {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin-top: 56px;
+    }
+    @media (min-width: 900px) { .roadmap { grid-template-columns: 1fr 1fr 1fr; } }
+    .phase-card {
+      border-radius: 18px;
+      padding: 36px 30px;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.008));
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    .phase-card:hover { transform: translateY(-4px); }
+    .phase-card.live {
+      border-color: rgba(104,148,62,0.45);
+      box-shadow: 0 0 40px rgba(104,148,62,0.08);
+    }
+    .phase-card.live:hover { box-shadow: 0 0 60px rgba(104,148,62,0.14); }
+    .phase-card.future:hover { border-color: rgba(0,168,255,0.35); }
+    .phase-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    }
+    .phase-card.live::before { background: linear-gradient(90deg, transparent, rgba(143,196,94,0.6), transparent); }
+    .phase-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .phase-status {
+      font-size: 0.5rem;
+      letter-spacing: 0.2em;
+      border-radius: 100px;
+      padding: 5px 12px;
+    }
+    .phase-status.now {
+      color: var(--green-bright);
+      border: 1px solid rgba(104,148,62,0.5);
+      background: rgba(104,148,62,0.08);
+      animation: led-breathe 2.4s ease-in-out infinite;
+    }
+    .phase-status.next {
+      color: var(--blue);
+      border: 1px solid rgba(0,168,255,0.35);
+      background: rgba(0,168,255,0.05);
+    }
+    .phase-status.later {
+      color: rgba(255,255,255,0.4);
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+    .phase-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--white);
+      margin-bottom: 18px;
+      line-height: 1.25;
+    }
+    .phase-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .phase-list li {
+      font-family: 'Questrial', sans-serif;
+      font-size: 0.9rem;
+      color: var(--white-dim);
+      display: flex;
+      gap: 10px;
+      align-items: baseline;
+    }
+    .phase-list li::before {
+      content: '→';
+      color: var(--green);
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+    .phase-card.future .phase-list li::before { color: var(--blue); }
+
+    /* scan-line sheen on future cards */
+    .phase-card.future::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 46%, rgba(0,168,255,0.035) 50%, transparent 54%);
+      background-size: 100% 220%;
+      animation: scanline 5.5s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes scanline {
+      0%   { background-position: 0 220%; }
+      100% { background-position: 0 -120%; }
+    }
+
+
+    /* ══════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════ */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 72px 24px 56px;
+      text-align: center;
+    }
+    .footer-logo {
+      max-width: 170px;
+      margin: 0 auto 24px;
+      opacity: 0.85;
+    }
+    .footer-note {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      line-height: 2;
+    }
+    .footer-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 28px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--green-bright);
+      border: 1px solid rgba(104,148,62,0.4);
+      background: rgba(104,148,62,0.06);
+      border-radius: 100px;
+      padding: 13px 28px;
+      transition: background 0.25s, box-shadow 0.25s, transform 0.2s;
+    }
+    .footer-back:hover {
+      background: rgba(104,148,62,0.14);
+      box-shadow: var(--glow-green);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- ── NAV ── -->
+  <nav id="portal-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/nsa-logo2.png" alt="Newsonic Age">
+      </a>
+      <div class="nav-center">
+        <div class="nav-center-title">Executive Branch Tree &amp; Landscape &nbsp;|&nbsp; Systems Demonstration</div>
+        <div class="nav-center-sub">Experience Studio &nbsp;/&nbsp; Newsonic Age &nbsp;/&nbsp; 2026</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+        <a href="ebtl.html" class="nav-back snd">← Portal</a>
+        <div class="nav-icon">
+          <img src="assets/ebtl-icon.png" alt="EBTL">
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- ══════════════════════════════════════════
+       GATE — FULL-SCREEN LOGIN
+  ══════════════════════════════════════════ -->
+  <section id="gate-section">
+    <div class="gate-grid"></div>
+    <div class="gate-glow"></div>
+    <div class="gate-particles" id="particles"></div>
+
+    <div class="terminal-card" id="terminal-card">
+      <div class="terminal-header">
+        <div class="terminal-dots">
+          <div class="tdot tdot-r"></div>
+          <div class="tdot tdot-y"></div>
+          <div class="tdot tdot-g"></div>
+        </div>
+        <div class="th-icon">
+          <img src="assets/ebtl-icon.png" alt="EBTL">
+        </div>
+        <div class="th-title">Newsonic Age &nbsp;·&nbsp; Secure Terminal</div>
+      </div>
+
+      <div class="terminal-body">
+        <div class="t-prompt"><em>$</em> ./portal --client=ebtl --demo=automation</div>
+
+        <div class="t-title">Access Code</div>
+        <div class="t-sub">Enter your secure client password</div>
+
+        <label class="input-label" for="pw">Password</label>
+        <input
+          type="password"
+          id="pw"
+          placeholder="••••••••"
+          autocomplete="current-password"
+          spellcheck="false"
+          onkeydown="if(event.key==='Enter') tryUnlock()"
+        >
+
+        <div class="led-row">
+          <div class="led" id="led"></div>
+          <div class="led-label" id="led-label">Awaiting Input</div>
+        </div>
+
+        <button class="btn-unlock" onclick="tryUnlock()">
+          Unlock System Demo
+        </button>
+
+        <div id="err">Access Denied — Contact your producer</div>
+      </div>
+    </div>
+
+    <div class="gate-note">Password-protected demonstration &nbsp;/&nbsp; Newsonic Age &nbsp;/&nbsp; 2026</div>
+  </section>
+
+  <!-- Access granted banner -->
+  <div id="granted-banner">Access Granted</div>
+
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <div id="main-content">
+
+    <!-- ─── HERO ─── -->
+    <section id="demo-hero">
+      <div class="hero-haze"></div>
+      <div class="inner">
+        <div class="eyebrow reveal">Automation System &nbsp;/&nbsp; Demonstration &nbsp;/&nbsp; 2026</div>
+        <h1 class="hero-line reveal d1">
+          The phone stops<br>
+          <span class="accent-green">running your day.</span>
+        </h1>
+        <p class="body-text reveal d2">
+          This is a preview of the system Newsonic Age is building for Executive Branch Tree &amp; Landscape.
+          It isn't software to manage. It's the <strong>removal of interruption</strong> from your working day —
+          calls answered, leads captured, estimates booked, and your calendar filled while you're up in the tree.
+        </p>
+        <p class="mono-note reveal d3" style="margin-top:28px;">Scroll to watch the system work ↓</p>
+      </div>
+      <div class="scroll-cue">Begin</div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── SCENE 1 · THE CURRENT PROBLEM ─── -->
+    <section class="section scene" id="scene-1">
+      <div class="inner">
+        <div class="two-col">
+          <div>
+            <div class="scene-tag reveal"><i></i>Scene 01 &nbsp;/&nbsp; The Current Problem</div>
+            <h2 class="h2 reveal d1">Every call<br>interrupts <span class="accent-red">the work.</span></h2>
+            <p class="body-text reveal d2">
+              Right now, every ring is a decision: <strong>stop the saw and answer</strong>, or let it go and
+              face hours of callbacks and admin entry at night. High-ticket tree work pays for expertise in
+              the canopy — not for screening calls from the cab of a truck.
+            </p>
+            <div class="stat-chips reveal d3">
+              <div class="stat-chip"><b>17</b>&nbsp; interruptions / day</div>
+              <div class="stat-chip"><b>4 hrs</b>&nbsp; of evening admin</div>
+              <div class="stat-chip"><b>0</b>&nbsp; filtering</div>
+            </div>
+          </div>
+          <div class="reveal d2">
+            <div class="phone ringing">
+              <div class="badge-17">17</div>
+              <div class="phone-notch"></div>
+              <div class="phone-screen">
+                <div class="phone-time">1:47</div>
+                <div class="phone-date">Tuesday · On Site · In Tree</div>
+                <div class="notif missed">
+                  <div class="notif-title"><span>Missed Call</span><span>now</span></div>
+                  <div class="notif-sub">Unknown · "need an estimate…"</div>
+                </div>
+                <div class="notif vm">
+                  <div class="notif-title"><span>Voicemail (2)</span><span>4m</span></div>
+                  <div class="notif-sub">"Hi, calling about a quote for—"</div>
+                </div>
+                <div class="notif missed">
+                  <div class="notif-title"><span>Missed Call</span><span>9m</span></div>
+                  <div class="notif-sub">Riverside Dr · second attempt</div>
+                </div>
+                <div class="notif vm">
+                  <div class="notif-title"><span>Text Message</span><span>12m</span></div>
+                  <div class="notif-sub">"Did you get my voicemail?"</div>
+                </div>
+                <div class="notif missed">
+                  <div class="notif-title"><span>Missed Call</span><span>15m</span></div>
+                  <div class="notif-sub">Went to a competitor.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="chaos-caption reveal">
+          The business has grown <em>beyond the owner's availability.</em>
+        </p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── SCENE 2 · INCOMING CALL ─── -->
+    <section class="section scene" id="scene-2">
+      <div class="inner" style="text-align:center;">
+        <div class="scene-tag reveal"><i></i>Scene 02 &nbsp;/&nbsp; Incoming Call</div>
+        <h2 class="h2 reveal d1">The call comes in.<br><span class="accent-green">The owner keeps working.</span></h2>
+        <p class="body-text reveal d2" style="margin:0 auto;">
+          From this point on, calls don't ring a phone in a tree. They enter the system.
+        </p>
+
+        <div class="flow-stage">
+          <div class="call-card">
+            <div class="call-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4cff91" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+            </div>
+            <div style="text-align:left;">
+              <div class="call-label">Incoming Call</div>
+              <div class="call-text">"Need a tree removal estimate."</div>
+            </div>
+          </div>
+
+          <div class="flow-beam"></div>
+
+          <div class="hub-node">
+            <div class="hub-ring"></div>
+            <div class="hub-ring r2"></div>
+            <div class="hub-ring r3"></div>
+            <div class="hub-core">
+              <img src="assets/ebtl-icon.png" alt="" style="width:42px; opacity:0.9;">
+            </div>
+            <div class="hub-label">Intelligence Layer</div>
+            <div class="hub-sublabel">answers · qualifies · routes</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── SCENE 3 · AI RECEPTIONIST ─── -->
+    <section class="section scene" id="scene-3">
+      <div class="inner-slim">
+        <div style="text-align:center;">
+          <div class="scene-tag reveal"><i></i>Scene 03 &nbsp;/&nbsp; AI Receptionist</div>
+          <h2 class="h2 reveal d1">Answered <span class="accent-green">instantly.</span><br>Qualified automatically.</h2>
+          <p class="body-text reveal d2" style="margin:0 auto;">
+            A calm, professional voice picks up every time — and quietly collects exactly what an estimate needs.
+          </p>
+        </div>
+
+        <div class="chat-window reveal d2">
+          <div class="chat-header">
+            <div class="terminal-dots">
+              <div class="tdot" style="background:rgba(255,255,255,0.12);"></div>
+              <div class="tdot" style="background:rgba(255,255,255,0.12);"></div>
+              <div class="tdot" style="background:var(--green-bright); box-shadow:0 0 6px var(--green-bright);"></div>
+            </div>
+            <div class="th-title">EBTL &nbsp;·&nbsp; Reception Line &nbsp;·&nbsp; Live</div>
+          </div>
+          <div class="chat-body">
+            <div class="bubble ai">
+              <span class="bubble-tag">Receptionist</span>
+              Thanks for calling Executive Branch Tree &amp; Landscape. Is this an emergency, or a standard estimate?
+            </div>
+            <div class="bubble caller">
+              <span class="bubble-tag">Caller</span>
+              Standard estimate — a big oak leaning over the driveway.
+            </div>
+            <div class="bubble ai">
+              <span class="bubble-tag">Receptionist</span>
+              Got it. I'll set that up now — what's the best name, number, and address for the visit?
+            </div>
+          </div>
+        </div>
+
+        <div class="captured-row">
+          <span class="captured-chip">Name</span>
+          <span class="captured-chip">Address</span>
+          <span class="captured-chip">Phone</span>
+          <span class="captured-chip">Project Type</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── SCENE 4 · DECISION ENGINE ─── -->
+    <section class="section scene" id="scene-4">
+      <div class="inner">
+        <div style="text-align:center;">
+          <div class="scene-tag reveal"><i></i>Scene 04 &nbsp;/&nbsp; Decision Engine</div>
+          <h2 class="h2 reveal d1">Every call finds<br><span class="accent-green">its own lane.</span></h2>
+          <p class="body-text reveal d2" style="margin:0 auto;">
+            The system decides in seconds what deserves your attention right now — and what doesn't.
+          </p>
+        </div>
+
+        <div class="engine-stage reveal d2">
+          <div class="engine-node"><i></i>Decision Engine</div>
+          <div class="branch-grid">
+            <div class="branch b-red">
+              <div class="branch-line"></div>
+              <div class="card card-r">
+                <div class="branch-badge">Emergency</div>
+                <div class="h3">Straight to you</div>
+                <p class="branch-desc">A tree on a house doesn't wait. <strong>Emergencies break through immediately</strong> — your phone rings, flagged and prioritized.</p>
+              </div>
+            </div>
+            <div class="branch b-green">
+              <div class="branch-line"></div>
+              <div class="card card-g">
+                <div class="branch-badge">Routine Estimate</div>
+                <div class="h3">Books itself</div>
+                <p class="branch-desc">Standard quotes continue automatically — <strong>qualified, scheduled, and confirmed</strong> without you touching the phone.</p>
+              </div>
+            </div>
+            <div class="branch b-blue">
+              <div class="branch-line"></div>
+              <div class="card card-b">
+                <div class="branch-badge">Administrative</div>
+                <div class="h3">Queued quietly</div>
+                <p class="branch-desc">Invoices, vendors, everything else — <strong>categorized and waiting</strong> for whenever you choose to look.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── SCENE 5 · AUTOMATIC BOOKING ─── -->
+    <section class="section scene" id="scene-5">
+      <div class="inner">
+        <div class="two-col" style="align-items:start;">
+          <div>
+            <div class="scene-tag reveal"><i></i>Scene 05 &nbsp;/&nbsp; Automatic Booking</div>
+            <h2 class="h2 reveal d1">Booked in the<br><span class="accent-green">same call.</span></h2>
+            <p class="body-text reveal d2">
+              The caller is offered real openings from your calendar. They pick one.
+              That's the last human step — everything after this happens on its own.
+            </p>
+
+            <div class="card card-g reveal d3" style="margin-top:32px;">
+              <div class="mono-note" style="margin-bottom:14px;">Available This Week</div>
+              <div class="slot-grid" id="slot-grid">
+                <div class="slot-btn">Tue · 9:00 AM</div>
+                <div class="slot-btn" data-pick>Tue · 1:30 PM</div>
+                <div class="slot-btn">Wed · 8:30 AM</div>
+                <div class="slot-btn">Thu · 10:00 AM</div>
+              </div>
+              <div class="booking-confirm" id="booking-confirm">
+                <div class="confirm-dot">✓</div>
+                <div>
+                  <div class="confirm-title">Estimate Booked</div>
+                  <div class="confirm-sub">TUE 1:30 PM · 41 MAPLEWOOD DR · OAK REMOVAL</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="reveal d2">
+            <div class="mono-note" style="text-align:center; margin-bottom:22px;">Then, within seconds —</div>
+            <div class="sync-chain" id="sync-chain">
+              <div class="sync-item">
+                <div class="sync-check">✓</div>
+                <div>
+                  <div class="sync-name">CRM Updated</div>
+                  <div class="sync-sub">Lead → Booked Estimate</div>
+                </div>
+              </div>
+              <div class="sync-connector"></div>
+              <div class="sync-item">
+                <div class="sync-check">✓</div>
+                <div>
+                  <div class="sync-name">Google Calendar Updated</div>
+                  <div class="sync-sub">Event created · address attached</div>
+                </div>
+              </div>
+              <div class="sync-connector"></div>
+              <div class="sync-item">
+                <div class="sync-check">✓</div>
+                <div>
+                  <div class="sync-name">iPhone Calendar Updated</div>
+                  <div class="sync-sub">Synced · no typing required</div>
+                </div>
+              </div>
+              <div class="sync-connector"></div>
+              <div class="sync-item">
+                <div class="sync-check">✓</div>
+                <div>
+                  <div class="sync-name">Apple Watch Notified</div>
+                  <div class="sync-sub">One quiet tap on the wrist</div>
+                </div>
+              </div>
+            </div>
+            <div class="sync-caption" id="sync-caption">All within seconds. <em>No typing. No callbacks.</em></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── SCENE 6 · QUIET SYSTEM VIEW ─── -->
+    <section class="section scene" id="scene-6">
+      <div class="inner">
+        <div style="text-align:center;">
+          <div class="scene-tag reveal"><i></i>Scene 06 &nbsp;/&nbsp; The Quiet System View</div>
+          <h2 class="h2 reveal d1">Boring, <span class="accent-green">on purpose.</span></h2>
+          <p class="body-text reveal d2" style="margin:0 auto;">
+            There is a system view — but it's not a job. It's an optional glimpse of the organization
+            happening in the background. <strong>Nothing here needs to be managed.</strong>
+          </p>
+        </div>
+
+        <div class="quiet-panel reveal d2">
+          <div class="quiet-topbar">
+            <div class="terminal-dots">
+              <div class="tdot"></div><div class="tdot"></div><div class="tdot"></div>
+            </div>
+            <div class="quiet-topbar-title">EBTL · System View · Read Only</div>
+          </div>
+          <div class="quiet-grid">
+            <div class="quiet-side">
+              <div class="quiet-nav-item active"><span>Leads</span><span>12</span></div>
+              <div class="quiet-nav-item"><span>Appointments</span><span>8</span></div>
+              <div class="quiet-nav-item"><span>Customers</span><span>47</span></div>
+              <div class="quiet-nav-item"><span>Emergency Calls</span><span>1</span></div>
+              <div class="quiet-nav-item"><span>Photos</span><span>23</span></div>
+              <div class="quiet-nav-item"><span>Calendar</span><span>—</span></div>
+            </div>
+            <div class="quiet-main">
+              <div class="quiet-row">
+                <div>
+                  <div class="quiet-row-name">Oak removal — 41 Maplewood Dr</div>
+                  <div class="quiet-row-meta">CAPTURED 1:52 PM · ESTIMATE TUE 1:30 PM</div>
+                </div>
+                <div class="quiet-pill booked">Booked</div>
+              </div>
+              <div class="quiet-row">
+                <div>
+                  <div class="quiet-row-name">Maple pruning — Riverside Dr</div>
+                  <div class="quiet-row-meta">CAPTURED 11:20 AM · FOLLOW-UP SENT</div>
+                </div>
+                <div class="quiet-pill auto">Auto</div>
+              </div>
+              <div class="quiet-row">
+                <div>
+                  <div class="quiet-row-name">Stump grinding — Hillcrest Ave</div>
+                  <div class="quiet-row-meta">CAPTURED 9:04 AM · QUOTE REQUESTED</div>
+                </div>
+                <div class="quiet-pill auto">Auto</div>
+              </div>
+              <div class="quiet-row">
+                <div>
+                  <div class="quiet-row-name">Storm limb — Cedar Ln</div>
+                  <div class="quiet-row-meta">CAPTURED 8:12 AM · SCHEDULED WED</div>
+                </div>
+                <div class="quiet-pill booked">Booked</div>
+              </div>
+            </div>
+          </div>
+          <div class="quiet-footnote">This runs automatically in the background — the owner never types any of this.</div>
+        </div>
+
+        <div class="quiet-lines reveal d3">
+          <p><strong>Nothing needs to be managed here.</strong></p>
+          <p>If you never open this screen, the business runs exactly the same.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── SCENE 7 · OPTIONAL PHOTOS ─── -->
+    <section class="section scene" id="scene-7">
+      <div class="inner">
+        <div style="text-align:center;">
+          <div class="scene-tag reveal"><i></i>Scene 07 &nbsp;/&nbsp; Optional Photo Upload</div>
+          <h2 class="h2 reveal d1">Photos help.<br><span class="accent-green">They're never required.</span></h2>
+          <p class="body-text reveal d2" style="margin:0 auto;">
+            After booking, the customer gets one gentle text: <strong>"Upload photos if available."</strong>
+            Better photos mean sharper quotes — but the system works perfectly either way.
+          </p>
+        </div>
+
+        <div class="photo-options">
+          <div class="card card-g reveal d2">
+            <div class="option-head">
+              <div class="option-tag">Option A</div>
+              <div class="branch-badge" style="margin:0; color:var(--green-bright); border:1px solid rgba(104,148,62,0.45); background:rgba(104,148,62,0.08);">Upload Photos</div>
+            </div>
+            <div class="thumb-row">
+              <div class="thumb"></div>
+              <div class="thumb"></div>
+              <div class="thumb"></div>
+            </div>
+            <p class="branch-desc" style="margin-top:16px;">Three quick shots from a driveway. The estimate arrives pre-informed.</p>
+          </div>
+          <div class="card reveal d3">
+            <div class="option-head">
+              <div class="option-tag">Option B</div>
+              <div class="branch-badge" style="margin:0; color:rgba(255,255,255,0.5); border:1px solid rgba(255,255,255,0.16);">Skip</div>
+            </div>
+            <div class="skip-box">No photos — no problem</div>
+            <p class="branch-desc" style="margin-top:16px;">The appointment stands. Nothing stalls, nothing is chased.</p>
+          </div>
+        </div>
+
+        <div class="converge reveal">
+          <div class="converge-lines"><i></i><i></i></div>
+          <div class="converge-result">The estimate proceeds either way</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── SCENE 8 · OWNER EXPERIENCE ─── -->
+    <section class="section scene" id="scene-8">
+      <div class="inner">
+        <div style="text-align:center;">
+          <div class="scene-tag reveal"><i></i>Scene 08 &nbsp;/&nbsp; The Owner's Day</div>
+          <h2 class="h2 reveal d1">Same phone.<br><span class="accent-green">Different life.</span></h2>
+        </div>
+
+        <div class="before-after">
+          <div class="ba-col reveal d1">
+            <div class="ba-label before">Before — Today</div>
+            <div class="phone ringing">
+              <div class="badge-17">17</div>
+              <div class="phone-notch"></div>
+              <div class="phone-screen">
+                <div class="phone-time">1:47</div>
+                <div class="phone-date">Every ring is a decision</div>
+                <div class="notif missed">
+                  <div class="notif-title"><span>Missed Call</span><span>now</span></div>
+                  <div class="notif-sub">Unknown number</div>
+                </div>
+                <div class="notif vm">
+                  <div class="notif-title"><span>Voicemail (2)</span><span>4m</span></div>
+                  <div class="notif-sub">To transcribe tonight</div>
+                </div>
+                <div class="notif missed">
+                  <div class="notif-title"><span>Missed Call</span><span>9m</span></div>
+                  <div class="notif-sub">Third attempt — gone</div>
+                </div>
+                <div class="notif vm">
+                  <div class="notif-title"><span>Text Message</span><span>12m</span></div>
+                  <div class="notif-sub">"Following up again…"</div>
+                </div>
+              </div>
+            </div>
+            <ul class="ba-points">
+              <li>17 interruptions during paid work</li>
+              <li>Evenings lost to admin entry</li>
+              <li>Leads lost to whoever answers first</li>
+            </ul>
+          </div>
+
+          <div class="ba-col reveal d2">
+            <div class="ba-label after">After — With The System</div>
+            <div class="phone">
+              <div class="phone-notch"></div>
+              <div class="phone-screen">
+                <div class="phone-time">1:47</div>
+                <div class="phone-date">Tuesday · Route Planned</div>
+                <div class="calm-item emergency">
+                  <div class="notif-title"><span>⚠ Emergency — breaks through</span><span>now</span></div>
+                  <div class="notif-sub">Limb on roofline · Cedar Ln · caller holding</div>
+                </div>
+                <div class="calm-item">
+                  <div class="notif-title"><span>Estimate · 1:30 PM</span><span>booked</span></div>
+                  <div class="notif-sub">41 Maplewood Dr · oak removal · photos attached</div>
+                </div>
+                <div class="calm-item">
+                  <div class="notif-title"><span>Estimate · 4:00 PM</span><span>booked</span></div>
+                  <div class="notif-sub">Riverside Dr · maple pruning</div>
+                </div>
+                <div class="calm-item">
+                  <div class="notif-title"><span>Tomorrow's route</span><span>ready</span></div>
+                  <div class="notif-sub">3 stops · confirmed · reminders sent</div>
+                </div>
+              </div>
+            </div>
+            <ul class="ba-points good">
+              <li>Phone is calm during work hours</li>
+              <li>Notifications appear only when relevant</li>
+              <li>The schedule is already planned</li>
+              <li>Emergencies break through — everything else waits</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="closing-statement">
+          <div class="line1 reveal">You don't run the phone anymore.</div>
+          <div class="line2 reveal d1">The phone runs itself.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── SCENE 9 · FUTURE EXPANSION ─── -->
+    <section class="section scene" id="scene-9">
+      <div class="inner">
+        <div style="text-align:center;">
+          <div class="scene-tag reveal"><i></i>Scene 09 &nbsp;/&nbsp; Where This Goes</div>
+          <h2 class="h2 reveal d1">From defense<br>to <span class="accent-blue">offense.</span></h2>
+          <p class="body-text reveal d2" style="margin:0 auto;">
+            Phase 1 stops the interruptions. The phases after it start <strong>hunting for work</strong>
+            instead of waiting for the phone to ring.
+          </p>
+        </div>
+
+        <div class="roadmap">
+          <div class="phase-card live reveal d1">
+            <div class="phase-num"><span>Phase 01</span><span class="phase-status now">This Build</span></div>
+            <div class="phase-title">Lead Capture &amp; Scheduling</div>
+            <ul class="phase-list">
+              <li>AI reception on every call</li>
+              <li>Emergency / routine / admin routing</li>
+              <li>Self-booking calendar, synced to iPhone</li>
+              <li>CRM organized automatically</li>
+            </ul>
+          </div>
+          <div class="phase-card future reveal d2">
+            <div class="phase-num"><span>Phase 02</span><span class="phase-status next">Next</span></div>
+            <div class="phase-title">Estimate Intelligence</div>
+            <ul class="phase-list">
+              <li>Photo collection &amp; enrichment</li>
+              <li>Lead scoring — high-ticket first</li>
+              <li>Automated follow-up sequences</li>
+            </ul>
+          </div>
+          <div class="phase-card future reveal d3">
+            <div class="phase-num"><span>Phase 03</span><span class="phase-status later">Horizon</span></div>
+            <div class="phase-title">Market Intelligence</div>
+            <ul class="phase-list">
+              <li>Neighborhood scanning for dead &amp; dying trees</li>
+              <li>Storm-response opportunity alerts</li>
+              <li>Route optimization across the week</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── FOOTER ─── -->
+    <footer>
+      <img src="assets/ebtl-white-full.png" alt="Executive Branch Tree & Landscape" class="footer-logo">
+      <div class="footer-note">
+        Automation System Demonstration<br>
+        Prepared by Newsonic Age · Experience Studio · 2026
+      </div>
+      <br>
+      <a href="ebtl.html" class="footer-back snd">← Back to Client Portal</a>
+    </footer>
+
+  </div><!-- /main-content -->
+
+
+  <script>
+    /* ── CUSTOM CURSOR ─────────────────────────── */
+    (function() {
+      const cursor = document.getElementById('cursor');
+      const ring   = document.getElementById('cursor-ring');
+      let cx = 0, cy = 0, rx = 0, ry = 0;
+
+      document.addEventListener('mousemove', e => {
+        cx = e.clientX; cy = e.clientY;
+        cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px';
+      });
+      (function animateRing() {
+        rx += (cx - rx) * 0.12; ry += (cy - ry) * 0.12;
+        ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+        requestAnimationFrame(animateRing);
+      })();
+      document.addEventListener('mouseleave', () => { cursor.style.opacity = '0'; ring.style.opacity = '0'; });
+      document.addEventListener('mouseenter', () => { cursor.style.opacity = '1'; ring.style.opacity = '1'; });
+
+      function addCursorHover() {
+        document.querySelectorAll('a, button, input, [role="button"], .snd, .card, .slot-btn, .phase-card, .sync-item').forEach(el => {
+          if (!el.dataset.cursorBound) {
+            el.dataset.cursorBound = '1';
+            el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+          }
+        });
+      }
+      addCursorHover();
+      window._addCursorHover = addCursorHover;
+    })();
+
+    /* ── PASSWORD GATE ──────────────────────────
+       Same password as the EBTL client portal.
+       In production, move authentication to server-side.
+    ────────────────────────────────────────── */
+    const PORTAL_PASSWORD = 'penny';
+    const AUTH_KEY = 'ebtlPortalAuth';
+
+    function revealContent(instant) {
+      const banner  = document.getElementById('granted-banner');
+      const content = document.getElementById('main-content');
+      const gate    = document.getElementById('gate-section');
+
+      gate.style.display = 'none';
+      content.style.display = 'block';
+
+      if (instant) {
+        content.classList.add('visible');
+        initReveal();
+        initSceneObserver();
+        initHoverSounds();
+        if (window._addCursorHover) window._addCursorHover();
+        return;
+      }
+
+      banner.style.display = 'block';
+      setTimeout(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 80);
+      setTimeout(() => {
+        content.classList.add('visible');
+        initReveal();
+        initSceneObserver();
+        initHoverSounds();
+        if (window._addCursorHover) window._addCursorHover();
+      }, 550);
+      setTimeout(() => {
+        banner.classList.add('fade-out');
+        setTimeout(() => { banner.style.display = 'none'; }, 550);
+      }, 3200);
+    }
+
+    function tryUnlock() {
+      const input    = document.getElementById('pw');
+      const led      = document.getElementById('led');
+      const ledLabel = document.getElementById('led-label');
+      const errEl    = document.getElementById('err');
+      const terminal = document.getElementById('terminal-card');
+
+      const entered = input.value.trim().toLowerCase();
+
+      if (entered === PORTAL_PASSWORD.toLowerCase()) {
+        led.classList.remove('led-error');
+        led.classList.add('led-ok');
+        ledLabel.classList.remove('is-error');
+        ledLabel.classList.add('is-ok');
+        ledLabel.textContent = 'Access Granted';
+        errEl.style.display = 'none';
+        input.disabled = true;
+
+        try { sessionStorage.setItem(AUTH_KEY, '1'); } catch (e) {}
+
+        setTimeout(() => { terminal.classList.add('gate-open'); }, 150);
+        setTimeout(() => revealContent(false), 570);
+      } else {
+        input.classList.remove('shake');
+        void input.offsetWidth;
+        input.classList.add('shake');
+        input.value = '';
+
+        led.classList.add('led-error');
+        ledLabel.classList.add('is-error');
+        ledLabel.textContent = 'Access Denied';
+        errEl.style.display = 'block';
+
+        setTimeout(() => {
+          input.classList.remove('shake');
+          led.classList.remove('led-error');
+          ledLabel.classList.remove('is-error');
+          ledLabel.textContent = 'Awaiting Input';
+          errEl.style.display = 'none';
+        }, 2200);
+      }
+    }
+
+    /* ── MOBILE KEYBOARD STABILITY ───────────── */
+    const pwInput = document.getElementById('pw');
+    pwInput.addEventListener('focus', () => {
+      document.body.style.overflow = 'hidden';
+      const led = document.getElementById('led');
+      if (!led.classList.contains('led-error') && !led.classList.contains('led-ok')) {
+        document.getElementById('led-label').textContent = 'Ready';
+      }
+    });
+    pwInput.addEventListener('blur', () => {
+      document.body.style.overflow = '';
+      const led = document.getElementById('led');
+      if (!led.classList.contains('led-error') && !led.classList.contains('led-ok')) {
+        document.getElementById('led-label').textContent = 'Awaiting Input';
+      }
+    });
+
+    /* ── HOVER SOUND EFFECTS ────────────────── */
+    const SOUNDS = ['assets/hover1.mp3', 'assets/hover2.mp3', 'assets/hover3.mp3'];
+    const audioPool = SOUNDS.map(src => {
+      const a = new Audio(src);
+      a.volume = 0.18;
+      a.preload = 'auto';
+      return a;
+    });
+    let lastSoundTime = 0;
+    function playHoverSound() {
+      const now = Date.now();
+      if (now - lastSoundTime < 80) return;
+      lastSoundTime = now;
+      const track = audioPool[Math.floor(Math.random() * audioPool.length)];
+      track.currentTime = 0;
+      track.play().catch(() => {});
+    }
+    function initHoverSounds() {
+      document.querySelectorAll('.snd, .card, .phase-card, .slot-btn').forEach(el => {
+        if (!el.dataset.sndBound) {
+          el.dataset.sndBound = '1';
+          el.addEventListener('mouseenter', playHoverSound, { passive: true });
+        }
+      });
+    }
+    document.querySelectorAll('.btn-unlock, .nav-back').forEach(el => {
+      el.addEventListener('mouseenter', playHoverSound, { passive: true });
+    });
+
+    /* ── RISING PARTICLES ───────────────────── */
+    (function createParticles() {
+      const container = document.getElementById('particles');
+      const count = window.innerWidth < 640 ? 10 : 20;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const sz = 1 + Math.random() * 2;
+        p.style.cssText = `
+          width:${sz}px; height:${sz}px;
+          left:${Math.random() * 100}%;
+          animation-duration:${10 + Math.random() * 18}s;
+          animation-delay:${Math.random() * 14}s;
+          opacity:0;
+        `;
+        container.appendChild(p);
+      }
+    })();
+
+    /* ── SCROLL REVEAL ──────────────────────── */
+    let revealObs;
+    function initReveal() {
+      if (revealObs) revealObs.disconnect();
+      revealObs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('on');
+            revealObs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
+      document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+    }
+
+    /* ── SCENE ANIMATION TRIGGERS ───────────────
+       Each .scene gets .play when it enters view,
+       which starts its internal CSS animations.
+       Scene 5 additionally runs a JS sequence.
+    ────────────────────────────────────────── */
+    let sceneObs;
+    function initSceneObserver() {
+      if (sceneObs) sceneObs.disconnect();
+      sceneObs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('play');
+            if (e.target.id === 'scene-5') runBookingSequence();
+            sceneObs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.25 });
+      document.querySelectorAll('.scene').forEach(el => sceneObs.observe(el));
+    }
+
+    /* Scene 5: slot select → confirmation → sync chain */
+    let bookingRan = false;
+    function runBookingSequence() {
+      if (bookingRan) return;
+      bookingRan = true;
+
+      const pick    = document.querySelector('#slot-grid [data-pick]');
+      const confirm = document.getElementById('booking-confirm');
+      const items   = document.querySelectorAll('#sync-chain .sync-item');
+      const lines   = document.querySelectorAll('#sync-chain .sync-connector');
+      const caption = document.getElementById('sync-caption');
+
+      setTimeout(() => { if (pick) pick.classList.add('selected'); }, 900);
+      setTimeout(() => { confirm.classList.add('on'); }, 1600);
+
+      items.forEach((item, i) => {
+        setTimeout(() => {
+          item.classList.add('lit');
+          if (lines[i]) lines[i].classList.add('lit');
+        }, 2400 + i * 650);
+      });
+      setTimeout(() => { caption.classList.add('on'); }, 2400 + items.length * 650 + 200);
+    }
+
+    /* ── NAV SHADOW ON SCROLL ───────────────── */
+    window.addEventListener('scroll', () => {
+      document.getElementById('portal-nav').style.boxShadow =
+        window.scrollY > 16 ? '0 4px 32px rgba(0,0,0,0.6)' : 'none';
+    }, { passive: true });
+
+    /* ── AUTO-UNLOCK ────────────────────────────
+       If already authenticated this browser session
+       (e.g. arriving from the main client portal),
+       skip the gate instantly. Runs last so all
+       functions/observers above are initialized.
+    ────────────────────────────────────────── */
+    (function checkExistingAuth() {
+      let authed = false;
+      try { authed = sessionStorage.getItem(AUTH_KEY) === '1'; } catch (e) {}
+      if (authed) revealContent(true);
+    })();
+  </script>
+
+</body>
+</html>

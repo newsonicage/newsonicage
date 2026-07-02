@@ -1672,6 +1672,9 @@
   <div id="top-actions">
     <div class="top-actions-inner">
       <button class="btn-action-blue snd" onclick="scrollToCoreFocus()">Review Strategy</button>
+      <a href="ebtl-automation.html" style="text-decoration:none;">
+        <button class="btn-action-blue snd">Automation Demo</button>
+      </a>
       <a href="booking.html" style="text-decoration:none;">
         <button class="btn-action-green snd">Schedule Content Day</button>
       </a>
@@ -2360,6 +2363,9 @@
         errEl.style.display = 'none';
         input.disabled = true;
 
+        // Share auth with other portal pages (e.g. the automation demo)
+        try { sessionStorage.setItem('ebtlPortalAuth', '1'); } catch (e) {}
+
         setTimeout(() => { terminal.classList.add('gate-open'); }, 150);
 
         setTimeout(() => {
@@ -2532,6 +2538,26 @@
       document.getElementById('portal-nav').style.boxShadow =
         window.scrollY > 16 ? '0 4px 32px rgba(0,0,0,0.6)' : 'none';
     }, { passive: true });
+
+    /* ── AUTO-UNLOCK ────────────────────────────
+       If already authenticated this browser session
+       (e.g. returning from the automation demo),
+       skip the gate instantly.
+    ────────────────────────────────────────── */
+    (function checkExistingAuth() {
+      let authed = false;
+      try { authed = sessionStorage.getItem('ebtlPortalAuth') === '1'; } catch (e) {}
+      if (!authed) return;
+
+      document.getElementById('gate-section').style.display = 'none';
+      document.getElementById('top-actions').style.display = 'block';
+      const content = document.getElementById('main-content');
+      content.style.display = 'block';
+      content.classList.add('visible');
+      initReveal();
+      initHoverSounds();
+      if (window._addCursorHover) window._addCursorHover();
+    })();
   </script>
 
 </body>
