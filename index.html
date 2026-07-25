@@ -3,588 +3,196 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Newsonic Age — We don't just build websites. We build experiences. Premium digital experience studio specializing in interactive websites and cinematic content creation.">
-  <title>Newsonic Age — Digital Experience Studio</title>
+
+  <title>Newsonic Age — Systems Implementation Studio for Service Businesses</title>
+  <meta name="description" content="Newsonic Age implements the systems a service business runs on — websites, apps, a phone receptionist that never misses a call, automation, and the business backbone underneath. Setup and monthly pricing published up front. Book a time.">
+  <link rel="canonical" href="https://newsonicage.com/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Newsonic Age">
+  <meta property="og:url" content="https://newsonicage.com/">
+  <meta property="og:title" content="Newsonic Age — Systems Implementation Studio for Service Businesses">
+  <meta property="og:description" content="We implement the system your business actually runs on. Websites, apps, a phone receptionist, automation, and the business backbone underneath — priced openly, implemented in phases.">
+  <meta property="og:image" content="https://newsonicage.com/assets/nsa-logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Newsonic Age — Systems Implementation Studio">
+  <meta name="twitter:description" content="We implement the system your business actually runs on. Setup and monthly pricing published up front.">
+  <meta name="twitter:image" content="https://newsonicage.com/assets/nsa-logo.png">
+
   <link rel="icon" type="image/png" href="assets/nsa-logo.png">
-  <link rel="stylesheet" href="style.css">
-  <!-- Questrial body font + Space Grotesk (matching client portal) -->
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Questrial&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <style>
-    /* ══════════════════════════════════════════
-       NSA HOMEPAGE — Full Glassmorphic Redesign
-       Space Grotesk headings · Questrial body
-       NSA blue dominant · white accents
-       Hover sounds · glow cards everywhere
-    ══════════════════════════════════════════ */
+  <link rel="stylesheet" href="style.css">
 
-    /* ── GLOW OVERRIDES — tone down style.css defaults ── */
-    :root {
-      --glow-text-sm:  0 0 6px rgba(0,168,255,0.5), 0 0 14px rgba(0,168,255,0.2);
-      --glow-text-md:  0 0 8px rgba(0,168,255,0.4), 0 0 20px rgba(0,168,255,0.15);
-      --glow-text-lg:  0 0 12px rgba(0,168,255,0.45), 0 0 28px rgba(0,168,255,0.18);
-      --glass-bg:      rgba(255,255,255,0.025);
-      --glass-border:  rgba(255,255,255,0.09);
-      --glass-blur:    blur(14px);
-      --blue-border:   rgba(0,168,255,0.15);
-      --blue-glow-sm:  0 0 16px rgba(0,168,255,0.08), 0 0 40px rgba(0,168,255,0.04);
-      --white-border:  rgba(255,255,255,0.12);
-    }
-
-    /* ── FONTS ── */
-    body { font-family: 'Questrial', sans-serif; }
-
-    h1, h2, h3, h4, h5, h6,
-    .section-tag, .section-headline,
-    .stat-num, .price-name, .price-tier,
-    .service-label, .step-num,
-    .btn-cta, .btn-primary, .btn-secondary,
-    .tile-label { font-family: 'Space Grotesk', sans-serif; }
-
-    .tile-number, .tile-cta { font-family: 'Space Mono', monospace; }
-
-    .section-sub, .service-desc, .pain-text, .step-desc,
-    .price-tagline, .mgmt-card-desc {
-      font-family: 'Questrial', sans-serif;
-      line-height: 1.75;
-    }
-
-    /* ── CHOICE TILES — glass + rounded ── */
-    .choice-tile {
-      border-radius: 14px;
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      border: 1px solid var(--glass-border);
-      transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s, background 0.3s;
-    }
-    .choice-tile:hover {
-      background: rgba(255,255,255,0.045);
-      border-color: rgba(0,168,255,0.35);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(0,168,255,0.1), inset 0 1px 0 rgba(255,255,255,0.08);
-    }
-
-    /* ── PAIN ITEMS — glass cards ── */
-    .pain-item {
-      border-radius: 16px;
-      border: 1px solid var(--blue-border);
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      transition: background 0.3s, border-color 0.3s, transform 0.3s, box-shadow 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-    .pain-item::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-    }
-    .pain-item:hover {
-      background: rgba(255,255,255,0.04);
-      border-color: rgba(0,168,255,0.3);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 56px rgba(0,0,0,0.45), 0 0 24px rgba(0,168,255,0.07), inset 0 1px 0 rgba(255,255,255,0.1);
-    }
-    .pain-item::after { display: none; }
-
-    /* ── STATS SECTION — glass strip ── */
-    #stats {
-      background: rgba(255,255,255,0.018);
-      border-top: 1px solid var(--white-border);
-      border-bottom: 1px solid var(--white-border);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-
-    /* ── PRICING CARDS — glass + rounded ── */
-    .price-card {
-      border-radius: 20px;
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      border: 1px solid var(--white-border);
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.35s, border-color 0.35s, box-shadow 0.35s;
-    }
-    .price-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    }
-    .price-card:hover {
-      transform: translateY(-8px);
-      border-color: rgba(0,168,255,0.3);
-      box-shadow: 0 28px 72px rgba(0,0,0,0.5), 0 0 40px rgba(0,168,255,0.1), inset 0 1px 0 rgba(255,255,255,0.1);
-    }
-    .price-card.featured {
-      border-color: rgba(0,168,255,0.28);
-      background: rgba(0,168,255,0.04);
-    }
-    .price-card.featured::before {
-      background: linear-gradient(90deg, transparent, rgba(0,168,255,0.5), transparent);
-    }
-
-    /* ── MANAGEMENT CARDS — glass ── */
-    .mgmt-card {
-      border-radius: 16px;
-      border: 1px solid var(--white-border);
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      padding: 36px 28px;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s, background 0.3s;
-    }
-    .mgmt-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
-    }
-    .mgmt-card:hover {
-      border-color: rgba(0,168,255,0.3);
-      background: rgba(255,255,255,0.04);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 56px rgba(0,0,0,0.45), 0 0 28px rgba(0,168,255,0.07);
-    }
-
-    /* ── PROCESS STEPS — glass ── */
-    .process-step {
-      border-radius: 16px;
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      border: 1px solid var(--white-border);
-      padding: 36px 32px;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s, background 0.3s;
-    }
-    .process-step::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
-    }
-    .process-step:hover {
-      border-color: rgba(0,168,255,0.28);
-      background: rgba(255,255,255,0.04);
-      transform: translateX(8px);
-      box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 20px rgba(0,168,255,0.06);
-    }
-
-    /* ── SERVICE VISUAL — rounded ── */
-    .service-visual {
-      border-radius: 16px;
-      border: 1px solid var(--white-border);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-
-    /* ── SERVICE BLOCK extra info grid ── */
-    #services > div:last-child > div[style*="border:1px"] {
-      border-radius: 16px !important;
-      backdrop-filter: blur(10px) !important;
-      -webkit-backdrop-filter: blur(10px) !important;
-      background: rgba(255,255,255,0.02) !important;
-      border-color: rgba(255,255,255,0.1) !important;
-    }
-
-    /* ── SERVICE FEATURES text ── */
-    .service-features li { font-family: 'Questrial', sans-serif; font-size: 0.92rem; }
-
-    /* ── SECTION TAG — softer glow ── */
-    .section-tag {
-      letter-spacing: 0.22em;
-      color: rgba(255,255,255,0.45);
-    }
-
-    /* ── ACCENT TEXT — toned down ── */
-    .accent {
-      color: var(--blue);
-      text-shadow: 0 0 10px rgba(0,168,255,0.35), 0 0 24px rgba(0,168,255,0.12);
-    }
-
-    /* ── HERO HEADLINE — soft glow ── */
-    .glow-text {
-      text-shadow: 0 0 8px rgba(0,168,255,0.35), 0 0 22px rgba(0,168,255,0.12);
-    }
-
-    /* ── DUAL CONTACT SECTION ── */
-    .contact-split {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      max-width: 900px;
-      margin: 0 auto 20px;
-    }
-    @media (max-width: 640px) { .contact-split { grid-template-columns: 1fr; } }
-
-    .contact-card {
-      border: 1px solid var(--blue-border);
-      border-radius: 20px;
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      padding: 36px 32px;
-      text-align: center;
-      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s, background 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-    .contact-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(0,168,255,0.4), transparent);
-    }
-    .contact-card:hover {
-      border-color: rgba(0,168,255,0.4);
-      background: rgba(255,255,255,0.04);
-      transform: translateY(-4px);
-      box-shadow: 0 24px 64px rgba(0,0,0,0.45), 0 0 36px rgba(0,168,255,0.09);
-    }
-    .contact-card-type {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.58rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--blue);
-      text-shadow: 0 0 6px rgba(0,168,255,0.4);
-      margin-bottom: 12px;
-    }
-    .contact-card-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(1.2rem, 2.5vw, 1.6rem);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: -0.01em;
-      color: #ffffff;
-      margin-bottom: 10px;
-    }
-    .contact-card-desc {
-      font-family: 'Questrial', sans-serif;
-      font-size: 0.9rem;
-      color: rgba(255,255,255,0.55);
-      line-height: 1.6;
-      margin-bottom: 24px;
-    }
-    .btn-book {
-      display: inline-block;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: #04070d;
-      background: var(--blue);
-      border: none;
-      padding: 14px 32px;
-      border-radius: 100px;
-      cursor: none;
-      transition: background 0.25s, box-shadow 0.25s, transform 0.2s;
-      box-shadow: 0 0 20px rgba(0,168,255,0.3);
-      text-decoration: none;
-    }
-    .btn-book:hover {
-      background: #22b8ff;
-      box-shadow: 0 0 40px rgba(0,168,255,0.5), 0 0 80px rgba(0,168,255,0.15);
-      transform: translateY(-2px);
-    }
-
-    /* ── FOOTER GLASS ── */
-    footer {
-      background: rgba(255,255,255,0.015);
-      border-top: 1px solid var(--white-border);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-
-    /* ── WHITE EYEBROWS ── */
-    .hero-eyebrow {
-      color: rgba(255,255,255,0.38);
-      letter-spacing: 0.22em;
-    }
-
-    /* ── STAT NUMBERS — crisp, no over-glow ── */
-    .stat-num {
-      text-shadow: 0 0 8px rgba(0,168,255,0.4);
-    }
-
-    /* ══════════════════════════════════════════
-       HERO TILE CTA BUTTONS
-    ══════════════════════════════════════════ */
-    .tile-cta-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 28px;
-      flex-wrap: wrap;
-    }
-    .tile-btn-primary {
-      flex: 1;
-      min-width: 130px;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.6rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: #04070d;
-      background: #00a8ff;
-      border: none;
-      padding: 12px 14px;
-      border-radius: 100px;
-      cursor: none;
-      font-weight: 700;
-      transition: background 0.25s, box-shadow 0.25s, transform 0.2s;
-      box-shadow: 0 0 18px rgba(0,168,255,0.4), 0 0 36px rgba(0,168,255,0.12);
-      white-space: nowrap;
-    }
-    .tile-btn-primary:hover {
-      background: #22b8ff;
-      box-shadow: 0 0 28px rgba(0,168,255,0.6), 0 0 56px rgba(0,168,255,0.2);
-      transform: translateY(-2px);
-    }
-    .tile-btn-secondary {
-      flex: 1;
-      min-width: 130px;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.6rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: #00a8ff;
-      background: rgba(0,168,255,0.07);
-      border: 1px solid rgba(0,168,255,0.28);
-      padding: 12px 14px;
-      border-radius: 100px;
-      cursor: none;
-      transition: all 0.25s;
-      text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      white-space: nowrap;
-      text-decoration: none;
-    }
-    .tile-btn-secondary:hover {
-      background: rgba(0,168,255,0.14);
-      border-color: rgba(0,168,255,0.55);
-      box-shadow: 0 0 20px rgba(0,168,255,0.18);
-      transform: translateY(-2px);
-    }
-
-    /* ══════════════════════════════════════════
-       SERVICE SECTION CTA ROW
-    ══════════════════════════════════════════ */
-    .service-cta-row {
-      display: flex;
-      gap: 14px;
-      margin-top: 4px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .btn-glass-session {
-      display: inline-flex;
-      align-items: center;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: #00a8ff;
-      background: rgba(0,168,255,0.07);
-      border: 1px solid rgba(0,168,255,0.28);
-      padding: 10px 24px;
-      border-radius: 100px;
-      cursor: none;
-      transition: all 0.25s;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      text-decoration: none;
-      overflow: hidden;
-      position: relative;
-    }
-    .btn-glass-session:hover {
-      background: rgba(0,168,255,0.14);
-      border-color: rgba(0,168,255,0.55);
-      box-shadow: 0 0 24px rgba(0,168,255,0.18);
-      transform: translateY(-2px);
-    }
-
-    /* ══════════════════════════════════════════
-       CONTENT DECISION FLOW
-    ══════════════════════════════════════════ */
-    .content-decision {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 36px;
-    }
-    .content-decision-label {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.58rem;
-      letter-spacing: 0.28em;
-      color: rgba(255,255,255,0.32);
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-    .content-choice-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      padding: 14px 28px;
-      border-radius: 12px;
-      border: 1px solid rgba(0,168,255,0.22);
-      background: rgba(0,168,255,0.04);
-      color: rgba(255,255,255,0.65);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      cursor: none;
-      transition: all 0.3s;
-      text-decoration: none;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .content-choice-btn::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
-    }
-    .content-choice-btn:hover {
-      background: rgba(0,168,255,0.1);
-      border-color: rgba(0,168,255,0.45);
-      color: #ffffff;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 20px rgba(0,168,255,0.1);
-      transform: translateY(-2px);
-    }
-    .content-choice-btn.become-client {
-      background: rgba(0,168,255,0.1);
-      border-color: rgba(0,168,255,0.45);
-      color: #00a8ff;
-      box-shadow: 0 0 20px rgba(0,168,255,0.18), inset 0 1px 0 rgba(255,255,255,0.07);
-      font-weight: 700;
-      letter-spacing: 0.24em;
-      padding: 17px 28px;
-      margin-top: 4px;
-    }
-    .content-choice-btn.become-client::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 50% 0%, rgba(0,168,255,0.18) 0%, transparent 65%);
-      pointer-events: none;
-    }
-    .content-choice-btn.become-client:hover {
-      background: rgba(0,168,255,0.18);
-      border-color: rgba(0,168,255,0.75);
-      box-shadow: 0 0 40px rgba(0,168,255,0.32), 0 0 80px rgba(0,168,255,0.1), inset 0 1px 0 rgba(255,255,255,0.12);
-      transform: translateY(-2px);
-      color: #ffffff;
-    }
-
-    /* ══════════════════════════════════════════
-       EXPANDED LEAD FORM
-    ══════════════════════════════════════════ */
-    .t-grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-    @media (max-width: 560px) { .t-grid-2 { grid-template-columns: 1fr; } }
-
-    .t-budget-toggle {
-      display: flex;
-      border: 1px solid rgba(0,168,255,0.3);
-      border-radius: 6px;
-      overflow: hidden;
-      width: fit-content;
-      margin-bottom: 10px;
-    }
-    .t-budget-toggle button {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 7px 18px;
-      background: transparent;
-      color: #888;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .t-budget-toggle button.active {
-      background: #00a8ff;
-      color: #04070d;
-      font-weight: 700;
-    }
-
-    .t-checkbox-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-top: 6px;
-    }
-    @media (max-width: 560px) { .t-checkbox-grid { grid-template-columns: 1fr; } }
-
-    .t-checkbox-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.65rem;
-      color: #666;
-      cursor: pointer;
-      padding: 7px 10px;
-      border: 1px solid rgba(0,168,255,0.18);
-      border-radius: 6px;
-      transition: all 0.2s;
-      user-select: none;
-      line-height: 1.3;
-    }
-    .t-checkbox-item:hover {
-      border-color: rgba(0,168,255,0.45);
-      background: rgba(0,168,255,0.05);
-      color: #333;
-    }
-    .t-checkbox-item input[type="checkbox"] {
-      width: 13px;
-      height: 13px;
-      accent-color: #00a8ff;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .t-checkbox-item.checked {
-      border-color: rgba(0,168,255,0.55);
-      background: rgba(0,168,255,0.09);
-      color: #0070cc;
-      font-weight: 600;
-    }
-    .t-checkbox-full { grid-column: span 2; }
-    @media (max-width: 560px) { .t-checkbox-full { grid-column: span 1; } }
-
-    .t-section-divider {
-      border: none;
-      border-top: 1px solid rgba(0,168,255,0.12);
-      margin: 4px 0;
-    }
-  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://newsonicage.com/#organization",
+        "name": "Newsonic Age",
+        "alternateName": "Newsonic Age Studio",
+        "url": "https://newsonicage.com/",
+        "logo": "https://newsonicage.com/assets/nsa-logo.png",
+        "image": "https://newsonicage.com/assets/nsa-logo.png",
+        "slogan": "An adaptive systems studio.",
+        "description": "Newsonic Age is a systems implementation studio for service businesses. It assesses how a business operates, then implements the systems that remove friction — websites, mobile apps, an AI phone receptionist, automation, and a business backbone — in phases.",
+        "parentOrganization": {
+          "@type": "Organization",
+          "name": "BECON Industries",
+          "description": "Designs adaptive systems, intelligence, and products. Newsonic Age is its Partner Studio and implements them into real businesses."
+        },
+        "knowsAbout": [
+          "Systems implementation",
+          "Business backbone",
+          "Field service operations software",
+          "AI receptionist and call triage",
+          "Business process automation",
+          "Field console mobile applications",
+          "Lead intake and routing",
+          "Review automation"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://newsonicage.com/#website",
+        "url": "https://newsonicage.com/",
+        "name": "Newsonic Age",
+        "publisher": { "@id": "https://newsonicage.com/#organization" },
+        "inLanguage": "en-US"
+      },
+      {
+        "@type": "ProfessionalService",
+        "@id": "https://newsonicage.com/#service",
+        "name": "Newsonic Age",
+        "url": "https://newsonicage.com/",
+        "parentOrganization": { "@id": "https://newsonicage.com/#organization" },
+        "description": "Systems implementation for field service businesses: tree services, landscaping, hardscaping, roofing, pressure washing, fencing, concrete, excavation, HVAC, plumbing, electrical, and pest control.",
+        "priceRange": "$$$",
+        "areaServed": { "@type": "Country", "name": "United States" },
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "Implementations",
+          "itemListElement": [
+            {
+              "@type": "Offer",
+              "name": "Websites",
+              "category": "Web Foundation",
+              "description": "A rebuilt site engineered to be found and trusted, with an intake form that categorizes and routes every inquiry from the first day it is live.",
+              "priceCurrency": "USD",
+              "priceSpecification": [
+                { "@type": "UnitPriceSpecification", "name": "Setup", "priceCurrency": "USD", "minPrice": 4500, "maxPrice": 7500 },
+                { "@type": "UnitPriceSpecification", "name": "Monthly", "priceCurrency": "USD", "minPrice": 249, "maxPrice": 399, "referenceQuantity": { "@type": "QuantitativeValue", "value": 1, "unitCode": "MON" } }
+              ]
+            },
+            {
+              "@type": "Offer",
+              "name": "Apps",
+              "category": "Field Console",
+              "description": "A mobile field console for the owner and crew: one-tap lead intake, today's route, active jobs, customer history, photos, notes, and job completion.",
+              "priceCurrency": "USD",
+              "priceSpecification": [
+                { "@type": "UnitPriceSpecification", "name": "Setup", "priceCurrency": "USD", "minPrice": 9000, "maxPrice": 14000 },
+                { "@type": "UnitPriceSpecification", "name": "Monthly", "priceCurrency": "USD", "minPrice": 349, "maxPrice": 549, "referenceQuantity": { "@type": "QuantitativeValue", "value": 1, "unitCode": "MON" } }
+              ]
+            },
+            {
+              "@type": "Offer",
+              "name": "Phone Receptionist",
+              "category": "Intelligence Layer",
+              "description": "Answers, qualifies, and triages every call and message around the clock, separating true emergencies from routine requests and booking or routing them instantly.",
+              "priceCurrency": "USD",
+              "priceSpecification": [
+                { "@type": "UnitPriceSpecification", "name": "Setup", "priceCurrency": "USD", "minPrice": 5000, "maxPrice": 8500 },
+                { "@type": "UnitPriceSpecification", "name": "Monthly", "priceCurrency": "USD", "minPrice": 349, "maxPrice": 599, "referenceQuantity": { "@type": "QuantitativeValue", "value": 1, "unitCode": "MON" } }
+              ]
+            },
+            {
+              "@type": "Offer",
+              "name": "Automation",
+              "category": "Automation Layer",
+              "description": "Confirmations, reminders, estimate follow-up, and review requests that fire on their own instead of depending on somebody remembering.",
+              "priceCurrency": "USD",
+              "priceSpecification": [
+                { "@type": "UnitPriceSpecification", "name": "Setup", "priceCurrency": "USD", "minPrice": 2000, "maxPrice": 3500 },
+                { "@type": "UnitPriceSpecification", "name": "Monthly", "priceCurrency": "USD", "minPrice": 149, "maxPrice": 249, "referenceQuantity": { "@type": "QuantitativeValue", "value": 1, "unitCode": "MON" } }
+              ]
+            },
+            {
+              "@type": "Offer",
+              "name": "Business Backbone",
+              "category": "Business Backbone",
+              "description": "One operational center holding every lead, customer, property, job, appointment, and conversation. Everything else connects to it.",
+              "priceCurrency": "USD",
+              "priceSpecification": [
+                { "@type": "UnitPriceSpecification", "name": "Setup", "priceCurrency": "USD", "minPrice": 5000, "maxPrice": 8000 },
+                { "@type": "UnitPriceSpecification", "name": "Monthly", "priceCurrency": "USD", "minPrice": 299, "maxPrice": 449, "referenceQuantity": { "@type": "QuantitativeValue", "value": 1, "unitCode": "MON" } }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://newsonicage.com/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How much does a Newsonic Age implementation cost?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Every implementation has a setup price and a monthly price. Websites run $4,500–$7,500 setup and $249–$399 per month. The Business Backbone runs $5,000–$8,000 and $299–$449 per month. Apps run $9,000–$14,000 and $349–$549 per month. Automation runs $2,000–$3,500 and $149–$249 per month. The Phone Receptionist runs $5,000–$8,500 and $349–$599 per month. The Business Assessment that comes before all of it costs nothing."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why does everything have a monthly price?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Because we never build and leave. There is no one-time build. Every implementation is carried by an ongoing plan that maintains it, updates it, and keeps improving it, so when something needs to change a year later we are still the ones who change it."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do I have to buy everything at once?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Implementations happen in phases and each phase stands entirely on its own. Most businesses start with the Web Foundation and continue only as long as the returns stay obvious. A later phase is proposed once the previous one has visibly done its job."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is a Business Backbone?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The operational center of the business — one place where leads, customers, properties, jobs, appointments, communications, and automations live. It is closer to infrastructure than to software: you rarely open it, and nothing works well without it."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is a Field Console?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The mobile operational tool the owner and crew actually carry. One tap files a new lead; a long press opens the day — today's route, active jobs, customer history, emergencies, and job completion. It replaces paper, texts, and random phone calls, and everything it captures writes back to the Business Backbone."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What kinds of businesses does Newsonic Age work with?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Field service businesses that run crews and trucks: tree services, landscaping, hardscaping, roofing, pressure washing, fencing, concrete, excavation, HVAC, plumbing, electrical, and pest control. They share one operational shape — constant phone interruptions, owners working in the field, estimate-driven revenue, scheduling that changes hourly, and revenue that depends on reviews."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 
@@ -592,682 +200,722 @@
   <div id="cursor"></div>
   <div id="cursor-ring"></div>
 
-  <!-- ─── PRELOADER ─── -->
-  <div id="preloader">
-    <div class="preloader-inner">
-      <img src="assets/nsa-logo.png" alt="Newsonic Age" class="preloader-logo">
-      <div class="preloader-text">INITIALIZING EXPERIENCE</div>
-      <div class="preloader-bar"><div class="preloader-fill"></div></div>
+  <!-- ═══ RAIL ═══ -->
+  <header class="rail">
+    <a href="#open" class="wordmark" aria-label="Newsonic Age — home">
+      <img src="assets/nsa-logo.png" alt="Newsonic Age logo">
+      <span class="wm-a">NEWSONIC</span><span class="wm-b">AGE</span>
+    </a>
+
+    <nav class="rail-nav" aria-label="Primary">
+      <a href="#deliverables">Deliverables</a>
+      <a href="#proof">Proof</a>
+      <a href="#path">The Path</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <div class="rail-actions">
+      <a href="#intake" class="rail-cta ghost">Start Your File</a>
+      <a href="booking.html" class="rail-cta">Schedule a Time</a>
     </div>
-  </div>
+  </header>
 
-  <!-- ─── MOBILE MENU ─── -->
-  <div id="mobile-menu">
-    <a href="#pain" onclick="closeMenu(); scrollToSection('pain')">The Problem</a>
-    <a href="#services" onclick="closeMenu(); scrollToSection('services')">Services</a>
-    <a href="#pricing" onclick="closeMenu(); scrollToSection('pricing')">Pricing</a>
-    <a href="#process" onclick="closeMenu(); scrollToSection('process')">Process</a>
-    <button class="btn-cta" onclick="closeMenu(); openTerminal()"><span>Start a Project</span></button>
-  </div>
+  <!-- ═══ 01 · OPENING ═══ -->
+  <section class="screen" id="open">
+    <div class="screen-head">
+      <div class="rule reveal"></div>
+      <p class="eyebrow reveal">SYSTEMS IMPLEMENTATION STUDIO</p>
 
-  <!-- ─── NAV ─── -->
-  <nav id="nav">
-    <div class="nav-inner">
-      <a href="#" class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">
-        <img src="assets/nsa-logo.png" alt="Newsonic Age">
-      </a>
-      <div class="nav-links">
-        <a href="#" onclick="scrollToSection('pain'); return false;">The Problem</a>
-        <a href="#" onclick="scrollToSection('services'); return false;">Services</a>
-        <a href="#" onclick="scrollToSection('pricing'); return false;">Pricing</a>
-        <a href="#" onclick="scrollToSection('process'); return false;">Process</a>
-        <button class="btn-cta" onclick="openTerminal()"><span>Start a Project</span></button>
-      </div>
-      <button class="nav-hamburger" onclick="toggleMenu()">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </nav>
+      <h1 class="hero-title reveal d1">
+        We implement the system<br>your business<br><span class="azure">actually runs on.</span>
+      </h1>
 
-  <!-- ─── HERO ─── -->
-  <section id="hero">
-    <div class="hero-grid"></div>
-    <div class="hero-orb"></div>
-
-    <div class="hero-eyebrow">NEWSONIC AGE &nbsp;/&nbsp; DIGITAL EXPERIENCE STUDIO &nbsp;/&nbsp; 2026</div>
-
-    <h1 class="hero-headline">
-      <span class="glow-text">Your brand deserves</span><br>
-      more than a website.
-    </h1>
-
-    <p class="hero-sub">We don't just build websites &mdash; we build experiences.</p>
-
-    <!-- Two main service tiles -->
-    <div class="choice-grid">
-
-      <div class="choice-tile" onclick="scrollToSection('web-section')">
-        <div class="tile-corner"></div>
-        <div class="tile-number">01 &mdash;</div>
-        <div class="tile-icon">
-          <!-- Web/Code icon -->
-          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-            <rect x="4" y="12" width="56" height="40" rx="2"/>
-            <polyline points="16,28 8,36 16,44"/>
-            <polyline points="48,28 56,36 48,44"/>
-            <line x1="28" y1="44" x2="36" y2="28"/>
-            <circle cx="32" cy="4" r="2" fill="currentColor" stroke="none"/>
-            <line x1="32" y1="6" x2="32" y2="12"/>
-          </svg>
-        </div>
-        <div class="tile-label">WEBSITE CREATION<br>&amp; MAINTENANCE</div>
-        <div class="tile-desc">Fully custom-coded digital experiences engineered to engage, convert, and grow with your brand.</div>
-        <div class="tile-cta-row">
-          <button class="tile-btn-primary" onclick="openTerminal('web'); event.stopPropagation()">START A PROJECT</button>
-          <a href="booking.html" class="tile-btn-secondary" onclick="event.stopPropagation()">REQUEST A SESSION</a>
-        </div>
-      </div>
-
-      <div class="choice-tile" onclick="scrollToSection('content-section')">
-        <div class="tile-corner"></div>
-        <div class="tile-number">02 &mdash;</div>
-        <div class="tile-icon">
-          <!-- Camera/Content icon -->
-          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-            <rect x="2" y="18" width="60" height="38" rx="2"/>
-            <path d="M18 18 L24 8 L40 8 L46 18"/>
-            <circle cx="32" cy="37" r="12"/>
-            <circle cx="32" cy="37" r="5"/>
-            <circle cx="52" cy="27" r="3"/>
-          </svg>
-        </div>
-        <div class="tile-label">CONTENT<br>CREATION</div>
-        <div class="tile-desc">Cinematic video, brand photography, and social content that stops the scroll and builds desire.</div>
-        <div class="tile-cta-row">
-          <button class="tile-btn-primary" onclick="openTerminal('content'); event.stopPropagation()">START A PROJECT</button>
-          <a href="booking.html" class="tile-btn-secondary" onclick="event.stopPropagation()">REQUEST A SESSION</a>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="scroll-hint">scroll to explore &darr;</div>
-  </section>
-
-  <!-- ─── PAIN POINTS ─── -->
-  <section id="pain">
-    <div style="max-width:1200px; margin:0 auto;">
-      <div class="section-tag reveal">THE 2026 REALITY</div>
-      <h2 class="section-headline reveal reveal-delay-1">
-        The digital landscape<br>is <span class="accent">broken.</span>
-      </h2>
-      <p class="section-sub reveal reveal-delay-2">
-        AI flooded the internet with average. Your competitors all look the same.
-        Attention is worth more than ever — and most brands are wasting it.
+      <p class="hero-sub reveal d2">
+        Not a website you have to maintain. Not software you have to learn. We start by
+        understanding how the work really moves through your business today — then implement
+        the pieces that <strong>remove the friction</strong>, one phase at a time, beginning with
+        the one that pays off fastest.
       </p>
-
-      <div class="pain-grid">
-        <div class="pain-item reveal">
-          <div class="pain-num">01</div>
-          <div class="pain-title">AI Made Average Free</div>
-          <div class="pain-text">Template sites, AI-generated copy, stock visuals — your audience has seen it all a thousand times. When mediocrity costs nothing, standing out requires deliberate craft.</div>
-        </div>
-        <div class="pain-item reveal reveal-delay-1">
-          <div class="pain-num">02</div>
-          <div class="pain-title">8-Second Attention Windows</div>
-          <div class="pain-text">Short-form video rewired how people consume. Visitors decide in seconds whether you're worth their time. A slow, forgettable first impression is an invisible exit sign.</div>
-        </div>
-        <div class="pain-item reveal reveal-delay-2">
-          <div class="pain-num">03</div>
-          <div class="pain-title">Trust Is the New Currency</div>
-          <div class="pain-text">In an era of synthetic content and AI personas, authenticity and premium presentation are the signals that separate serious brands from noise. Your digital presence is your handshake.</div>
-        </div>
-        <div class="pain-item reveal reveal-delay-3">
-          <div class="pain-num">04</div>
-          <div class="pain-title">Templates Kill Brands</div>
-          <div class="pain-text">Drag-and-drop builders create a sea of sameness. When your brand looks like everyone else's, price becomes the only differentiator. That's a race to the bottom you won't win.</div>
-        </div>
-        <div class="pain-item reveal reveal-delay-4">
-          <div class="pain-num">05</div>
-          <div class="pain-title">Engagement Over Impressions</div>
-          <div class="pain-text">Algorithms in 2026 reward time on page, return visits, and saves — not just reach. A website people actually explore becomes your most powerful marketing channel.</div>
-        </div>
-        <div class="pain-item reveal reveal-delay-5">
-          <div class="pain-num">06</div>
-          <div class="pain-title">Content Without Context Fails</div>
-          <div class="pain-text">Posting without a cohesive visual world is shouting into a void. Your website and your content need to speak the same language — or neither of them speaks loud enough.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── STATS ─── -->
-  <div id="stats">
-    <div class="stats-inner">
-      <div>
-        <div class="stat-num" data-target="3" data-suffix="s">0s</div>
-        <div class="stat-label">Avg. Time Before Judgment</div>
-      </div>
-      <div>
-        <div class="stat-num" data-target="74" data-suffix="%">0%</div>
-        <div class="stat-label">Users Judge Credibility by Design</div>
-      </div>
-      <div>
-        <div class="stat-num" data-target="400" data-suffix="%">0%</div>
-        <div class="stat-label">More Conversions: Custom vs Template</div>
-      </div>
-      <div>
-        <div class="stat-num" data-target="2" data-suffix="x">0x</div>
-        <div class="stat-label">Longer Time on Site with Interaction</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ─── SERVICES ─── -->
-  <section id="services">
-    <div style="max-width:1200px; margin:0 auto 80px;">
-      <div class="section-tag reveal">WHAT WE DO</div>
-      <h2 class="section-headline reveal reveal-delay-1">
-        Two disciplines.<br><span class="accent">One unified vision.</span>
-      </h2>
     </div>
 
-    <!-- SERVICE 1: Website -->
-    <div id="web-section" class="service-block reveal">
-      <div class="service-content">
-        <div class="service-label">01 — WEBSITE CREATION &amp; MAINTENANCE</div>
-        <h3 class="service-title">Not just a website.<br>A digital flagship.</h3>
-        <p class="service-desc">
-          We build from scratch — no themes, no templates, no shortcuts. Every interaction, transition,
-          and layout decision is deliberate. The result is a digital presence that doesn't just represent
-          your brand — it elevates it.
-        </p>
-        <ul class="service-features">
-          <li>Fully custom-coded — zero templates, total control</li>
-          <li>Advanced UI/UX tailored to your specific audience</li>
-          <li>Interactive elements: hover effects, animations, transitions</li>
-          <li>Mobile-first with the same premium feel at every size</li>
-          <li>Shopify Storefront API &amp; custom e-commerce integration</li>
-          <li>Custom cart flows optimized for conversion</li>
-          <li>Performance-tuned for Core Web Vitals and speed</li>
-          <li>Ongoing hosting, updates, and technical support</li>
-        </ul>
-        <div class="glow-line" style="margin-top:36px;"></div>
-        <div class="service-cta-row">
-          <button class="btn-cta" onclick="openTerminal('web')"><span>START A PROJECT</span></button>
-          <a href="booking.html" class="btn-glass-session">REQUEST A SESSION</a>
-        </div>
-      </div>
-      <div class="service-visual">
-        <div class="corner tl"></div>
-        <div class="corner tr"></div>
-        <div class="corner bl"></div>
-        <div class="corner br"></div>
-        <div class="vis-web">
-          <div style="display:flex;gap:6px;margin-bottom:16px;">
-            <div style="width:8px;height:8px;background:rgba(0,168,255,0.5);border-radius:50%;box-shadow:0 0 8px #00a8ff;"></div>
-            <div style="width:8px;height:8px;background:rgba(0,168,255,0.3);border-radius:50%;"></div>
-            <div style="width:8px;height:8px;background:rgba(0,168,255,0.3);border-radius:50%;"></div>
-          </div>
-          <div class="vis-bar"></div>
-          <div style="height:20px;"></div>
-          <div class="vis-bar" style="width:45%;height:60px;background:rgba(0,168,255,0.08);border:1px solid rgba(0,168,255,0.2);box-shadow:none;margin-bottom:8px;"></div>
-          <div class="vis-bar"></div>
-          <div class="vis-bar"></div>
-          <div class="vis-bar"></div>
-          <div style="height:16px;"></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-            <div class="vis-bar" style="height:40px;background:rgba(0,168,255,0.08);border:1px solid rgba(0,168,255,0.15);box-shadow:none;"></div>
-            <div class="vis-bar" style="height:40px;background:rgba(0,168,255,0.08);border:1px solid rgba(0,168,255,0.15);box-shadow:none;"></div>
-            <div class="vis-bar" style="height:40px;background:rgba(0,168,255,0.08);border:1px solid rgba(0,168,255,0.15);box-shadow:none;"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SERVICE 2: Content -->
-    <div id="content-section" class="service-block reverse reveal" style="max-width:1200px;margin:0 auto;">
-      <div class="service-content">
-        <div class="service-label">02 — CONTENT CREATION</div>
-        <h3 class="service-title">Content that doesn't<br>just get seen — it's felt.</h3>
-        <p class="service-desc">
-          We produce on-site video, brand photography, and social content that matches the level of your
-          website. No stock. No filler. Every frame is constructed to communicate value, trigger emotion,
-          and build the kind of trust that makes people spend.
-        </p>
-        <ul class="service-features">
-          <li>On-site video production: brand films, product, behind-the-scenes</li>
-          <li>Brand photography that becomes your visual identity</li>
-          <li>Social media content aligned with your website aesthetic</li>
-          <li>Cinematic direction and post-production</li>
-          <li>Short-form content engineered for algorithm performance</li>
-          <li>Storytelling strategy that deepens brand perception</li>
-          <li>Content calendars and campaign planning</li>
-        </ul>
-        <div class="glow-line" style="margin-top:36px;"></div>
-        <div class="content-decision">
-          <div class="content-decision-label">How would you like to begin?</div>
-          <a href="booking.html" class="content-choice-btn">SCHEDULE A CALL</a>
-          <a href="booking.html" class="content-choice-btn">REQUEST A SHOOT</a>
-          <button class="content-choice-btn become-client" onclick="openTerminal('content')">BECOME A CLIENT</button>
-        </div>
-      </div>
-      <div class="service-visual">
-        <div class="corner tl"></div>
-        <div class="corner tr"></div>
-        <div class="corner bl"></div>
-        <div class="corner br"></div>
-        <div class="vis-content">
-          <div style="width:100%;aspect-ratio:16/9;background:rgba(0,168,255,0.05);border:1px solid rgba(0,168,255,0.2);display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
-            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#00a8ff" stroke-width="1.5" style="filter:drop-shadow(0 0 8px #00a8ff);">
-              <circle cx="20" cy="20" r="18"/>
-              <polygon points="16,13 30,20 16,27" fill="#00a8ff" stroke="none"/>
-            </svg>
-          </div>
-          <div class="vis-dot"></div>
-          <div class="vis-dot"></div>
-          <div class="vis-dot"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Additional services mention -->
-    <div style="max-width:1200px;margin:0 auto;padding-top:40px;">
-      <div style="border:1px solid rgba(0,168,255,0.1);padding:48px;background:var(--bg2);display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;" class="reveal">
-        <div>
-          <div class="service-label" style="margin-bottom:12px;">E-COMMERCE</div>
-          <p style="font-size:0.88rem;color:var(--white-dim);line-height:1.6;">Shopify Storefront API integration with custom cart flows and product storytelling built to convert.</p>
-        </div>
-        <div>
-          <div class="service-label" style="margin-bottom:12px;">DIGITAL EXPERIENCE DESIGN</div>
-          <p style="font-size:0.88rem;color:var(--white-dim);line-height:1.6;">We build worlds around brands — not just pages. Emotional user journeys that increase time on site and trust.</p>
-        </div>
-        <div>
-          <div class="service-label" style="margin-bottom:12px;">ONGOING MANAGEMENT</div>
-          <p style="font-size:0.88rem;color:var(--white-dim);line-height:1.6;">Hosting, monitoring, continuous updates, and growth optimization. Your site gets better over time, not stale.</p>
-        </div>
-      </div>
-
-      <!-- ── WHAT WE DO — Reinforcement CTAs ── -->
-      <div class="reveal" style="max-width:1200px;margin:60px auto 0;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
-        <button class="btn-cta" onclick="openTerminal()" style="border-radius:100px;padding:14px 36px;"><span>START A PROJECT</span></button>
-        <a href="booking.html" class="btn-glass-session" style="padding:14px 36px;border-radius:100px;">REQUEST A SESSION</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── PRICING ─── -->
-  <section id="pricing">
-    <div class="pricing-inner">
-      <div class="pricing-intro">
-        <div class="section-tag reveal">INVESTMENT</div>
-        <h2 class="section-headline reveal reveal-delay-1">
-          Choose your<br><span class="accent">level of ambition.</span>
-        </h2>
-        <p class="section-sub reveal reveal-delay-2">
-          Every tier is built to outperform its market. The question is how far you want to go.
-        </p>
-      </div>
-
-      <div class="pricing-grid">
-
-        <!-- LITE -->
-        <div class="price-card reveal">
-          <div class="price-tier">TIER ONE</div>
-          <div class="price-name">Lite</div>
-          <div class="price-tagline">Clean, modern, and intentional. Best for emerging brands ready to make a real first impression.</div>
-          <div class="price-divider"></div>
-          <ul class="price-features">
-            <li><span class="check">✦</span> Custom-designed, fully coded website</li>
-            <li><span class="check">✦</span> Up to 5 pages with responsive layout</li>
-            <li><span class="check">✦</span> Clean UI/UX — minimal but premium</li>
-            <li><span class="check">✦</span> Performance optimized &amp; mobile-first</li>
-            <li><span class="check">✦</span> Contact form &amp; basic integrations</li>
-            <li><span class="check">✦</span> Netlify hosting setup</li>
-            <li><span class="check">✦</span> 30-day post-launch support</li>
-          </ul>
-          <button class="price-cta" onclick="openTerminal('web')"><span>Get Started</span></button>
-        </div>
-
-        <!-- PRO -->
-        <div class="price-card featured reveal reveal-delay-1">
-          <div class="price-badge">MOST POPULAR</div>
-          <div class="price-tier">TIER TWO</div>
-          <div class="price-name">Pro</div>
-          <div class="price-tagline">A full interactive experience. Custom UI/UX, e-commerce ready, and built to convert high-value clients.</div>
-          <div class="price-divider"></div>
-          <ul class="price-features">
-            <li><span class="check">✦</span> Everything in Lite</li>
-            <li><span class="check">✦</span> Advanced interactive UI/UX design</li>
-            <li><span class="check">✦</span> Hover effects, animations, scroll transitions</li>
-            <li><span class="check">✦</span> Shopify or custom e-commerce integration</li>
-            <li><span class="check">✦</span> Product storytelling through design</li>
-            <li><span class="check">✦</span> Visual brand language development</li>
-            <li><span class="check">✦</span> SEO architecture &amp; performance tuning</li>
-            <li><span class="check">✦</span> 60-day post-launch support</li>
-          </ul>
-          <button class="price-cta" onclick="openTerminal('web')"><span>Get Started</span></button>
-        </div>
-
-        <!-- ELITE -->
-        <div class="price-card reveal reveal-delay-2">
-          <div class="price-tier">TIER THREE</div>
-          <div class="price-name">Elite</div>
-          <div class="price-tagline">Cinematic. Flagship. Unforgettable. For premium brands that refuse to be ordinary.</div>
-          <div class="price-divider"></div>
-          <ul class="price-features">
-            <li><span class="check">✦</span> Everything in Pro</li>
-            <li><span class="check">✦</span> Cinematic interaction design &amp; WebGL effects</li>
-            <li><span class="check">✦</span> Custom micro-animations throughout</li>
-            <li><span class="check">✦</span> Advanced e-commerce &amp; custom checkout</li>
-            <li><span class="check">✦</span> Full brand world development</li>
-            <li><span class="check">✦</span> Content production bundle included</li>
-            <li><span class="check">✦</span> Priority support &amp; feature expansion</li>
-            <li><span class="check">✦</span> Dedicated project manager</li>
-            <li><span class="check">✦</span> 90-day post-launch partnership</li>
-          </ul>
-          <button class="price-cta" onclick="openTerminal('web')"><span>Get Started</span></button>
-        </div>
-
-      </div>
-
-      <!-- Management Tiers -->
-      <div class="mgmt-section reveal">
-        <div class="mgmt-title">+ MONTHLY MANAGEMENT OPTIONS</div>
-        <div class="mgmt-grid">
-          <div class="mgmt-card">
-            <div class="service-label" style="margin-bottom:10px;">BASIC MAINTENANCE</div>
-            <div class="mgmt-card-name">Keep It Running</div>
-            <div class="mgmt-card-desc">Hosting management, security updates, performance monitoring, and minor content edits. Your site stays fast, secure, and online.</div>
-          </div>
-          <div class="mgmt-card">
-            <div class="service-label" style="margin-bottom:10px;">GROWTH OPTIMIZATION</div>
-            <div class="mgmt-card-name">Keep It Growing</div>
-            <div class="mgmt-card-desc">Everything in Basic plus monthly analytics reviews, conversion optimization, A/B testing, and content strategy adjustments. We actively improve performance.</div>
-          </div>
-          <div class="mgmt-card">
-            <div class="service-label" style="margin-bottom:10px;">PREMIUM PARTNERSHIP</div>
-            <div class="mgmt-card-name">Keep It Evolving</div>
-            <div class="mgmt-card-desc">Full ongoing development, new feature rollouts, priority support, and a dedicated point of contact. Your digital presence grows as your brand grows.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── PROCESS ─── -->
-  <section id="process">
-    <div class="process-inner">
-      <div class="section-tag reveal">HOW IT WORKS</div>
-      <h2 class="section-headline reveal reveal-delay-1">
-        From first contact<br><span class="accent">to full launch.</span>
-      </h2>
-      <p class="section-sub reveal reveal-delay-2">
-        A proven process designed to be clear, collaborative, and efficient — so you always know what's happening and why.
-      </p>
-
-      <div class="process-steps">
-
-        <div class="process-step reveal">
-          <div class="step-num">01</div>
-          <div class="step-content">
-            <div class="step-title">Discovery &amp; Strategy</div>
-            <div class="step-desc">We start by understanding your brand, your audience, and your goals — not just aesthetically, but commercially. We identify what makes you different and build the digital strategy around that truth.</div>
-          </div>
-        </div>
-
-        <div class="process-step reveal reveal-delay-1">
-          <div class="step-num">02</div>
-          <div class="step-content">
-            <div class="step-title">Concept &amp; Direction</div>
-            <div class="step-desc">We present a visual direction and interaction concept for your approval before a line of code is written. You see the vision clearly before we commit — no surprises, no revisions that waste time.</div>
-          </div>
-        </div>
-
-        <div class="process-step reveal reveal-delay-2">
-          <div class="step-num">03</div>
-          <div class="step-content">
-            <div class="step-title">Design &amp; Build</div>
-            <div class="step-desc">We design and develop simultaneously, keeping the experience cohesive. Every element — from typography to motion — is considered. You receive regular updates and have input throughout.</div>
-          </div>
-        </div>
-
-        <div class="process-step reveal reveal-delay-3">
-          <div class="step-num">04</div>
-          <div class="step-content">
-            <div class="step-title">Refinement &amp; Testing</div>
-            <div class="step-desc">Before launch we stress-test across all devices, optimize for performance, and refine based on your final feedback. The standard is pixel-perfect on every screen size.</div>
-          </div>
-        </div>
-
-        <div class="process-step reveal reveal-delay-4">
-          <div class="step-num">05</div>
-          <div class="step-content">
-            <div class="step-title">Launch &amp; Beyond</div>
-            <div class="step-desc">We handle deployment, monitoring, and the post-launch period. This is the beginning of a relationship, not the end of a transaction. Your success beyond the launch is part of our measure of success.</div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── CTA ─── -->
-  <section id="cta">
-    <div class="cta-bg"></div>
-    <div class="cta-line"></div>
-
-    <div class="cta-eyebrow reveal">READY TO BEGIN</div>
-    <h2 class="cta-headline reveal reveal-delay-1">
-      Your audience is<br>waiting for <span class="accent">something real.</span>
+    <!-- ── Deliverables row ── -->
+    <h2 class="row-head reveal d2" id="deliverables">
+      <span class="eyebrow">WHAT YOU GET &nbsp;·&nbsp; SETUP + MONTHLY, STATED UP FRONT</span>
     </h2>
-    <p class="cta-sub reveal reveal-delay-2">
-      Let's build a digital presence that doesn't just look the part — it performs,
-      it converts, and it stays in people's minds long after they leave.
+
+    <div class="row">
+
+      <a class="tile reveal d2" data-panel href="#p-web">
+        <span class="tile-mark" aria-hidden="true">🌐</span>
+        <h3 class="tile-name">Websites</h3>
+        <p class="tile-line">Found, trusted, and turning visitors into filed leads from day one.</p>
+        <div class="tile-price">
+          <div><span class="tile-price-k">SETUP</span><span class="tile-price-v">$4,500–7,500</span></div>
+          <div><span class="tile-price-k">MONTHLY</span><span class="tile-price-v">$249–399</span></div>
+        </div>
+      </a>
+
+      <a class="tile reveal d3" data-panel href="#p-console">
+        <span class="tile-mark" aria-hidden="true">📱</span>
+        <h3 class="tile-name">Apps</h3>
+        <p class="tile-line">The tool your crew carries. Replaces paper, texts, and random phone calls.</p>
+        <div class="tile-price">
+          <div><span class="tile-price-k">SETUP</span><span class="tile-price-v">$9,000–14,000</span></div>
+          <div><span class="tile-price-k">MONTHLY</span><span class="tile-price-v">$349–549</span></div>
+        </div>
+      </a>
+
+      <a class="tile reveal d3" data-panel href="#p-intel">
+        <span class="tile-mark" aria-hidden="true">📞</span>
+        <h3 class="tile-name">Phone Receptionist</h3>
+        <p class="tile-line">Answers, qualifies, and books every call — around the clock.</p>
+        <div class="tile-price">
+          <div><span class="tile-price-k">SETUP</span><span class="tile-price-v">$5,000–8,500</span></div>
+          <div><span class="tile-price-k">MONTHLY</span><span class="tile-price-v">$349–599</span></div>
+        </div>
+      </a>
+
+      <a class="tile reveal d4" data-panel href="#p-auto">
+        <span class="tile-mark" aria-hidden="true">⚡</span>
+        <h3 class="tile-name">Automation</h3>
+        <p class="tile-line">Follow-ups, reminders, and review requests that stop needing a person.</p>
+        <div class="tile-price">
+          <div><span class="tile-price-k">SETUP</span><span class="tile-price-v">$2,000–3,500</span></div>
+          <div><span class="tile-price-k">MONTHLY</span><span class="tile-price-v">$149–249</span></div>
+        </div>
+      </a>
+
+      <a class="tile reveal d4" data-panel href="#p-backbone">
+        <span class="tile-mark" aria-hidden="true">🧱</span>
+        <h3 class="tile-name">Business Backbone</h3>
+        <p class="tile-line">One place where every lead, customer, and job lives. Everything connects to it.</p>
+        <div class="tile-price">
+          <div><span class="tile-price-k">SETUP</span><span class="tile-price-v">$5,000–8,000</span></div>
+          <div><span class="tile-price-k">MONTHLY</span><span class="tile-price-v">$299–449</span></div>
+        </div>
+      </a>
+
+    </div>
+
+    <p class="row-note reveal d4">
+      Five deliverables, <strong>one outcome</strong> — a business that runs with less friction than
+      it did before. Which of these you need, and in what order, comes out of the assessment.
+      <span class="k">Nobody gets the whole list on day one.</span> Everything carries a monthly
+      price because we stay on it — <span class="k">there is no one-time build here</span>.
     </p>
 
-    <!-- Two ways to get in touch -->
-    <div class="contact-split reveal reveal-delay-3">
+    <a href="booking.html" class="mega reveal d5" data-panel>
+      <div class="mega-copy">
+        <p class="eyebrow">START HERE</p>
+        <div class="mega-title">Schedule a Time</div>
+        <p class="mega-line">
+          Thirty minutes on the calendar. We ask how the work moves through your business right
+          now, and tell you plainly which piece would change the most, soonest.
+        </p>
+      </div>
+      <div class="mega-go" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="12" x2="19" y2="12"/><polyline points="13,6 19,12 13,18"/>
+        </svg>
+      </div>
+    </a>
 
-      <div class="contact-card">
-        <div class="contact-card-type">01 — Project Inquiry</div>
-        <div class="contact-card-title">Start a<br>Project</div>
-        <div class="contact-card-desc">Tell us about your brand and vision. We'll respond within 24–48 hours to discuss next steps.</div>
-        <button class="btn-cta" onclick="openTerminal()" style="border-radius:100px; padding:14px 32px;"><span>Open Intake Form</span></button>
+    <!-- ── LIGHT ONBOARDING · INTAKE ── -->
+    <form class="intake reveal" id="intake" name="intake" method="POST"
+          data-netlify="true" netlify-honeypot="referral-code" novalidate>
+      <input type="hidden" name="form-name" value="intake">
+      <p class="intake-trap" aria-hidden="true">
+        <label>Leave this empty <input name="referral-code" tabindex="-1" autocomplete="off"></label>
+      </p>
+
+      <div class="intake-head">
+        <p class="eyebrow on-dark">OR START YOUR FILE</p>
+        <h2 class="intake-title">Tell us who you are.</h2>
+        <p class="intake-line">
+          Who you are, what you run, and a number to reach you. You have already seen what things
+          cost — so <span class="k-dark">tell us what you know</span> and the first conversation
+          starts a long way ahead of where it usually does.
+        </p>
       </div>
 
-      <div class="contact-card" style="border-color:rgba(0,168,255,0.25);">
-        <div class="contact-card-type">02 — Book a Session</div>
-        <div class="contact-card-title">Request a<br>Session</div>
-        <div class="contact-card-desc">Ready to schedule a shoot or consultation? Browse availability and submit a booking request.</div>
-        <a href="booking.html" class="btn-book">Request Booking &nbsp;→</a>
+      <div class="intake-base">
+        <div class="fld">
+          <label class="fld-k" for="in-name">Your name <span class="req">*</span></label>
+          <input class="fld-i" id="in-name" name="name" type="text" placeholder="First and last" autocomplete="name" required>
+        </div>
+        <div class="fld">
+          <label class="fld-k" for="in-email">Email <span class="req">*</span></label>
+          <input class="fld-i" id="in-email" name="email" type="email" placeholder="you@yourbusiness.com" autocomplete="email" required>
+        </div>
       </div>
 
+      <div class="intake-more" id="intake-more">
+        <div class="intake-inner">
+
+          <div class="intake-base">
+            <div class="fld">
+              <label class="fld-k" for="in-biz">Business name <span class="req">*</span></label>
+              <input class="fld-i" id="in-biz" name="business" type="text" placeholder="The name on the truck" autocomplete="organization" required>
+            </div>
+            <div class="fld">
+              <label class="fld-k" for="in-phone">Phone <span class="req">*</span></label>
+              <input class="fld-i" id="in-phone" name="phone" type="tel" placeholder="(000) 000-0000" autocomplete="tel" required>
+            </div>
+          </div>
+
+          <div class="fld" role="group" aria-labelledby="lbl-wants">
+            <p class="fld-k" id="lbl-wants">What are you after? <span class="opt">pick any</span></p>
+            <div class="chips">
+              <label class="chip"><input type="checkbox" name="wants" value="Websites"><span>🌐 Websites</span></label>
+              <label class="chip"><input type="checkbox" name="wants" value="Apps"><span>📱 Apps</span></label>
+              <label class="chip"><input type="checkbox" name="wants" value="Phone Receptionist"><span>📞 Phone Receptionist</span></label>
+              <label class="chip"><input type="checkbox" name="wants" value="Automation"><span>⚡ Automation</span></label>
+              <label class="chip"><input type="checkbox" name="wants" value="Business Backbone"><span>🧱 Business Backbone</span></label>
+              <label class="chip"><input type="checkbox" name="wants" value="Not sure yet"><span>🤔 Not sure yet</span></label>
+            </div>
+          </div>
+
+          <div class="fld" role="radiogroup" aria-labelledby="lbl-urgency">
+            <p class="fld-k" id="lbl-urgency">How urgent is this?</p>
+            <div class="picker">
+              <label class="pick"><input type="radio" name="urgency" value="Bleeding now"><span>Bleeding now</span></label>
+              <label class="pick"><input type="radio" name="urgency" value="Next few weeks"><span>Next few weeks</span></label>
+              <label class="pick"><input type="radio" name="urgency" value="This quarter"><span>This quarter</span></label>
+              <label class="pick"><input type="radio" name="urgency" value="Mapping it out"><span>Mapping it out</span></label>
+            </div>
+          </div>
+
+          <div class="intake-base">
+            <div class="fld">
+              <label class="fld-k" for="in-setup">To get started, one time</label>
+              <select class="fld-i" id="in-setup" name="setup_budget">
+                <option value="">— select a range —</option>
+                <option>Under $5,000</option>
+                <option>$5,000 – $12,000</option>
+                <option>$12,000 – $25,000</option>
+                <option>$25,000 – $40,000</option>
+                <option>$40,000 – $75,000</option>
+                <option>$75,000+ — the whole system</option>
+                <option>Rather discuss it</option>
+              </select>
+            </div>
+            <div class="fld">
+              <label class="fld-k" for="in-monthly">Comfortable monthly</label>
+              <select class="fld-i" id="in-monthly" name="monthly_budget">
+                <option value="">— select a range —</option>
+                <option>Under $300 / mo</option>
+                <option>$300 – $700 / mo</option>
+                <option>$700 – $1,200 / mo</option>
+                <option>$1,200 – $2,000 / mo</option>
+                <option>$2,000 – $3,500 / mo</option>
+                <option>$3,500+ / mo</option>
+                <option>Rather discuss it</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="fld" role="radiogroup" aria-labelledby="lbl-pain">
+            <p class="fld-k" id="lbl-pain">Do you already know what's costing you the most?</p>
+            <div class="picker">
+              <label class="pick"><input type="radio" name="knows_pain" value="Yes"><span>Yes, I can name it</span></label>
+              <label class="pick"><input type="radio" name="knows_pain" value="Roughly"><span>Roughly</span></label>
+              <label class="pick"><input type="radio" name="knows_pain" value="No"><span>Not really</span></label>
+            </div>
+          </div>
+
+          <div class="fld">
+            <label class="fld-k" for="in-pain">
+              Where does the day actually break down? <span class="opt">optional</span>
+            </label>
+            <textarea class="fld-i fld-t" id="in-pain" name="pain"
+              placeholder="Missed calls, quotes that never get followed up, the schedule changing at 7am, customer history living in three phones — whatever it actually is."></textarea>
+          </div>
+
+          <div class="fld">
+            <label class="fld-k" for="in-vision">
+              Anything you've been picturing? <span class="opt">optional</span>
+            </label>
+            <textarea class="fld-i fld-t" id="in-vision" name="vision"
+              placeholder="An app your crew would actually open. A site that looks like the work you do. Something you saw somewhere and thought — we should have that."></textarea>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="intake-foot">
+        <button type="submit" class="intake-go">
+          <span class="intake-go-label">Open my file</span>
+          <span class="intake-go-arrow" aria-hidden="true">&rarr;</span>
+        </button>
+        <p class="intake-fine" id="intake-hint">
+          Click any field and the rest opens. Name, business, email, and a number are required.
+        </p>
+      </div>
+
+      <div class="intake-done" id="intake-done" hidden>
+        <div class="intake-done-mark" aria-hidden="true">✓</div>
+        <h3 class="intake-done-title">Your file is open.</h3>
+        <p class="intake-done-line">
+          We read every one of these ourselves. You will hear back within one business day — and
+          if you would rather not wait, <a href="booking.html">take a window on the calendar</a>.
+        </p>
+      </div>
+    </form>
+  </section>
+
+  <div class="beat" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"/></svg>
+  </div>
+
+  <!-- ═══ 02 · PROOF ═══ -->
+  <section class="screen" id="proof">
+    <div class="screen-head">
+      <div class="rule reveal"></div>
+      <p class="eyebrow reveal">ALREADY RUNNING ON THIS</p>
+      <h2 class="screen-title reveal d1">Not a portfolio.<br>Businesses we still answer to.</h2>
+      <p class="screen-sub reveal d2">Go look at them.</p>
     </div>
 
-    <div class="cta-buttons reveal reveal-delay-4" style="margin-top:0;">
-      <button class="btn-secondary" onclick="scrollToSection('pricing')">View Pricing</button>
-    </div>
+    <div class="proof">
 
-    <!-- Shock value: subtle hidden message that appears on hover of logo area -->
-    <div style="margin-top:80px;position:relative;z-index:2;" class="reveal reveal-delay-4">
-      <img src="assets/nsa-logo2.png" alt="Newsonic Age" style="width:140px;margin:0 auto;opacity:0.85;filter:drop-shadow(0 0 30px rgba(0,168,255,0.6)) drop-shadow(0 0 60px rgba(0,168,255,0.3));transition:filter 0.4s,transform 0.4s;"
-        onmouseenter="this.style.filter='drop-shadow(0 0 50px #00a8ff) drop-shadow(0 0 100px #00a8ff) drop-shadow(0 0 200px rgba(0,168,255,0.4))';this.style.transform='scale(1.06)'"
-        onmouseleave="this.style.filter='drop-shadow(0 0 30px rgba(0,168,255,0.6)) drop-shadow(0 0 60px rgba(0,168,255,0.3))';this.style.transform='scale(1)'">
+      <a class="proof-card reveal" data-panel
+         href="https://executivebranchtree.com" target="_blank" rel="noopener">
+        <p class="eyebrow">NORTH GEORGIA</p>
+        <h3 class="proof-name">Executive Branch<br>Tree &amp; Landscape</h3>
+        <p class="proof-go"><span>executivebranchtree.com</span><span class="arrow">&rarr;</span></p>
+      </a>
+
+      <a class="proof-card reveal d1" data-panel
+         href="https://duncanstree.netlify.app" target="_blank" rel="noopener">
+        <p class="eyebrow">WOODSTOCK, GA</p>
+        <h3 class="proof-name">Duncan's<br>Tree Service</h3>
+        <p class="proof-go"><span>duncanstreeservice.com</span><span class="arrow">&rarr;</span></p>
+      </a>
+
+      <div class="proof-card static reveal d2">
+        <p class="eyebrow faint">INDEPENDENT AGENT</p>
+        <h3 class="proof-name">Allstate</h3>
+        <p class="proof-go quiet"><span>Individual practice</span></p>
+      </div>
+
+      <div class="proof-card static reveal d3">
+        <p class="eyebrow faint">INDEPENDENT BROKER</p>
+        <h3 class="proof-name">RE/MAX</h3>
+        <p class="proof-go quiet"><span>Individual practice</span></p>
+      </div>
+
     </div>
   </section>
 
-  <!-- ─── FOOTER ─── -->
-  <footer>
-    <div class="footer-inner">
-      <a href="#" class="footer-logo" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">
-        <img src="assets/nsa-logo.png" alt="Newsonic Age">
-      </a>
-      <div class="footer-copy">
-        &copy; 2026 NEWSONIC AGE. ALL RIGHTS RESERVED.
+  <!-- ═══ 03 · HOW WE DESIGN IT ═══ -->
+  <section class="screen soft" id="method">
+    <div class="screen-inner">
+      <div class="screen-head">
+        <div class="rule reveal"></div>
+        <p class="eyebrow reveal">HOW WE DESIGN IT</p>
+        <h2 class="screen-title reveal d1">Built around your business.<br>Sharpened by every business before it.</h2>
+        <p class="screen-sub reveal d2">
+          This is the part that is hard to copy. We go narrow enough to learn how one specific
+          business runs, and wide enough to recognize when we have seen that problem before.
+        </p>
       </div>
-      <div class="footer-links">
-        <a href="#" onclick="scrollToSection('services'); return false;">Services</a>
-        <a href="#" onclick="scrollToSection('pricing'); return false;">Pricing</a>
-        <a href="#" onclick="openTerminal(); return false;">Contact</a>
+
+      <div class="pair">
+
+        <div class="panel reveal" data-panel>
+          <div class="panel-index">A</div>
+          <p class="eyebrow">YOUR STORY</p>
+          <h3 class="panel-title">We get specific.</h3>
+          <p class="panel-line">
+            Every implementation opens with an assessment of how your business operates today —
+            where the calls go, who answers them, what gets written down, and what quietly falls
+            through. Nothing is built off an assumption about what your industry needs.
+          </p>
+          <div class="pair-list">
+            <div><span class="tick">✦</span> Where the interruptions actually come from</div>
+            <div><span class="tick">✦</span> How an estimate becomes a scheduled job</div>
+            <div><span class="tick">✦</span> What your crew is holding in their heads</div>
+            <div><span class="tick">✦</span> Which bottleneck is costing the most right now</div>
+          </div>
+        </div>
+
+        <div class="pair-link" aria-hidden="true">
+          <div class="wire"></div>
+          <div class="node">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13,6 19,12 13,18"/></svg>
+          </div>
+          <div class="wire"></div>
+        </div>
+
+        <div class="panel reveal d1" data-panel>
+          <div class="panel-index">B</div>
+          <p class="eyebrow">THE PATTERN</p>
+          <h3 class="panel-title">Then we cross-reference.</h3>
+          <p class="panel-line">
+            When the same friction turns up across a dozen businesses, the fix stops being custom
+            work and becomes a proven piece we can implement quickly and confidently. You get
+            something shaped to you, carried by everything we have already learned.
+          </p>
+          <div class="pair-list">
+            <div><span class="tick">✦</span> The individual gets the tailored implementation</div>
+            <div><span class="tick">✦</span> The common problem gets a proven one</div>
+            <div><span class="tick">✦</span> Every engagement improves the next</div>
+            <div><span class="tick">✦</span> You are never the first to solve it alone</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="framing reveal d2" style="margin-top:clamp(18px,2.4vh,32px);">
+        A lead is a lead whether it comes from the website form, the phone, or a crew member
+        typing it in from a driveway. Every entry point writes to the same place and starts the
+        same workflow. There is never a second version of the truth.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 03 · WHO IT'S FOR ═══ -->
+  <section class="screen" id="focus">
+    <div class="screen-head">
+      <div class="rule reveal"></div>
+      <p class="eyebrow reveal">WHO IT'S FOR RIGHT NOW</p>
+      <h2 class="screen-title reveal d1">Field service.<br>Version one of something wider.</h2>
+      <p class="screen-sub reveal d2">
+        We are deliberately concentrated on businesses that run crews and trucks. Not because
+        that is the ceiling — because they share one operational shape, and solving that shape
+        properly is what makes everything after it portable.
+      </p>
+    </div>
+
+    <div class="deck" style="margin-bottom:clamp(10px,1.2vw,18px);">
+      <div class="panel flat span-6 wide reveal" style="min-height:auto;">
+        <p class="eyebrow">THE SHAPE WE KEEP FINDING</p>
+        <div class="shape">
+          <div class="shape-item">
+            <h3 class="micro">THE PHONE</h3>
+            <p>The owner is on a job site and the phone rings anyway. <span class="leak">The call that gets missed is usually the one worth the most.</span></p>
+          </div>
+          <div class="shape-item">
+            <h3 class="micro">THE ESTIMATE</h3>
+            <p>Revenue depends on getting out to look at it, quoting it, and following up before somebody else does.</p>
+          </div>
+          <div class="shape-item">
+            <h3 class="micro">THE SCHEDULE</h3>
+            <p>Crews, routes, and weather rearrange the day. What was agreed this morning is not what happens.</p>
+          </div>
+          <div class="shape-item">
+            <h3 class="micro">THE MEMORY</h3>
+            <p>Customer history lives in a truck, a notebook, and three phones. <span class="leak">Repeat work depends on somebody remembering.</span></p>
+          </div>
+          <div class="shape-item">
+            <h3 class="micro">THE REVIEWS</h3>
+            <p>New work comes from reputation, and reputation depends on asking at the one moment the customer is happiest.</p>
+          </div>
+          <div class="shape-item">
+            <h3 class="micro">THE SYSTEMS</h3>
+            <p>Whatever is in place grew by accident. It works because people work around it.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ul class="trades reveal d1">
+      <li class="trade">Tree Services</li>
+      <li class="trade">Landscaping</li>
+      <li class="trade">Hardscaping</li>
+      <li class="trade">Roofing</li>
+      <li class="trade">Pressure Washing</li>
+      <li class="trade">Fencing</li>
+      <li class="trade">Concrete</li>
+      <li class="trade">Excavation</li>
+      <li class="trade">HVAC</li>
+      <li class="trade">Plumbing</li>
+      <li class="trade">Electrical</li>
+      <li class="trade">Pest Control</li>
+    </ul>
+
+    <p class="screen-sub reveal d2" style="margin-top:26px;">
+      If your business is not on that list and the shape above still sounds familiar, the model
+      fits. The trades are where we are proving it — not where it ends.
+    </p>
+  </section>
+
+  <div class="beat" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"/></svg>
+  </div>
+
+  <!-- ═══ 04 · THE PATH ═══ -->
+  <section class="screen soft" id="path">
+    <div class="screen-inner">
+      <div class="screen-head">
+        <div class="rule reveal"></div>
+        <p class="eyebrow reveal">THE IMPLEMENTATION PATH</p>
+        <h2 class="screen-title reveal d1">Nothing gets built out of order.</h2>
+        <p class="screen-sub reveal d2">
+          You are not choosing from a menu. Each phase stands entirely on its own, and each one
+          earns the next by exposing the bottleneck that comes after it. Most businesses start at
+          the first and stop wherever the returns stop being obvious.
+        </p>
+      </div>
+
+      <div class="path">
+
+        <div class="step reveal" data-step id="p-assess">
+          <div class="step-stack" aria-hidden="true">
+            <div class="seg on"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div>
+          </div>
+          <div>
+            <p class="eyebrow">BEFORE ANYTHING</p>
+            <h3 class="step-name">Business Assessment</h3>
+            <p class="step-line">We map how the business runs today — workflow, interruptions, communication, scheduling, customer experience, what software already exists, and where it breaks. The assessment decides the order of everything below it.</p>
+          </div>
+          <div class="step-meta">
+            <span class="step-price"><span class="win">No cost</span></span>
+            <span class="data">FIRST</span>
+          </div>
+        </div>
+
+        <div class="step reveal" data-step id="p-web">
+          <div class="step-stack" aria-hidden="true">
+            <div class="seg on"></div><div class="seg on"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div>
+          </div>
+          <div>
+            <p class="eyebrow">PHASE ONE &nbsp;·&nbsp; WEBSITES</p>
+            <h3 class="step-name">Web Foundation</h3>
+            <p class="step-line">Get found, earn trust, capture leads properly. A rebuilt site, search visibility, and an intake form that categorizes and routes every inquiry from the first day it is live.</p>
+          </div>
+          <div class="step-meta">
+            <span class="step-price">$4,500–7,500 <span class="sep">+</span> $249–399<span class="per">/mo</span></span>
+            <span class="data">2–4 WEEKS</span>
+          </div>
+        </div>
+
+        <div class="step reveal" data-step id="p-backbone">
+          <div class="step-stack" aria-hidden="true">
+            <div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div>
+          </div>
+          <div>
+            <p class="eyebrow">PHASE TWO &nbsp;·&nbsp; BUSINESS BACKBONE</p>
+            <h3 class="step-name">Business Backbone</h3>
+            <p class="step-line">Give the business a memory. Customers, properties, jobs, service history, calendars, and every message in one place — with your existing customers moved into it.</p>
+          </div>
+          <div class="step-meta">
+            <span class="step-price">$5,000–8,000 <span class="sep">+</span> $299–449<span class="per">/mo</span></span>
+            <span class="data">3–4 WEEKS</span>
+          </div>
+        </div>
+
+        <div class="step reveal" data-step id="p-console">
+          <div class="step-stack" aria-hidden="true">
+            <div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div>
+          </div>
+          <div>
+            <p class="eyebrow">PHASE THREE &nbsp;·&nbsp; APPS</p>
+            <h3 class="step-name">Field Console</h3>
+            <p class="step-line">Your own app, and the face of the whole system. Lead intake in one tap, today's route, active jobs, photos, notes, and job completion — all of it writing straight back to the backbone.</p>
+          </div>
+          <div class="step-meta">
+            <span class="step-price">$9,000–14,000 <span class="sep">+</span> $349–549<span class="per">/mo</span></span>
+            <span class="data">4–6 WEEKS</span>
+          </div>
+        </div>
+
+        <div class="pairnote reveal">
+          <span class="brace"></span>
+          <span>Three and four are interchangeable — take whichever answers the sharper problem</span>
+        </div>
+
+        <div class="step reveal" data-step id="p-auto">
+          <div class="step-stack" aria-hidden="true">
+            <div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg"></div><div class="seg"></div>
+          </div>
+          <div>
+            <p class="eyebrow">PHASE FOUR &nbsp;·&nbsp; AUTOMATION</p>
+            <h3 class="step-name">Automation Layer</h3>
+            <p class="step-line">The routine work stops needing a person. Confirmations, reminders, follow-up on unanswered estimates, and a review request that fires the moment a job is marked complete.</p>
+          </div>
+          <div class="step-meta">
+            <span class="step-price">$2,000–3,500 <span class="sep">+</span> $149–249<span class="per">/mo</span></span>
+            <span class="data">CONTINUOUS</span>
+          </div>
+        </div>
+
+        <div class="step reveal" data-step id="p-intel">
+          <div class="step-stack" aria-hidden="true">
+            <div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg"></div>
+          </div>
+          <div>
+            <p class="eyebrow">PHASE FIVE &nbsp;·&nbsp; PHONE RECEPTIONIST</p>
+            <h3 class="step-name">Intelligence Layer</h3>
+            <p class="step-line">The phone stops being an interruption. Calls and messages are answered at any hour, qualified, triaged as emergency or routine, and either booked or routed to the right person.</p>
+          </div>
+          <div class="step-meta">
+            <span class="step-price">$5,000–8,500 <span class="sep">+</span> $349–599<span class="per">/mo</span></span>
+            <span class="data">2–3 WEEKS</span>
+          </div>
+        </div>
+
+        <div class="step reveal" data-step id="p-custom">
+          <div class="step-stack" aria-hidden="true">
+            <div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div>
+          </div>
+          <div>
+            <p class="eyebrow">AFTER THAT</p>
+            <h3 class="step-name">Custom Systems</h3>
+            <p class="step-line">Once the foundation is carrying the business, the next thing is specific to you — dispatch, routing, estimate intelligence, a customer portal, whatever the operation has grown into needing.</p>
+          </div>
+          <div class="step-meta">
+            <span class="step-price">Scoped per build <span class="sep">+</span> monthly</span>
+            <span class="data">AS EARNED</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="deck" style="margin-top:clamp(20px,3vh,44px);">
+        <div class="panel span-3 wide reveal" data-panel>
+          <p class="eyebrow">WHAT DOESN'T HAPPEN</p>
+          <h3 class="panel-title">We never build and leave.</h3>
+          <p class="panel-line">
+            There is no one-time build here. Every implementation is carried by an ongoing plan
+            that maintains it, updates it, and keeps improving it. When something needs to change
+            a year from now, <span class="k">we are still the ones who change it</span>.
+          </p>
+        </div>
+        <div class="panel span-3 wide reveal d1" data-panel>
+          <p class="eyebrow">HOW THE NEXT PHASE ARRIVES</p>
+          <h3 class="panel-title">Earned, never pushed.</h3>
+          <p class="panel-line">
+            A later phase is only proposed once the previous one has visibly done its job, and it
+            is always framed as the new bottleneck the last phase exposed. <em>The website is
+            working — the problem is no longer getting leads, it's handling them.</em>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 05 · FAQ ═══ -->
+  <section class="screen" id="faq">
+    <div class="screen-head">
+      <div class="rule reveal"></div>
+      <p class="eyebrow reveal">STRAIGHT ANSWERS</p>
+      <h2 class="screen-title reveal d1">Asked before<br>the first call.</h2>
+    </div>
+
+    <div class="faq reveal d2">
+      <div class="faq-item">
+        <h3 class="faq-q">How much does an implementation cost?</h3>
+        <p class="faq-a">Every implementation has <strong>a setup price and a monthly price</strong>, both listed at the top of this page and on each phase. The Business Assessment that comes before all of it <span class="win">costs nothing</span>.</p>
+      </div>
+      <div class="faq-item">
+        <h3 class="faq-q">Why does everything have a monthly price?</h3>
+        <p class="faq-a">Because we never build and leave. There is no one-time build — the monthly plan maintains it, updates it, and keeps improving it, so <span class="k">we are still here a year from now</span> when something needs to change.</p>
+      </div>
+      <div class="faq-item">
+        <h3 class="faq-q">Do I have to buy everything at once?</h3>
+        <p class="faq-a">No. Each phase stands entirely on its own. Most businesses start with the Web Foundation and continue only as long as the returns stay obvious. <span class="k">A later phase is proposed once the previous one has visibly done its job.</span></p>
+      </div>
+      <div class="faq-item">
+        <h3 class="faq-q">What is a Business Backbone?</h3>
+        <p class="faq-a">The operational center of the business — leads, customers, properties, jobs, appointments, and communications in one place. Closer to infrastructure than to software: you rarely open it, and nothing works well without it.</p>
+      </div>
+      <div class="faq-item">
+        <h3 class="faq-q">What is a Field Console?</h3>
+        <p class="faq-a">The mobile tool the owner and crew actually carry. One tap files a lead; a long press opens the day — route, active jobs, customer history, emergencies, job completion. <span class="k">It replaces paper, texts, and random phone calls.</span></p>
+      </div>
+      <div class="faq-item">
+        <h3 class="faq-q">What kinds of businesses do you work with?</h3>
+        <p class="faq-a">Field service businesses that run crews and trucks — tree services, landscaping, roofing, HVAC, plumbing, electrical, and the rest of the list above. If the shape sounds familiar, the model fits.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 06 · THE CONVERSATION ═══ -->
+  <section class="screen soft" id="talk">
+    <div class="screen-inner">
+      <div class="screen-head">
+        <div class="rule reveal"></div>
+        <p class="eyebrow reveal">THE CONVERSATION</p>
+        <h2 class="screen-title reveal d1">Start with a conversation,<br>not a quote.</h2>
+        <p class="screen-sub reveal d2">
+          We work with fewer businesses on purpose, so the first conversation matters more than a
+          proposal does. These are the things we would want to understand before either of us
+          commits to anything.
+        </p>
+      </div>
+
+      <div class="questions reveal d2" style="margin-bottom:clamp(28px,4vh,52px);">
+        <div class="q">
+          <div class="q-num">01</div>
+          <div class="q-text">In a normal week, roughly how many calls and quote requests come in that never get answered or followed up on?</div>
+        </div>
+        <div class="q">
+          <div class="q-num">02</div>
+          <div class="q-text">Where does a new lead physically go today — a phone, a notebook, an inbox, somebody's memory?</div>
+        </div>
+        <div class="q">
+          <div class="q-num">03</div>
+          <div class="q-text">When the day rearranges itself, who has to be called before the crew knows about it?</div>
+        </div>
+        <div class="q">
+          <div class="q-num">04</div>
+          <div class="q-text">Would your team welcome having leads, jobs, and customer history in one shared place — or is that the kind of change that tends to meet resistance at first?</div>
+        </div>
+      </div>
+
+      <a href="booking.html" class="mega reveal d3" data-panel>
+        <div class="mega-copy">
+          <p class="eyebrow">PICK A WINDOW</p>
+          <div class="mega-title">Schedule a Time</div>
+          <p class="mega-line">
+            Open the calendar and take whatever window works. No preparation needed — bring how the
+            business runs on a normal Tuesday and we will work from there.
+          </p>
+        </div>
+        <div class="mega-go" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="12" x2="19" y2="12"/><polyline points="13,6 19,12 13,18"/>
+          </svg>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ═══ 07 · LINEAGE ═══ -->
+  <div class="lineage">
+    <div class="lineage-card reveal">
+      <div>
+        <p class="eyebrow faint">THE PARENT</p>
+        <h2 class="lineage-name" style="margin-top:10px;">BECON Industries</h2>
+        <p class="lineage-role">Designs the adaptive systems, the intelligence, and the products. Builds systems, not features — worlds, not apps.</p>
+      </div>
+      <div class="lineage-arrow" aria-hidden="true">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13,6 19,12 13,18"/></svg>
+      </div>
+      <div>
+        <p class="eyebrow">THE PARTNER STUDIO</p>
+        <h2 class="lineage-name" style="margin-top:10px;">Newsonic Age</h2>
+        <p class="lineage-role">Implements them into real businesses. BECON designs the future; we are the arm that deploys it into the operation you run on Monday.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="footer-wrap">
+    <div class="footer-card">
+      <a href="#open" class="wordmark" aria-label="Newsonic Age — back to top">
+        <img src="assets/nsa-logo.png" alt="">
+        <span class="wm-a">NEWSONIC</span><span class="wm-b">AGE</span>
+      </a>
+      <div class="footer-tag">An adaptive systems studio.</div>
+      <div class="footer-row">
+        The Partner Studio of BECON Industries &nbsp;·&nbsp;
+        <a href="booking.html">Schedule a time</a> &nbsp;·&nbsp; &copy; 2026
       </div>
     </div>
   </footer>
 
-  <!-- ─── TERMINAL POPUP ─── -->
-  <div id="terminal-overlay">
-    <div class="terminal-window">
-      <div class="terminal-header">
-        <div class="t-dots">
-          <div class="t-dot red"></div>
-          <div class="t-dot yellow"></div>
-          <div class="t-dot green"></div>
-        </div>
-        <div class="t-title">newsonic_age &mdash; project_intake.sh</div>
-        <button class="t-close" onclick="closeTerminal()">&#x2715;</button>
-      </div>
-      <div class="terminal-body">
-        <div class="t-output" id="t-output"></div>
-
-        <form id="terminal-form" onsubmit="submitForm(event)" style="display:flex;flex-direction:column;">
-
-          <!-- Row 1: Name + Company -->
-          <div class="t-grid-2">
-            <div class="t-field">
-              <label class="t-label" for="t-name">&gt; name</label>
-              <input class="t-input" id="t-name" name="name" type="text" placeholder="your full name" autocomplete="off" spellcheck="false">
-            </div>
-            <div class="t-field">
-              <label class="t-label" for="t-company">&gt; company</label>
-              <input class="t-input" id="t-company" name="company" type="text" placeholder="company name" autocomplete="off" spellcheck="false">
-            </div>
-          </div>
-
-          <!-- Row 2: Email + Phone -->
-          <div class="t-grid-2">
-            <div class="t-field">
-              <label class="t-label" for="t-email">&gt; email</label>
-              <input class="t-input" id="t-email" name="email" type="email" placeholder="your@email.com" autocomplete="off" spellcheck="false">
-            </div>
-            <div class="t-field">
-              <label class="t-label" for="t-phone">&gt; phone</label>
-              <input class="t-input" id="t-phone" name="phone" type="tel" placeholder="+1 (000) 000-0000" autocomplete="off" spellcheck="false">
-            </div>
-          </div>
-
-          <!-- Row 3: Location + What are you selling -->
-          <div class="t-grid-2">
-            <div class="t-field">
-              <label class="t-label" for="t-location">&gt; location</label>
-              <input class="t-input" id="t-location" name="location" type="text" placeholder="city, state / country" autocomplete="off" spellcheck="false">
-            </div>
-            <div class="t-field">
-              <label class="t-label" for="t-selling">&gt; what are you selling?</label>
-              <input class="t-input" id="t-selling" name="selling" type="text" placeholder="products, services, or both" autocomplete="off" spellcheck="false">
-            </div>
-          </div>
-
-          <hr class="t-section-divider">
-
-          <!-- Budget Range -->
-          <div class="t-field">
-            <label class="t-label">&gt; budget range</label>
-            <div class="t-budget-toggle">
-              <button type="button" class="active" id="t-toggle-monthly" onclick="setBudgetType('monthly')">monthly</button>
-              <button type="button" id="t-toggle-yearly" onclick="setBudgetType('yearly')">yearly</button>
-            </div>
-            <select class="t-select" id="t-budget" name="budget">
-              <option value="">— select range —</option>
-              <option value="under-1k">under $1,000 / mo</option>
-              <option value="1k-3k">$1,000 – $3,000 / mo</option>
-              <option value="3k-7k">$3,000 – $7,000 / mo</option>
-              <option value="7k-15k">$7,000 – $15,000 / mo</option>
-              <option value="15k+">$15,000+ / mo</option>
-              <option value="custom">custom / let's talk</option>
-            </select>
-          </div>
-
-          <!-- Services Multi-Select -->
-          <div class="t-field">
-            <label class="t-label">&gt; what are you looking to build or improve?</label>
-            <div class="t-checkbox-grid" id="t-services-grid">
-              <label class="t-checkbox-item"><input type="checkbox" name="services" value="ecommerce"> E-commerce</label>
-              <label class="t-checkbox-item"><input type="checkbox" name="services" value="lead-forms"> Multiple Lead Forms</label>
-              <label class="t-checkbox-item"><input type="checkbox" name="services" value="automations"> Automations</label>
-              <label class="t-checkbox-item"><input type="checkbox" name="services" value="client-portals"> Client Portals</label>
-              <label class="t-checkbox-item"><input type="checkbox" name="services" value="uiux"> Advanced UI/UX Design</label>
-              <label class="t-checkbox-item"><input type="checkbox" name="services" value="app-dev"> App Development</label>
-              <label class="t-checkbox-item"><input type="checkbox" name="services" value="content"> Content Creation</label>
-              <label class="t-checkbox-item"><input type="checkbox" name="services" value="booking"> Booking System</label>
-              <label class="t-checkbox-item"><input type="checkbox" name="services" value="email-setup"> Custom Email Setup</label>
-              <label class="t-checkbox-item"><input type="checkbox" name="services" value="email-mktg"> Email Marketing</label>
-              <label class="t-checkbox-item t-checkbox-full"><input type="checkbox" name="services" value="ads"> Ad Services (creative, strategy, optimization)</label>
-            </div>
-          </div>
-
-          <hr class="t-section-divider">
-
-          <!-- Vision -->
-          <div class="t-field">
-            <label class="t-label" for="t-message">&gt; your vision</label>
-            <textarea class="t-textarea" id="t-message" name="message" placeholder="tell us about your brand and goals_"></textarea>
-          </div>
-
-          <button type="submit" class="t-submit"><span>&gt; TRANSMIT MESSAGE_</span></button>
-        </form>
-
-        <div id="t-success" style="display:none;font-family:var(--mono);font-size:0.82rem;line-height:1.8;"></div>
-      </div>
-    </div>
-  </div>
-
   <script src="main.js"></script>
-
-  <script>
-    /* ── HOVER SOUND SYSTEM ─────────────────────────
-       Same 3-sound pool as the client portal.
-       80ms global cooldown prevents rapid-fire spam.
-    ─────────────────────────────────────────────── */
-    (function() {
-      const SOUNDS = ['assets/hover1.mp3', 'assets/hover2.mp3', 'assets/hover3.mp3'];
-      const audioPool = SOUNDS.map(src => {
-        const a = new Audio(src);
-        a.volume = 0.15;
-        a.preload = 'auto';
-        return a;
-      });
-      let lastPlay = 0;
-
-      function playHoverSound() {
-        const now = Date.now();
-        if (now - lastPlay < 80) return;
-        lastPlay = now;
-        const a = audioPool[Math.floor(Math.random() * audioPool.length)];
-        a.currentTime = 0;
-        a.play().catch(() => {});
-      }
-
-      function bindSounds() {
-        const targets = document.querySelectorAll(
-          '.choice-tile, .pain-item, .price-card, .mgmt-card, ' +
-          '.process-step, .contact-card, .service-block, ' +
-          'nav a, .btn-cta, .btn-book, .btn-secondary, .price-cta, ' +
-          '.footer-links a, .nav-links a, ' +
-          '.tile-btn-primary, .tile-btn-secondary, .btn-glass-session, .content-choice-btn'
-        );
-        targets.forEach(el => {
-          if (!el.dataset.sndBound) {
-            el.dataset.sndBound = '1';
-            el.addEventListener('mouseenter', playHoverSound, { passive: true });
-          }
-        });
-      }
-
-      // Bind on load and after any dynamic reveals
-      window.addEventListener('DOMContentLoaded', bindSounds);
-      // Re-bind after a short delay to catch elements added by main.js
-      setTimeout(bindSounds, 800);
-    })();
-  </script>
 </body>
 </html>

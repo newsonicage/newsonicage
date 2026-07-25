@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /ebtl.html
+Disallow: /ebtl-automation.html
+
+Sitemap: https://newsonicage.com/sitemap.xml

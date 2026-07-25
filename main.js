@@ -1,317 +1,315 @@
-/* =============================================
+/* =============================================================
    NEWSONIC AGE — main.js
-   ============================================= */
 
-// ─── CURSOR ───
-const cursor = document.getElementById('cursor');
-const cursorRing = document.getElementById('cursor-ring');
-let cx = 0, cy = 0, rx = 0, ry = 0;
+   Four things happen here:
+     1. the cursor (unchanged in geometry and behaviour)
+     2. reveal-on-scroll
+     3. panel focus — pointer or arrow key, one panel at a time
+     4. the hover sound pool
+   ============================================================= */
 
-document.addEventListener('mousemove', e => {
-  cx = e.clientX;
-  cy = e.clientY;
-  cursor.style.left = cx + 'px';
-  cursor.style.top = cy + 'px';
-});
+(function () {
+  'use strict';
 
-// Smooth cursor ring
-function animateRing() {
-  rx += (cx - rx) * 0.12;
-  ry += (cy - ry) * 0.12;
-  cursorRing.style.left = rx + 'px';
-  cursorRing.style.top = ry + 'px';
-  requestAnimationFrame(animateRing);
-}
-animateRing();
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var finePointer  = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-// Hover state for interactive elements
-const hoverEls = document.querySelectorAll('a, button, .choice-tile, .price-cta, .btn-primary, .btn-secondary, .btn-cta, .tile-btn-primary, .tile-btn-secondary, .btn-glass-session, .content-choice-btn');
-hoverEls.forEach(el => {
-  el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
-  el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
-});
+  /* ─── 1 · CURSOR ─────────────────────────────────────────── */
 
-// Hide cursor when leaving window
-document.addEventListener('mouseleave', () => {
-  cursor.style.opacity = '0';
-  cursorRing.style.opacity = '0';
-});
-document.addEventListener('mouseenter', () => {
-  cursor.style.opacity = '1';
-  cursorRing.style.opacity = '1';
-});
+  var cursor = document.getElementById('cursor');
+  var ring   = document.getElementById('cursor-ring');
 
-// ─── PRELOADER ───
-window.addEventListener('load', () => {
-  const preloader = document.getElementById('preloader');
-  // Min 2.2s so animation plays
-  const minTime = 2200;
-  const startTime = Date.now();
-  const elapsed = Date.now() - startTime;
-  const remaining = Math.max(0, minTime - elapsed);
+  if (cursor && ring && finePointer) {
+    var cx = 0, cy = 0, rx = 0, ry = 0;
 
-  setTimeout(() => {
-    preloader.classList.add('done');
-    document.body.style.overflow = 'auto';
-  }, minTime);
-});
-
-// Lock scroll during preload
-document.body.style.overflow = 'hidden';
-
-// ─── NAV SCROLL EFFECT ───
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 60) {
-    nav.classList.add('scrolled');
-  } else {
-    nav.classList.remove('scrolled');
-  }
-});
-
-// ─── MOBILE MENU ───
-const mobileMenu = document.getElementById('mobile-menu');
-let menuOpen = false;
-
-function toggleMenu() {
-  menuOpen = !menuOpen;
-  mobileMenu.classList.toggle('open', menuOpen);
-  document.body.style.overflow = menuOpen ? 'hidden' : 'auto';
-}
-
-function closeMenu() {
-  menuOpen = false;
-  mobileMenu.classList.remove('open');
-  document.body.style.overflow = 'auto';
-}
-
-// ─── SMOOTH SCROLL ───
-function scrollToSection(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const nav   = document.getElementById('nav');
-  const navH  = nav ? nav.offsetHeight : 80;
-  // Compensate for nav height + section's own top padding so content
-  // appears just below the nav with a small breathing gap (24px).
-  const pt  = parseInt(window.getComputedStyle(el).paddingTop, 10) || 0;
-  const top = el.getBoundingClientRect().top + window.scrollY + pt - navH - 24;
-  window.scrollTo({ top, behavior: 'smooth' });
-  closeMenu();
-}
-
-// ─── INTERSECTION OBSERVER (reveal on scroll) ───
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('in-view');
-    }
-  });
-}, { threshold: 0.1 });
-
-document.querySelectorAll('.reveal, .pain-item, .process-step, .price-card, .service-block, .stat-num').forEach(el => {
-  revealObserver.observe(el);
-});
-
-// ─── STAT COUNTER ANIMATION ───
-function animateCounter(el) {
-  const target = parseInt(el.getAttribute('data-target'), 10);
-  const suffix = el.getAttribute('data-suffix') || '';
-  const duration = 1800;
-  const start = Date.now();
-
-  function update() {
-    const elapsed = Date.now() - start;
-    const progress = Math.min(elapsed / duration, 1);
-    // Ease out cubic
-    const eased = 1 - Math.pow(1 - progress, 3);
-    const current = Math.round(eased * target);
-    el.textContent = current + suffix;
-    if (progress < 1) requestAnimationFrame(update);
-  }
-  update();
-}
-
-const statObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
-      entry.target.classList.add('counted');
-      animateCounter(entry.target);
-    }
-  });
-}, { threshold: 0.5 });
-
-document.querySelectorAll('.stat-num[data-target]').forEach(el => {
-  statObserver.observe(el);
-});
-
-// ─── TERMINAL POPUP ───
-const terminalOverlay = document.getElementById('terminal-overlay');
-const tOutput = document.getElementById('t-output');
-let terminalOpen = false;
-
-function openTerminal(service) {
-  terminalOverlay.classList.add('open');
-  terminalOpen = true;
-  document.body.style.overflow = 'hidden';
-
-  // Pre-select service if passed
-  if (service) {
-    const sel = document.getElementById('t-service');
-    if (sel) sel.value = service;
-  }
-
-  // Typewriter boot sequence
-  const lines = [
-    { text: '> Establishing encrypted channel...', delay: 100, class: 'dim' },
-    { text: '> Connection secured. [AES-256]', delay: 700, class: 'blue-text' },
-    { text: '> NEWSONIC AGE — PROJECT INTAKE v2.6', delay: 1200, class: '' },
-    { text: '> Ready. Please complete the form below.', delay: 1700, class: 'dim' },
-  ];
-
-  tOutput.innerHTML = '';
-  lines.forEach(line => {
-    setTimeout(() => {
-      const p = document.createElement('p');
-      p.className = line.class;
-      typeWriter(p, line.text, 30);
-      tOutput.appendChild(p);
-    }, line.delay);
-  });
-}
-
-function closeTerminal() {
-  terminalOverlay.classList.remove('open');
-  terminalOpen = false;
-  document.body.style.overflow = 'auto';
-  // Reset form
-  const form = document.getElementById('terminal-form');
-  if (form) { form.reset(); form.style.display = 'flex'; }
-  document.getElementById('t-success').style.display = 'none';
-}
-
-// Close on backdrop click
-terminalOverlay.addEventListener('click', e => {
-  if (e.target === terminalOverlay) closeTerminal();
-});
-
-// Close on ESC
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && terminalOpen) closeTerminal();
-});
-
-// Typewriter effect
-function typeWriter(el, text, speed) {
-  let i = 0;
-  function tick() {
-    if (i < text.length) {
-      el.textContent += text[i];
-      i++;
-      setTimeout(tick, speed);
-    }
-  }
-  tick();
-}
-
-// Form submission
-function submitForm(e) {
-  e.preventDefault();
-  const form = e.target;
-  const btn = form.querySelector('.t-submit');
-  const name = form.querySelector('#t-name').value.trim();
-
-  if (!name) {
-    alert('Please enter your name.');
-    return;
-  }
-
-  // Simulate submission
-  btn.querySelector('span').textContent = '> TRANSMITTING...';
-  btn.disabled = true;
-
-  setTimeout(() => {
-    form.style.display = 'none';
-    const success = document.getElementById('t-success');
-    success.style.display = 'block';
-
-    const lines = [
-      { text: `> Message received from ${name}.`, delay: 0, class: '' },
-      { text: '> Routing to project team...', delay: 600, class: 'dim' },
-      { text: '> TRANSMISSION COMPLETE.', delay: 1200, class: 'blue-text' },
-      { text: '> We will be in touch within 24-48 hours.', delay: 1800, class: '' },
-      { text: '> Thank you for choosing Newsonic Age.', delay: 2400, class: 'dim' },
-    ];
-
-    success.innerHTML = '';
-    lines.forEach(line => {
-      setTimeout(() => {
-        const p = document.createElement('p');
-        p.className = line.class;
-        typeWriter(p, line.text, 25);
-        success.appendChild(p);
-      }, line.delay);
+    document.addEventListener('mousemove', function (e) {
+      cx = e.clientX;
+      cy = e.clientY;
+      cursor.style.left = cx + 'px';
+      cursor.style.top  = cy + 'px';
     });
 
-    // Auto-close after 5s
-    setTimeout(closeTerminal, 6000);
-  }, 1200);
-}
+    (function animateRing() {
+      rx += (cx - rx) * 0.12;
+      ry += (cy - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top  = ry + 'px';
+      requestAnimationFrame(animateRing);
+    })();
 
-// ─── BUDGET TYPE TOGGLE ───
-function setBudgetType(type) {
-  const monthly = document.getElementById('t-toggle-monthly');
-  const yearly  = document.getElementById('t-toggle-yearly');
-  const sel     = document.getElementById('t-budget');
-  if (!monthly || !yearly || !sel) return;
+    document.addEventListener('mouseleave', function () {
+      cursor.style.opacity = '0';
+      ring.style.opacity   = '0';
+    });
+    document.addEventListener('mouseenter', function () {
+      cursor.style.opacity = '1';
+      ring.style.opacity   = '1';
+    });
 
-  if (type === 'monthly') {
-    monthly.classList.add('active');
-    yearly.classList.remove('active');
-    sel.innerHTML = `
-      <option value="">— select range —</option>
-      <option value="under-1k">under $1,000 / mo</option>
-      <option value="1k-3k">$1,000 – $3,000 / mo</option>
-      <option value="3k-7k">$3,000 – $7,000 / mo</option>
-      <option value="7k-15k">$7,000 – $15,000 / mo</option>
-      <option value="15k+">$15,000+ / mo</option>
-      <option value="custom">custom / let's talk</option>`;
+    // Delegated, so anything added later still swells the cursor.
+    var HOVER_SELECTOR = 'a, button, [data-panel], [data-step], .trade, .rail-cta, ' +
+                         '.chip, .seg-o, .fld-i, .proof-card';
+    document.addEventListener('mouseover', function (e) {
+      if (e.target.closest && e.target.closest(HOVER_SELECTOR)) {
+        document.body.classList.add('cursor-hover');
+      }
+    });
+    document.addEventListener('mouseout', function (e) {
+      if (e.target.closest && e.target.closest(HOVER_SELECTOR)) {
+        var to = e.relatedTarget;
+        if (!to || !to.closest || !to.closest(HOVER_SELECTOR)) {
+          document.body.classList.remove('cursor-hover');
+        }
+      }
+    });
+  }
+
+  /* ─── 2 · REVEAL ON SCROLL ───────────────────────────────── */
+
+  var revealTargets = document.querySelectorAll('.reveal, [data-step]');
+
+  if (!('IntersectionObserver' in window) || reduceMotion) {
+    revealTargets.forEach(function (el) { el.classList.add('in-view'); });
   } else {
-    yearly.classList.add('active');
-    monthly.classList.remove('active');
-    sel.innerHTML = `
-      <option value="">— select range —</option>
-      <option value="under-12k">under $12,000 / yr</option>
-      <option value="12k-36k">$12,000 – $36,000 / yr</option>
-      <option value="36k-84k">$36,000 – $84,000 / yr</option>
-      <option value="84k-180k">$84,000 – $180,000 / yr</option>
-      <option value="180k+">$180,000+ / yr</option>
-      <option value="custom">custom / let's talk</option>`;
+    var revealObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+
+    revealTargets.forEach(function (el) { revealObserver.observe(el); });
   }
-}
 
-// ─── CHECKBOX VISUAL TOGGLE ───
-document.addEventListener('change', function(e) {
-  if (e.target.type === 'checkbox' && e.target.name === 'services') {
-    const label = e.target.closest('.t-checkbox-item');
-    if (label) label.classList.toggle('checked', e.target.checked);
-  }
-});
+  /* ─── 3 · PANEL FOCUS ────────────────────────────────────── */
+  /* The page navigates like a console: arrow keys move between
+     panels once focus is already inside one. Tab order is left
+     alone — only real controls sit in it.                      */
 
-// ─── PARALLAX on hero ───
-window.addEventListener('scroll', () => {
-  const scrollY = window.scrollY;
-  const heroGrid = document.querySelector('.hero-grid');
-  const heroOrb = document.querySelector('.hero-orb');
-  if (heroGrid) heroGrid.style.transform = `translateY(${scrollY * 0.3}px)`;
-  if (heroOrb) heroOrb.style.transform = `translate(-50%, calc(-50% + ${scrollY * 0.15}px))`;
-});
+  var panels = Array.prototype.slice.call(
+    document.querySelectorAll('[data-panel], [data-step]')
+  );
 
-// ─── CHOICE TILE — subtle mouse tracking glow ───
-document.querySelectorAll('.choice-tile').forEach(tile => {
-  tile.addEventListener('mousemove', e => {
-    const rect = tile.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    tile.style.setProperty('--mx', `${x}%`);
-    tile.style.setProperty('--my', `${y}%`);
+  panels.forEach(function (panel) {
+    // Non-interactive panels can be focused programmatically but
+    // never appear in the tab sequence.
+    if (!panel.hasAttribute('tabindex') &&
+        panel.tagName !== 'A' && panel.tagName !== 'BUTTON') {
+      panel.setAttribute('tabindex', '-1');
+    }
+    panel.addEventListener('focus', function () { panel.classList.add('is-focused'); });
+    panel.addEventListener('blur',  function () { panel.classList.remove('is-focused'); });
   });
-});
+
+  function centerOf(el) {
+    var r = el.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  }
+
+  // Nearest panel in a direction, weighting off-axis drift so the
+  // move feels like a grid rather than a straight-line scan.
+  function nextPanel(from, dx, dy) {
+    var origin = centerOf(from);
+    var best = null, bestScore = Infinity;
+
+    panels.forEach(function (candidate) {
+      if (candidate === from) return;
+      var c = centerOf(candidate);
+      var vx = c.x - origin.x;
+      var vy = c.y - origin.y;
+      var along  = vx * dx + vy * dy;
+      if (along <= 8) return;                       // not in that direction
+      var offAxis = Math.abs(vx * dy - vy * dx);
+      var score   = along + offAxis * 2.2;
+      if (score < bestScore) { bestScore = score; best = candidate; }
+    });
+
+    return best;
+  }
+
+  // Whichever input the visitor last used owns the focus state, so two
+  // panels are never lit at once.
+  var kbdNav = false;
+  function setKbdNav(on) {
+    if (kbdNav === on) return;
+    kbdNav = on;
+    document.body.classList.toggle('kbd-nav', on);
+  }
+  document.addEventListener('mousemove', function () { setKbdNav(false); }, { passive: true });
+
+  var DIRECTIONS = {
+    ArrowUp:    [0, -1],
+    ArrowDown:  [0,  1],
+    ArrowLeft:  [-1, 0],
+    ArrowRight: [1,  0]
+  };
+
+  document.addEventListener('keydown', function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+    var direction = DIRECTIONS[e.key];
+    if (!direction) return;
+
+    var active = document.activeElement;
+    if (!active || !active.closest) return;
+
+    var current = active.closest('[data-panel], [data-step]');
+    if (!current) return;   // focus isn't in the grid — leave scrolling alone
+
+    var target = nextPanel(current, direction[0], direction[1]);
+    if (!target) return;
+
+    e.preventDefault();
+    setKbdNav(true);
+    target.focus({ preventScroll: true });
+    target.scrollIntoView({
+      behavior: reduceMotion ? 'auto' : 'smooth',
+      block: 'center'
+    });
+  });
+
+  /* ─── 3b · RAIL — mark the screen you're reading ─────────── */
+
+  var railLinks = {};
+  document.querySelectorAll('.rail-nav a').forEach(function (a) {
+    var id = a.getAttribute('href');
+    if (id && id.charAt(0) === '#') railLinks[id.slice(1)] = a;
+  });
+
+  if ('IntersectionObserver' in window && Object.keys(railLinks).length) {
+    var railObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var link = railLinks[entry.target.id];
+        if (!link) return;
+        if (entry.isIntersecting) {
+          link.style.color = 'var(--blue)';
+          link.setAttribute('aria-current', 'true');
+        } else {
+          link.style.color = '';
+          link.removeAttribute('aria-current');
+        }
+      });
+    }, { rootMargin: '-45% 0px -45% 0px' });
+
+    Object.keys(railLinks).forEach(function (id) {
+      var section = document.getElementById(id);
+      if (section) railObserver.observe(section);
+    });
+  }
+
+  /* ─── 4 · INTAKE ─────────────────────────────────────────── */
+  /* Two fields until you touch one. Then the rest opens — this is
+     onboarding for someone already decided, not a qualification gate. */
+
+  var intake = document.getElementById('intake');
+
+  if (intake) {
+    var opened = false;
+
+    function openIntake() {
+      if (opened) return;
+      opened = true;
+      intake.classList.add('open');
+      var hint = document.getElementById('intake-hint');
+      if (hint) {
+        hint.textContent = 'Name, business, email, and a number are required. Everything else just gets us further ahead.';
+      }
+    }
+
+    intake.addEventListener('focusin', openIntake);
+    intake.addEventListener('input', function (e) {
+      openIntake();
+      if (e.target.classList) e.target.classList.remove('invalid');
+    });
+    // Arriving from the header button should show the whole thing.
+    if (window.location.hash === '#intake') openIntake();
+    document.querySelectorAll('a[href="#intake"]').forEach(function (a) {
+      a.addEventListener('click', function () {
+        openIntake();
+        var first = document.getElementById('in-name');
+        if (first) setTimeout(function () { first.focus({ preventScroll: true }); }, 500);
+      });
+    });
+
+    intake.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      openIntake();
+
+      // Whoever fills this out is already serious — we ask for enough to
+      // actually call them back.
+      var required = [
+        { el: document.getElementById('in-name'),  ok: function (v) { return v.trim().length > 1; } },
+        { el: document.getElementById('in-email'), ok: function (v, el) { return el.checkValidity() && v.trim() !== ''; } },
+        { el: document.getElementById('in-biz'),   ok: function (v) { return v.trim().length > 1; } },
+        { el: document.getElementById('in-phone'), ok: function (v) { return (v.match(/\d/g) || []).length >= 10; } }
+      ];
+
+      var firstBad = null;
+      required.forEach(function (f) {
+        var good = f.ok(f.el.value, f.el);
+        f.el.classList.toggle('invalid', !good);
+        if (!good && !firstBad) firstBad = f.el;
+      });
+
+      if (firstBad) {
+        firstBad.focus();
+        firstBad.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+        return;
+      }
+
+      var btn = intake.querySelector('.intake-go');
+      var label = intake.querySelector('.intake-go-label');
+      btn.disabled = true;
+      if (label) label.textContent = 'Opening…';
+
+      // Netlify Forms accepts a urlencoded POST to the page itself.
+      var data = new URLSearchParams(new FormData(intake)).toString();
+
+      function finish() {
+        intake.classList.remove('open');
+        Array.prototype.forEach.call(
+          intake.querySelectorAll('.intake-head, .intake-base, .intake-more, .intake-foot'),
+          function (el) { el.hidden = true; }
+        );
+        var done = document.getElementById('intake-done');
+        done.hidden = false;
+        done.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+      }
+
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: data
+      }).then(finish).catch(finish);
+    });
+  }
+
+  /* ─── 5 · HOVER SOUND ────────────────────────────────────── */
+
+  if (finePointer) {
+    var pool = ['assets/hover1.mp3', 'assets/hover2.mp3', 'assets/hover3.mp3'].map(function (src) {
+      var a = new Audio(src);
+      a.volume  = 0.12;
+      a.preload = 'auto';
+      return a;
+    });
+    var lastPlay = 0;
+
+    document.addEventListener('mouseover', function (e) {
+      if (!e.target.closest) return;
+      if (!e.target.closest('[data-panel], [data-step], .trade, .rail-nav a, .rail-cta, .chip, .seg-o')) return;
+
+      var now = Date.now();
+      if (now - lastPlay < 90) return;
+      lastPlay = now;
+
+      var clip = pool[Math.floor(Math.random() * pool.length)];
+      clip.currentTime = 0;
+      clip.play().catch(function () {});
+    }, { passive: true });
+  }
+
+})();
