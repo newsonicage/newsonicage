@@ -49,21 +49,33 @@ User-agent: Google-Extended
 Allow: /
 
 # ── Model-training crawlers ──────────────────────────────
-# Separate decision from the above: these collect content to train models
-# rather than to answer and cite. Currently allowed. To refuse training
-# while keeping every citation crawler above, change each Allow to Disallow.
+# Refused 2026-07-25. These collect content to train models rather than to
+# answer a question and cite the source. Refusing them costs nothing above:
+# every citation crawler in the previous block is a separate user agent and
+# stays allowed.
+#
+# This is also enforced at the network layer — Cloudflare → AI Crawl Control
+# → Security blocks these same crawlers, so the refusal holds even for the
+# ones that ignore this file. Keep the two lists in agreement.
 User-agent: GPTBot
-Allow: /
+Disallow: /
 
 User-agent: ClaudeBot
-Allow: /
+Disallow: /
 
 User-agent: CCBot
-Allow: /
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
 
 User-agent: Applebot-Extended
-Allow: /
+Disallow: /
 
+# Deliberately still allowed — mixed-purpose, so refusing them would cost
+# citations, not just training:
+#   Google-Extended   — also gates Gemini grounding (allowed above)
+#   meta-externalagent — also gates whether Meta AI can answer with this site
 User-agent: meta-externalagent
 Allow: /
 
