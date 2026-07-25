@@ -1,6 +1,70 @@
+# newsonicage.com
+#
+# NOTE: Cloudflare's managed robots.txt must stay OFF for this file to be
+# served. If this file ever comes back with a "Content-Signal:" line or a
+# "Cloudflare Managed content" block, Cloudflare has taken it over again.
+
+# ── Everyone ─────────────────────────────────────────────
 User-agent: *
 Allow: /
 Disallow: /ebtl.html
 Disallow: /ebtl-automation.html
+
+# ── Search engines ───────────────────────────────────────
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# ── AI answer engines ────────────────────────────────────
+# These are the crawlers that read a page in order to answer a question and
+# cite the source. Being read by these is the point of the JSON-LD on the
+# homepage — the pricing, services, and FAQ are all published for them.
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# ── Model-training crawlers ──────────────────────────────
+# Separate decision from the above: these collect content to train models
+# rather than to answer and cite. Currently allowed. To refuse training
+# while keeping every citation crawler above, change each Allow to Disallow.
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
 
 Sitemap: https://newsonicage.com/sitemap.xml
