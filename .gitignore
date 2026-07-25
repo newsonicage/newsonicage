@@ -1,3 +1,6 @@
 node_modules/
 .env
 .tokens.json
+
+# Claude Code personal settings (machine-specific, not shared)
+.claude/settings.local.json
