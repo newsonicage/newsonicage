@@ -407,9 +407,10 @@ body:not(.kbd-nav) .panel:hover,
   margin-top: 26px;
 }
 
-/* ─── DELIVERABLE ROW ─── */
-/* Five large tiles in one horizontal run. Emoji so the category lands
-   before the words do; price so nobody has to ask. */
+/* ─── THE SYSTEM ROW ─── */
+/* Six capabilities in one horizontal run, in activation order. Emoji so the
+   category lands before the words do; an outcome so nobody has to translate
+   the capability into what it does for them. */
 
 .row-head {
   margin: clamp(34px, 5vh, 60px) 0 14px;
@@ -421,7 +422,7 @@ body:not(.kbd-nav) .panel:hover,
 
 .row {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: clamp(10px, 1.1vw, 16px);
 }
 
@@ -431,7 +432,7 @@ body:not(.kbd-nav) .panel:hover,
   background: var(--paper);
   border: 1px solid var(--hairline);
   border-radius: 20px;
-  padding: clamp(20px, 1.9vw, 30px);
+  padding: clamp(18px, 1.6vw, 26px);
   min-height: clamp(260px, 34vh, 400px);
   transition: transform 0.4s var(--ease), background 0.35s,
               border-color 0.35s, box-shadow 0.4s var(--ease);
@@ -447,13 +448,13 @@ body:not(.kbd-nav) .tile:hover,
 }
 
 .tile-mark {
-  font-size: clamp(2.2rem, 3vw, 3.1rem);
+  font-size: clamp(1.9rem, 2.3vw, 2.7rem);
   line-height: 1;
   display: block;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 .tile-name {
-  font-size: clamp(1.15rem, 1.5vw, 1.55rem);
+  font-size: clamp(1.05rem, 1.2vw, 1.4rem);
   font-weight: 800;
   letter-spacing: -0.025em;
   line-height: 1.05;
@@ -461,36 +462,47 @@ body:not(.kbd-nav) .tile:hover,
 }
 @media (max-width: 560px) { .tile-name { min-height: 0; } }
 .tile-line {
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   line-height: 1.5;
   color: var(--ink-secondary);
   margin-top: 10px;
 }
 
-.tile-price {
+/* The outcome sits where the price used to — same slot, same weight in the
+   eye. The capability is the mechanism; this is what the owner actually buys. */
+.tile-outcome {
   margin-top: auto;
-  padding-top: 20px;
+  padding-top: 18px;
   border-top: 1px solid var(--hairline);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 }
-.tile:hover .tile-price,
-.tile.is-focused .tile-price { border-top-color: rgba(0,168,255,0.35); }
-.tile-price > div { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
-.tile-price-k {
+.tile:hover .tile-outcome,
+.tile.is-focused .tile-outcome { border-top-color: rgba(0,168,255,0.35); }
+.tile-outcome-k {
   font-family: var(--mono);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.16em;
   color: var(--ink-faint);
 }
-.tile-price-v {
-  font-family: var(--mono);
-  font-size: clamp(12px, 0.95vw, 13.5px);
-  font-weight: 700;
+.tile-outcome-v {
+  font-size: clamp(0.86rem, 0.95vw, 0.98rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
   color: var(--blue-text);
-  white-space: nowrap;
+}
+
+/* The trademark mark — present, never shouting. */
+.tm {
+  font-size: 0.5em;
+  font-weight: 700;
+  vertical-align: super;
+  line-height: 0;
+  letter-spacing: 0;
+  margin-left: 0.06em;
 }
 
 .row-note {
@@ -501,7 +513,7 @@ body:not(.kbd-nav) .tile:hover,
   margin: clamp(20px, 3vh, 34px) 0 clamp(24px, 4vh, 44px);
 }
 
-@media (max-width: 1240px) { .row { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 1400px) { .row { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 860px)  { .row { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px)  {
   .row { grid-template-columns: 1fr; }
@@ -1026,21 +1038,37 @@ body:not(.kbd-nav) .step:hover, .step.is-focused {
   align-items: flex-end;
   gap: 6px;
 }
-.step-price {
-  font-family: var(--mono);
-  font-size: clamp(12px, 1vw, 14px);
-  font-weight: 700;
+/* Every phase ends on a business outcome, not a deliverable. */
+.step-outcome {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--hairline);
+  max-width: 62ch;
+  font-size: clamp(0.94rem, 1.05vw, 1.05rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--blue-text);
-  white-space: nowrap;
+  transition: border-color 0.35s;
 }
-.step-price .sep { color: var(--ink-faint); font-weight: 400; margin: 0 2px; }
-.step-price .per { color: var(--ink-faint); font-weight: 400; }
+body:not(.kbd-nav) .step:hover .step-outcome,
+.step.is-focused .step-outcome { border-top-color: rgba(0,168,255,0.35); }
+.step-outcome-k {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--ink-faint);
+}
 
 .pairnote {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 4px 0 4px clamp(20px, 2.4vw, 36px);
+  padding: 10px 0 4px clamp(20px, 2.4vw, 36px);
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 700;
@@ -1101,6 +1129,15 @@ body:not(.kbd-nav) .step:hover, .step.is-focused {
   color: var(--ink-secondary);
   margin-top: 12px;
 }
+.faq-a a {
+  color: var(--blue-text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgba(0, 168, 255, 0.4);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.25s;
+}
+.faq-a a:hover { text-decoration-color: var(--blue); }
 @media (max-width: 860px) { .faq { grid-template-columns: 1fr; } }
 
 /* ═════════════════════════════════════════════
