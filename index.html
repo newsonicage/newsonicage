@@ -360,9 +360,13 @@
     <form class="intake reveal" id="intake" name="intake" method="POST"
           data-netlify="true" netlify-honeypot="referral-code" novalidate>
       <input type="hidden" name="form-name" value="intake">
-      <!-- Netlify uses this field's value as the notification email subject. Its own
-           UI only templates %{formName}/%{siteName}/%{submissionId} — no access to
-           what was actually typed — so main.js fills this in at submit time. -->
+      <!-- INERT ON NETLIFY. The docs present a hidden `subject` field as the way to
+           control the notification subject; tested 2026-07-28 and the email arrived
+           with Netlify's default regardless. Its UI field is no help either — it only
+           templates %{formName}/%{siteName}/%{submissionId}, never a submitted value.
+           Kept because main.js composes the line we actually want, and the planned
+           move to Resend needs exactly that string. Until then it just rides along
+           in the submission. -->
       <input type="hidden" name="subject" id="in-subject" value="New file — newsonicage.com">
       <p class="intake-trap" aria-hidden="true">
         <label>Leave this empty <input name="referral-code" tabindex="-1" autocomplete="off"></label>
