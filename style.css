@@ -191,7 +191,7 @@ strong { font-weight: 700; color: var(--ink); }
   margin-left: 6px;
 }
 
-.rail-nav { display: flex; align-items: center; gap: 26px; }
+.rail-nav { display: flex; align-items: center; gap: 22px; white-space: nowrap; }
 .rail-nav a {
   font-family: var(--mono);
   font-size: 11px;
@@ -230,7 +230,9 @@ strong { font-weight: 700; color: var(--ink); }
   box-shadow: 0 6px 20px rgba(255,255,255,0.18);
 }
 
-@media (max-width: 1180px) { .rail-nav { display: none; } }
+/* Five items plus the wordmark and both CTAs need real room — below this the
+   nav crowds the wordmark rather than wrapping, so it goes rather than squeeze. */
+@media (max-width: 1260px) { .rail-nav { display: none; } }
 @media (max-width: 620px)  { .rail-cta.ghost { display: none; } }
 
 /* ═════════════════════════════════════════════
