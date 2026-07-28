@@ -221,6 +221,28 @@ strong { font-weight: 700; color: var(--ink); }
 .rail-cta:hover { transform: translateY(-1px); box-shadow: var(--lift); }
 
 .rail-actions { display: flex; align-items: center; gap: 10px; }
+
+/* Text, never call. The product is the removal of interruption — the studio
+   selling it does not open with a phone call. Deliberately subordinate to the
+   two real CTAs: it is the escape hatch for someone who will not fill a form,
+   not a third thing competing with them. Collapses to the icon when tight. */
+.rail-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--on-dark-dim);
+  transition: color 0.25s;
+}
+.rail-text:hover { color: var(--blue); }
+.rail-text svg { width: 15px; height: 15px; flex: none; }
+@media (max-width: 980px) { .rail-text-n { display: none; } }
 .rail-cta.ghost {
   background: var(--paper);
   color: var(--ink);
@@ -781,6 +803,15 @@ select.fld-i option { background: var(--ink900); color: var(--on-dark); }
 .intake-go-arrow { transition: transform 0.3s var(--ease); }
 .intake-go:hover .intake-go-arrow { transform: translateX(5px); }
 .intake-fine { font-size: 12.5px; color: var(--on-dark-faint); line-height: 1.5; max-width: 46ch; }
+.intake-foot-copy { display: flex; flex-direction: column; gap: 7px; }
+/* The way out for someone who will not fill in eleven fields from a truck. */
+.intake-alt a {
+  color: var(--blue);
+  font-weight: 600;
+  border-bottom: 1px solid rgba(0,168,255,0.4);
+  transition: border-color 0.25s;
+}
+.intake-alt a:hover { border-bottom-color: var(--blue); }
 
 /* ── success ── */
 .intake-done { text-align: left; padding: clamp(10px, 2vh, 24px) 0; }
@@ -1229,6 +1260,8 @@ body:not(.kbd-nav) .step:hover .step-outcome,
 }
 .footer-row a { color: var(--on-dark-dim); transition: color 0.25s; }
 .footer-row a:hover { color: var(--blue); }
+.footer-row a.footer-text { color: var(--on-dark); font-weight: 600; }
+.footer-row a.footer-text:hover { color: var(--blue); }
 
 /* ═════════════════════════════════════════════
    MOTION

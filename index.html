@@ -88,7 +88,8 @@
           "@type": "ContactPoint",
           "telephone": "+14049106583",
           "contactType": "sales",
-          "availableLanguage": "English"
+          "availableLanguage": "English",
+          "description": "Text message is the preferred and fastest way to reach Newsonic Age. Bookings are taken at https://newsonicage.com/booking.html."
         },
         "areaServed": [
           { "@type": "City", "name": "Kennesaw" },
@@ -234,6 +235,12 @@
     </nav>
 
     <div class="rail-actions">
+      <a href="sms:+14049106583" class="rail-text" aria-label="Text us at (404) 910-6583">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-4-.9L3 21l1.9-4.6A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4z"/>
+        </svg>
+        <span class="rail-text-n">Text (404) 910-6583</span>
+      </a>
       <a href="#intake" class="rail-cta ghost">Start Your File</a>
       <a href="booking.html" class="rail-cta">Schedule a Time</a>
     </div>
@@ -275,7 +282,7 @@
       </a>
 
       <a class="tile reveal d3" data-panel href="#p-backbone">
-        <span class="tile-mark" aria-hidden="true">🧱</span>
+        <span class="tile-mark" aria-hidden="true">🦴</span>
         <h3 class="tile-name">BACK-BONE<span class="tm">™</span></h3>
         <p class="tile-line">Customers, jobs, properties, history, calendar, communication. Everything else plugs into it.</p>
         <div class="tile-outcome">
@@ -305,7 +312,7 @@
       </a>
 
       <a class="tile reveal d4" data-panel href="#p-intel">
-        <span class="tile-mark" aria-hidden="true">📞</span>
+        <span class="tile-mark" aria-hidden="true">🧠</span>
         <h3 class="tile-name">Intelligence</h3>
         <p class="tile-line">The AI phone receptionist is version one. Then triage, estimates, reviews.</p>
         <div class="tile-outcome">
@@ -477,9 +484,15 @@
           <span class="intake-go-label">Open my file</span>
           <span class="intake-go-arrow" aria-hidden="true">&rarr;</span>
         </button>
-        <p class="intake-fine" id="intake-hint">
-          Click any field and the rest opens. Name, business, email, and a number are required.
-        </p>
+        <div class="intake-foot-copy">
+          <p class="intake-fine" id="intake-hint">
+            Click any field and the rest opens. Name, business, email, and a number are required.
+          </p>
+          <p class="intake-fine intake-alt">
+            Rather not type all this out? <a href="sms:+14049106583">Text (404) 910-6583</a> and
+            we will take it from there.
+          </p>
+        </div>
       </div>
 
       <div class="intake-done" id="intake-done" hidden>
@@ -487,7 +500,8 @@
         <h3 class="intake-done-title">Your file is open.</h3>
         <p class="intake-done-line">
           We read every one of these ourselves. You will hear back within one business day — and
-          if you would rather not wait, <a href="booking.html">take a window on the calendar</a>.
+          if you would rather not wait, <a href="booking.html">take a window on the calendar</a>
+          or <a href="sms:+14049106583">text (404) 910-6583</a>.
         </p>
       </div>
     </form>
@@ -1019,8 +1033,9 @@
       </a>
       <div class="footer-tag">An adaptive systems studio.</div>
       <div class="footer-row">
-        The Partner Studio of BECON Industries &nbsp;·&nbsp;
-        <a href="booking.html">Schedule a time</a> &nbsp;·&nbsp; &copy; 2026
+        <a href="sms:+14049106583" class="footer-text">Text (404) 910-6583</a> &nbsp;·&nbsp;
+        <a href="booking.html">Schedule a time</a> &nbsp;·&nbsp;
+        The Partner Studio of BECON Industries &nbsp;·&nbsp; &copy; 2026
       </div>
     </div>
   </footer>
