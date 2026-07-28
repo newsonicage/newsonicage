@@ -239,7 +239,7 @@
       openIntake();
 
       // Whoever fills this out is already serious — we ask for enough to
-      // actually call them back.
+      // actually reach them.
       var required = [
         { el: document.getElementById('in-name'),  ok: function (v) { return v.trim().length > 1; } },
         { el: document.getElementById('in-email'), ok: function (v, el) { return el.checkValidity() && v.trim() !== ''; } },
@@ -265,6 +265,17 @@
       btn.disabled = true;
       if (label) label.textContent = 'Opening…';
 
+      // The subject is what gets read on a phone, so it carries the two things
+      // worth knowing before opening it: who it is and how much of a hurry.
+      var subject = document.getElementById('in-subject');
+      if (subject) {
+        var urgent = intake.querySelector('input[name="urgency"]:checked');
+        subject.value = 'New file — ' +
+          document.getElementById('in-biz').value.trim() +
+          ' (' + document.getElementById('in-name').value.trim() + ')' +
+          (urgent ? ' · ' + urgent.value : '');
+      }
+
       // Netlify Forms accepts a urlencoded POST to the page itself.
       var data = new URLSearchParams(new FormData(intake)).toString();
 
@@ -279,11 +290,27 @@
         done.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
       }
 
+      // Never claim the file is open unless it actually is. fetch only rejects on
+      // network failure, so a 404 or 500 resolves — without the res.ok check the
+      // form thanks someone whose lead was just dropped.
+      function fail() {
+        btn.disabled = false;
+        if (label) label.textContent = 'Open my file';
+        var hint = document.getElementById('intake-hint');
+        if (hint) {
+          hint.textContent = 'That did not go through. Try again, or text (404) 910-6583 ' +
+            'and we will pick it up from there.';
+          hint.classList.add('intake-failed');
+        }
+      }
+
       fetch('/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: data
-      }).then(finish).catch(finish);
+      })
+        .then(function (res) { if (res.ok) { finish(); } else { fail(); } })
+        .catch(fail);
     });
   }
 

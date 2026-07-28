@@ -803,6 +803,7 @@ select.fld-i option { background: var(--ink900); color: var(--on-dark); }
 .intake-go-arrow { transition: transform 0.3s var(--ease); }
 .intake-go:hover .intake-go-arrow { transform: translateX(5px); }
 .intake-fine { font-size: 12.5px; color: var(--on-dark-faint); line-height: 1.5; max-width: 46ch; }
+.intake-fine.intake-failed { color: var(--warn); font-weight: 600; }
 .intake-foot-copy { display: flex; flex-direction: column; gap: 7px; }
 /* The way out for someone who will not fill in eleven fields from a truck. */
 .intake-alt a {
