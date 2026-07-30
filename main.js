@@ -298,7 +298,7 @@
         if (label) label.textContent = 'Open my file';
         var hint = document.getElementById('intake-hint');
         if (hint) {
-          hint.textContent = 'That did not go through. Try again, or text (404) 910-6583 ' +
+          hint.textContent = 'That did not go through. Try again, or call (678) 903-1255 ' +
             'and we will pick it up from there.';
           hint.classList.add('intake-failed');
         }

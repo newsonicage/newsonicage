@@ -222,11 +222,9 @@ strong { font-weight: 700; color: var(--ink); }
 
 .rail-actions { display: flex; align-items: center; gap: 10px; }
 
-/* Text, never call. The product is the removal of interruption — the studio
-   selling it does not open with a phone call. Deliberately subordinate to the
-   two real CTAs: it is the escape hatch for someone who will not fill a form,
-   not a third thing competing with them. Collapses to the icon when tight. */
-.rail-text {
+/* Subordinate to the two real CTAs — the escape hatch for someone who will not
+   fill a form. Collapses to the icon when tight. */
+.rail-call {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -240,9 +238,9 @@ strong { font-weight: 700; color: var(--ink); }
   color: var(--on-dark-dim);
   transition: color 0.25s;
 }
-.rail-text:hover { color: var(--blue); }
-.rail-text svg { width: 15px; height: 15px; flex: none; }
-@media (max-width: 980px) { .rail-text-n { display: none; } }
+.rail-call:hover { color: var(--blue); }
+.rail-call svg { width: 15px; height: 15px; flex: none; }
+@media (max-width: 980px) { .rail-call-n { display: none; } }
 .rail-cta.ghost {
   background: var(--paper);
   color: var(--ink);
@@ -1261,8 +1259,8 @@ body:not(.kbd-nav) .step:hover .step-outcome,
 }
 .footer-row a { color: var(--on-dark-dim); transition: color 0.25s; }
 .footer-row a:hover { color: var(--blue); }
-.footer-row a.footer-text { color: var(--on-dark); font-weight: 600; }
-.footer-row a.footer-text:hover { color: var(--blue); }
+.footer-row a.footer-call { color: var(--on-dark); font-weight: 600; }
+.footer-row a.footer-call:hover { color: var(--blue); }
 
 /* ═════════════════════════════════════════════
    MOTION
