@@ -170,7 +170,82 @@
     });
   });
 
-  /* ─── 3b · RAIL — mark the screen you're reading ─────────── */
+  /* ─── 3b · PROOF TRACK ───────────────────────────────────── */
+  /* The client row scrolls sideways so the list can grow without the page
+     growing. Trackpads and touch already do this; the strip underneath is
+     for a mouse, and it disappears when there is nothing to scroll to.
+     The wheel is left alone — hijacking it breaks the page scroll. */
+
+  var track = document.getElementById('proof-track');
+
+  if (track) {
+    var controls = document.getElementById('proof-controls');
+    var fill     = document.getElementById('proof-bar-fill');
+    var count    = document.getElementById('proof-count');
+    var prev     = document.getElementById('proof-prev');
+    var next     = document.getElementById('proof-next');
+    var cards    = Array.prototype.slice.call(track.children);
+    var bar      = fill.parentNode;
+
+    function step() {
+      if (cards.length < 2) return track.clientWidth;
+      return cards[1].offsetLeft - cards[0].offsetLeft;
+    }
+
+    function paint() {
+      var max = track.scrollWidth - track.clientWidth;
+
+      // Everything fits — there is nothing to say.
+      if (max < 2) {
+        controls.hidden = true;
+        return;
+      }
+      controls.hidden = false;
+
+      var left     = track.scrollLeft;
+      var progress = Math.min(1, Math.max(0, left / max));
+      var barW     = bar.clientWidth;
+      var thumbW   = Math.max(32, barW * (track.clientWidth / track.scrollWidth));
+
+      fill.style.width     = thumbW + 'px';
+      fill.style.transform = 'translateX(' + (progress * (barW - thumbW)) + 'px)';
+
+      // The leading card, so the number matches whatever is under the eye.
+      // At the far end the last card is the one you have arrived at, even
+      // though a whole screen of cards starts to its left.
+      var lead = 0;
+      if (left > max - 2) {
+        lead = cards.length - 1;
+      } else {
+        for (var i = 0; i < cards.length; i++) {
+          if (cards[i].offsetLeft - cards[0].offsetLeft >= left - 8) { lead = i; break; }
+        }
+      }
+      count.innerHTML = '<b>' + ('0' + (lead + 1)).slice(-2) + '</b> / ' +
+                        ('0' + cards.length).slice(-2);
+
+      prev.disabled = left < 2;
+      next.disabled = left > max - 2;
+    }
+
+    function nudge(dir) {
+      track.scrollBy({
+        left: dir * step(),
+        behavior: reduceMotion ? 'auto' : 'smooth'
+      });
+    }
+
+    prev.addEventListener('click', function () { nudge(-1); });
+    next.addEventListener('click', function () { nudge(1); });
+    track.addEventListener('scroll', paint, { passive: true });
+    window.addEventListener('resize', paint);
+
+    // Tab and the arrow keys already scroll a focused card into view — the
+    // browser walks the scrollable ancestor. Nothing to add there.
+    paint();
+  }
+
+  /* ─── 3c · RAIL — mark the screen you're reading ─────────── */
 
   var railLinks = {};
   document.querySelectorAll('.rail-nav a').forEach(function (a) {

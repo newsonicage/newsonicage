@@ -836,26 +836,49 @@ select.fld-i option { background: var(--ink900); color: var(--on-dark); }
    PROOF
    ═════════════════════════════════════════════ */
 
-/* Four equal panels. A stranger scans for a name they recognize, then
-   clicks one to check we are real. Name, category, domain — nothing else. */
-.proof {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+/* One row, however many clients there are. A stranger scans sideways for a
+   name they recognize, then clicks one to check we are real. Name, category,
+   domain — nothing else. The list grows without the page getting longer. */
+.proof-track {
+  display: flex;
   gap: clamp(10px, 1.2vw, 18px);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  /* Run the track past the section gutter so the next card is visibly cut
+     off by the edge — that sliver is the only thing telling anyone to scroll. */
+  margin-inline: calc(var(--gutter) * -1);
+  padding-inline: var(--gutter);
+  scroll-padding-inline-start: var(--gutter);
+  /* overflow-x also clips vertically, so the hover lift needs its own room —
+     the card rises 6px and --lift throws a 24px blur 6px below it. */
+  padding-block: 12px 34px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-@media (max-width: 1100px) { .proof { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 560px)  { .proof { grid-template-columns: 1fr; } }
+.proof-track::-webkit-scrollbar { display: none; }
+.proof-track:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: -2px;
+  border-radius: 20px;
+}
 
 .proof-card {
+  flex: 0 0 clamp(238px, 23vw, 330px);
+  scroll-snap-align: start;
   display: flex;
   flex-direction: column;
   background: var(--paper);
   border: 1px solid var(--hairline);
   border-radius: 20px;
-  padding: clamp(24px, 2.6vw, 40px);
-  min-height: clamp(260px, 32vh, 380px);
+  padding: clamp(24px, 2.2vw, 34px);
+  min-height: clamp(228px, 26vh, 300px);
   transition: transform 0.4s var(--ease), background 0.35s,
               border-color 0.35s, box-shadow 0.4s var(--ease);
+}
+/* On a phone a card sits just short of full width, for the same reason. */
+@media (max-width: 560px) {
+  .proof-card { flex-basis: min(78vw, 300px); }
 }
 body:not(.kbd-nav) .proof-card:hover,
 .proof-card:focus-visible,
@@ -905,6 +928,70 @@ body:not(.kbd-nav) .proof-card:hover,
   text-transform: uppercase;
   font-size: 10.5px;
 }
+
+/* The strip under the track: how far along you are, and a way to move
+   without a trackpad. It is hidden entirely when nothing overflows. */
+.proof-controls {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 2vw, 28px);
+  margin-top: 22px;
+}
+.proof-controls[hidden] { display: none; }
+
+.proof-bar {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  background: var(--hairline);
+  overflow: hidden;
+}
+.proof-bar-fill {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 30%;
+  background: var(--blue);
+  transform-origin: left center;
+  transition: transform 0.18s linear;
+}
+
+.proof-count {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+.proof-count b { color: var(--ink); font-weight: 700; }
+
+.proof-nav { display: flex; gap: 8px; }
+.proof-nav button {
+  width: 44px; height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--hairline);
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink);
+  transition: background 0.3s, border-color 0.3s, color 0.3s, opacity 0.3s;
+}
+.proof-nav button svg { width: 17px; height: 17px; }
+body:not(.kbd-nav) .proof-nav button:hover,
+.proof-nav button:focus-visible {
+  border-color: var(--blue);
+  color: var(--blue);
+  background: var(--tint);
+  outline: none;
+}
+.proof-nav button:disabled {
+  opacity: 0.28;
+  border-color: var(--hairline);
+  color: var(--ink-faint);
+  background: var(--paper);
+}
+@media (max-width: 620px) { .proof-nav { display: none; } }
 
 /* ═════════════════════════════════════════════
    TWO-PANEL ARGUMENT (specific ⇄ pattern)

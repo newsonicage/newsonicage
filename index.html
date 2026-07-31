@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=37961551f6">
+  <link rel="stylesheet" href="style.css?v=0a18f187b3">
 
   <script type="application/ld+json">
   {
@@ -528,34 +528,62 @@
       <p class="screen-sub reveal d2">Go look at them.</p>
     </div>
 
-    <div class="proof">
+    <!-- One row, scrolled sideways. The reveal sits on the wrapper, not the
+         cards — a card parked off the right edge never intersects, and would
+         stay invisible for as long as nobody scrolled to it. -->
+    <div class="proof reveal d3">
+      <!-- Focusable on purpose: a scroll region a mouse can reach has to be
+           reachable by a keyboard too. Arrow keys then scroll it natively. -->
+      <div class="proof-track" id="proof-track" role="group"
+           aria-label="Clients, scroll sideways for more" tabindex="0">
 
-      <a class="proof-card reveal" data-panel
-         href="https://executivebranchtree.com" target="_blank" rel="noopener">
-        <p class="eyebrow">NORTH GEORGIA</p>
-        <h3 class="proof-name">Executive Branch<br>Tree &amp; Landscape</h3>
-        <p class="proof-go"><span>executivebranchtree.com</span><span class="arrow">&rarr;</span></p>
-      </a>
+        <a class="proof-card" data-panel
+           href="https://executivebranchtree.com" target="_blank" rel="noopener">
+          <p class="eyebrow">NORTH GEORGIA</p>
+          <h3 class="proof-name">Executive Branch<br>Tree &amp; Landscape</h3>
+          <p class="proof-go"><span>executivebranchtree.com</span><span class="arrow">&rarr;</span></p>
+        </a>
 
-      <a class="proof-card reveal d1" data-panel
-         href="https://duncanstree.netlify.app" target="_blank" rel="noopener">
-        <p class="eyebrow">WOODSTOCK, GA</p>
-        <h3 class="proof-name">Duncan's<br>Tree Service</h3>
-        <p class="proof-go"><span>duncanstreeservice.com</span><span class="arrow">&rarr;</span></p>
-      </a>
+        <a class="proof-card" data-panel
+           href="https://duncanstree.netlify.app" target="_blank" rel="noopener">
+          <p class="eyebrow">WOODSTOCK, GA</p>
+          <h3 class="proof-name">Duncan's<br>Tree Service</h3>
+          <p class="proof-go"><span>duncanstreeservice.com</span><span class="arrow">&rarr;</span></p>
+        </a>
 
-      <div class="proof-card static reveal d2">
-        <p class="eyebrow faint">INDEPENDENT AGENT</p>
-        <h3 class="proof-name">Allstate</h3>
-        <p class="proof-go quiet"><span>Individual practice</span></p>
+        <a class="proof-card" data-panel
+           href="https://ingroundflooring.com" target="_blank" rel="noopener">
+          <p class="eyebrow">WOODSTOCK, GA</p>
+          <h3 class="proof-name">Inground<br>Flooring</h3>
+          <p class="proof-go"><span>ingroundflooring.com</span><span class="arrow">&rarr;</span></p>
+        </a>
+
+        <div class="proof-card static">
+          <p class="eyebrow faint">INDEPENDENT AGENT</p>
+          <h3 class="proof-name">Allstate</h3>
+          <p class="proof-go quiet"><span>Individual practice</span></p>
+        </div>
+
+        <div class="proof-card static">
+          <p class="eyebrow faint">INDEPENDENT BROKER</p>
+          <h3 class="proof-name">RE/MAX</h3>
+          <p class="proof-go quiet"><span>Individual practice</span></p>
+        </div>
+
       </div>
 
-      <div class="proof-card static reveal d3">
-        <p class="eyebrow faint">INDEPENDENT BROKER</p>
-        <h3 class="proof-name">RE/MAX</h3>
-        <p class="proof-go quiet"><span>Individual practice</span></p>
+      <div class="proof-controls" id="proof-controls" hidden>
+        <p class="proof-count" id="proof-count"></p>
+        <div class="proof-bar"><span class="proof-bar-fill" id="proof-bar-fill"></span></div>
+        <div class="proof-nav">
+          <button type="button" id="proof-prev" aria-label="Previous clients" aria-controls="proof-track">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15,18 9,12 15,6"/></svg>
+          </button>
+          <button type="button" id="proof-next" aria-label="More clients" aria-controls="proof-track">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9,18 15,12 9,6"/></svg>
+          </button>
+        </div>
       </div>
-
     </div>
   </section>
 
@@ -1048,6 +1076,6 @@
     </div>
   </footer>
 
-  <script src="main.js?v=34693f41da"></script>
+  <script src="main.js?v=73b6caeefc"></script>
 </body>
 </html>
