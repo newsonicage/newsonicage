@@ -19,9 +19,23 @@
  *   - Send through the Messaging Service, never a bare `From` number. The campaign
  *     is bound to the service; a raw From can bypass it and get filtered.
  *
- * Requires three Netlify environment variables. Until they are set this function
+ * AUTH — this sends with a scoped API key, NOT the account auth token.
+ *
+ * The auth token grants full control of the Twilio account and cannot be revoked
+ * without rotating it everywhere. An API key is scoped to what it needs and can be
+ * deleted on its own. Two things about API key auth are easy to get wrong:
+ *
+ *   - The key SID and secret go in the Authorization header. The ACCOUNT SID still
+ *     goes in the request URL path — an API key does not replace it there.
+ *   - A 401 with code 20003 means the key is missing a permission (or was deleted),
+ *     not that the message was bad.
+ *
+ * Requires four Netlify environment variables. Until they are set this function
  * runs, logs, and does nothing:
- *   TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_MESSAGING_SERVICE_SID
+ *   TWILIO_ACCOUNT_SID          AC… — identifies the account, used in the URL
+ *   TWILIO_API_KEY_SID          SK… — basic auth username
+ *   TWILIO_API_KEY_SECRET       the secret shown ONCE when the key is created
+ *   TWILIO_MESSAGING_SERVICE_SID
  */
 
 const CALLBACK = '(678) 903-1255';
@@ -87,11 +101,21 @@ exports.handler = async (event) => {
   }
 
   const sid = process.env.TWILIO_ACCOUNT_SID;
-  const token = process.env.TWILIO_AUTH_TOKEN;
+  const keySid = process.env.TWILIO_API_KEY_SID;
+  const keySecret = process.env.TWILIO_API_KEY_SECRET;
   const service = process.env.TWILIO_MESSAGING_SERVICE_SID;
-  if (!sid || !token || !service) {
-    console.error('[sms] skip: Twilio env vars are not set on this site ' +
-      '(need TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_MESSAGING_SERVICE_SID)');
+
+  // Name the missing ones. "env vars are not set" sends you to the dashboard to
+  // compare four values by eye; this tells you which one to look at.
+  const missing = [
+    ['TWILIO_ACCOUNT_SID', sid],
+    ['TWILIO_API_KEY_SID', keySid],
+    ['TWILIO_API_KEY_SECRET', keySecret],
+    ['TWILIO_MESSAGING_SERVICE_SID', service]
+  ].filter(function (pair) { return !pair[1]; }).map(function (pair) { return pair[0]; });
+
+  if (missing.length) {
+    console.error('[sms] skip: missing Twilio env vars on this site: ' + missing.join(', '));
     return ok;
   }
 
@@ -107,7 +131,7 @@ exports.handler = async (event) => {
       {
         method: 'POST',
         headers: {
-          Authorization: 'Basic ' + Buffer.from(sid + ':' + token).toString('base64'),
+          Authorization: 'Basic ' + Buffer.from(keySid + ':' + keySecret).toString('base64'),
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: form
@@ -116,10 +140,13 @@ exports.handler = async (event) => {
     const out = await res.json().catch(() => ({}));
 
     if (res.ok) {
+      // "queued" is Twilio accepting the request, NOT proof of delivery. A carrier
+      // block (A2P error 30034) lands later on the message record, which this
+      // function never sees. Check Monitor → Logs → Messaging to confirm delivery.
       console.log('[sms] queued ' + out.sid + ' to ' + to);
     } else {
-      // Expected while the A2P campaign is still In review — carriers reject
-      // traffic from an unregistered campaign. Not a bug in this function.
+      // 401 code=20003 → the API key lacks the permission to create messages, or
+      // was deleted. That is a credentials problem, not a message problem.
       console.error('[sms] Twilio rejected: ' + res.status + ' code=' + out.code +
         ' ' + (out.message || ''));
     }
