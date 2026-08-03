@@ -3,6 +3,11 @@
 /home.html   /home   301
 /home        /home.html  200
 
+# Legal pages. Linked from the A2P 10DLC campaign registration, so these
+# URLs are read by carrier reviewers — do not rename them.
+/privacy     /privacy.html  200
+/terms       /terms.html    200
+
 # EBTL app — public legal/support pages (App Store + TestFlight).
 # These are standalone files, NOT the password-gated /ebtl portal.
 /ebtl/privacy       /ebtl/privacy.html       200
