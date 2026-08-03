@@ -771,6 +771,32 @@ select.fld-i option { background: var(--ink900); color: var(--on-dark); }
 }
 .pick input:focus-visible + span { box-shadow: 0 0 0 3px rgba(0,168,255,0.3); }
 
+/* ── sms consent ── */
+.intake-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: clamp(18px, 2.2vh, 26px);
+  max-width: 62ch;
+  cursor: pointer;
+}
+.intake-consent input {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: var(--blue);
+  cursor: pointer;
+}
+.intake-consent span {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--on-dark-faint);
+}
+.intake-consent a { color: var(--blue); border-bottom: 1px solid transparent; }
+.intake-consent a:hover { border-bottom-color: var(--blue); }
+.intake-consent input:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
 /* ── submit ── */
 .intake-foot {
   display: flex;

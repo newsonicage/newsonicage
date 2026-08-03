@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=0a18f187b3">
+  <link rel="stylesheet" href="style.css?v=9728f598c1">
 
   <script type="application/ld+json">
   {
@@ -487,6 +487,21 @@
         </div>
       </div>
 
+      <!-- SMS consent. Deliberately NOT required — making consent a condition of
+           submitting the form is a TCPA violation, and the A2P campaign is registered
+           on the promise that this box is optional and unchecked by default. -->
+      <label class="intake-consent">
+        <input type="checkbox" name="sms_consent" value="Yes">
+        <span>
+          Text me about my request. By checking this box you agree to receive text messages
+          from Newsonic Age (BECON Industries LLC) at the number above. Typically fewer than
+          5 messages per conversation. Consent is not a condition of any purchase. Message and
+          data rates may apply. Reply STOP to opt out, HELP for help. See our
+          <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a> and
+          <a href="/terms" target="_blank" rel="noopener">Terms</a>.
+        </span>
+      </label>
+
       <div class="intake-foot">
         <button type="submit" class="intake-go">
           <span class="intake-go-label">Open my file</span>
@@ -497,7 +512,8 @@
             Click any field and the rest opens. Name, business, email, and a number are required.
           </p>
           <p class="intake-fine intake-alt">
-            Rather not type all this out? <a href="tel:+16789031255">Call (678) 903-1255</a> and
+            Rather not type all this out?
+            <a href="tel:+16789031255">Call or text (678) 903-1255</a> and
             we will take it from there.
           </p>
         </div>
@@ -509,7 +525,7 @@
         <p class="intake-done-line">
           We read every one of these ourselves. You will hear back within one business day — and
           if you would rather not wait, <a href="booking.html">take a window on the calendar</a>
-          or <a href="tel:+16789031255">call (678) 903-1255</a>.
+          or <a href="tel:+16789031255">call or text (678) 903-1255</a>.
         </p>
       </div>
     </form>
@@ -1069,8 +1085,10 @@
       </a>
       <div class="footer-tag">An adaptive systems studio.</div>
       <div class="footer-row">
-        <a href="tel:+16789031255" class="footer-call">Call (678) 903-1255</a> &nbsp;·&nbsp;
+        <a href="tel:+16789031255" class="footer-call">Call or text (678) 903-1255</a> &nbsp;·&nbsp;
         <a href="booking.html">Schedule a time</a> &nbsp;·&nbsp;
+        <a href="/privacy">Privacy</a> &nbsp;·&nbsp;
+        <a href="/terms">Terms</a> &nbsp;·&nbsp;
         The Partner Studio of BECON Industries &nbsp;·&nbsp; &copy; 2026
       </div>
     </div>
