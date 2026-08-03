@@ -1,3 +1,9 @@
+# The publish directory is the repo root, so netlify/functions/*.js would
+# otherwise be served as static source. It holds no secrets — only env var
+# names — but server-side code has no business being downloadable.
+# The trailing ! forces the rule; without it an existing file wins.
+/netlify/*   /index.html   404!
+
 # Clean URLs — remove .html extensions
 /index.html  /       301
 /home.html   /home   301
