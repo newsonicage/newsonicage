@@ -357,7 +357,7 @@
       function finish() {
         intake.classList.remove('open');
         Array.prototype.forEach.call(
-          intake.querySelectorAll('.intake-head, .intake-base, .intake-more, .intake-foot'),
+          intake.querySelectorAll('.intake-head, .intake-base, .intake-more, .intake-foot, .intake-consent'),
           function (el) { el.hidden = true; }
         );
         var done = document.getElementById('intake-done');
