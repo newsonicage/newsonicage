@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Schedule a Time — Newsonic Age</title>
-  <meta name="description" content="Pick a window on the calendar with Newsonic Age. Thirty minutes to talk through how work moves through your business today and which implementation would change the most, soonest.">
+  <meta name="description" content="Request fifteen minutes on the phone with Newsonic Age, or an in-person meeting at your place of business. Both are requests; the in-person meeting is reviewed before we confirm it.">
   <link rel="canonical" href="https://newsonicage.com/booking.html">
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Newsonic Age">
   <meta property="og:url" content="https://newsonicage.com/booking.html">
   <meta property="og:title" content="Schedule a Time — Newsonic Age">
-  <meta property="og:description" content="Pick a window on the calendar. Thirty minutes, no preparation needed.">
+  <meta property="og:description" content="Fifteen minutes on the phone, or an in-person meeting at your place of business.">
   <meta property="og:image" content="https://newsonicage.com/assets/nsa-logo.png">
 
   <link rel="icon" type="image/png" href="assets/nsa-logo.png">
@@ -25,7 +25,7 @@
         "@id": "https://newsonicage.com/booking.html",
         "url": "https://newsonicage.com/booking.html",
         "name": "Schedule a Time — Newsonic Age",
-        "description": "Book a consultation or session window with Newsonic Age.",
+        "description": "Request a fifteen-minute phone or video call, or an in-person meeting at your place of business, with Newsonic Age.",
         "isPartOf": { "@id": "https://newsonicage.com/#website" },
         "about": { "@id": "https://newsonicage.com/#organization" }
       },
@@ -458,19 +458,24 @@
       color: var(--blue);
     }
 
-    /* ── REQUEST PANEL ── */
-    #request-panel {
+    /* ── COLLAPSIBLE PANELS ──
+       These used to animate max-height against a fixed 600px. The in-person
+       questions are several times taller than that, and the failure is silent:
+       the panel opens, the bottom of the form is simply not there. Grid
+       template rows animate to the content's real height with no magic number. */
+    .panel {
       margin-top: 2rem;
       background: var(--card);
       border: 1px solid var(--border-md);
       border-radius: var(--radius);
-      overflow: hidden;
-      transition: var(--transition);
-      max-height: 0;
+      display: grid;
+      grid-template-rows: 0fr;
       opacity: 0;
+      transition: grid-template-rows var(--transition), opacity var(--transition);
     }
-    #request-panel.open {
-      max-height: 600px;
+    .panel > .panel-clip { overflow: hidden; min-height: 0; }
+    .panel.open {
+      grid-template-rows: 1fr;
       opacity: 1;
     }
     .panel-inner {
@@ -510,6 +515,10 @@
     .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
     .form-group.full { grid-column: 1 / -1; }
 
+    /* State and ZIP are short and belong side by side at every width. The mobile
+       rule below collapses .form-row to one column; this pair opts out. */
+    .form-row.tight { grid-template-columns: 1fr 1fr; }
+
     label {
       font-family: var(--mono);
       font-size: 0.6rem;
@@ -538,6 +547,164 @@
     }
     input::placeholder, textarea::placeholder { color: var(--faint); }
     textarea { resize: none; height: 80px; }
+
+    /* ── FIELD GROUPINGS ── */
+    .field-block { margin-bottom: 1.5rem; }
+    .field-block:last-of-type { margin-bottom: 0; }
+    .block-label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+      display: block;
+    }
+    .block-label .required { color: var(--blue); margin-left: 2px; }
+    .block-hint {
+      font-size: 0.75rem;
+      color: var(--faint);
+      margin: -0.35rem 0 0.7rem;
+      font-weight: 300;
+    }
+
+    /* ── CHIPS + PICKS (checkbox / radio grids) ── */
+    .chip-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 0.5rem;
+    }
+    .pick-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+    /* Chips and picks are <label>s, so the generic `label` rule above reaches them.
+       The mono/caps treatment is wanted here — stated outright rather than inherited,
+       so editing the generic rule cannot silently restyle every chip on the page. */
+    .chip, .pick {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid var(--border-md);
+      border-radius: 4px;
+      background: rgba(255,255,255,0.02);
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dim);
+      cursor: pointer;
+      transition: var(--transition);
+      line-height: 1.4;
+    }
+    .pick { padding: 0.55rem 0.9rem; }
+    .chip:hover, .pick:hover { border-color: var(--blue-mid); color: var(--white); }
+
+    /* The native control is the state; the box next to it is the picture of it.
+       Kept in the layout rather than display:none so it stays keyboard-reachable. */
+    .chip input, .pick input {
+      position: absolute;
+      opacity: 0;
+      width: 0; height: 0;
+      margin: 0;
+    }
+    .chip .box, .pick .box {
+      flex: none;
+      width: 15px; height: 15px;
+      border: 1px solid var(--border-md);
+      border-radius: 3px;
+      transition: var(--transition);
+      position: relative;
+    }
+    .pick .box { border-radius: 50%; }
+    .chip input:checked ~ .box, .pick input:checked ~ .box {
+      background: var(--blue);
+      border-color: var(--blue);
+      box-shadow: var(--blue-glow);
+    }
+    .chip:has(input:checked), .pick:has(input:checked) {
+      border-color: var(--blue);
+      background: rgba(0,168,255,0.07);
+      color: var(--white);
+    }
+    .chip:has(input:focus-visible), .pick:has(input:focus-visible) {
+      outline: 2px solid var(--blue);
+      outline-offset: 3px;
+    }
+
+    /* ── SERVICE-AREA NOTICE ── */
+    #area-notice {
+      display: none;
+      gap: 0.6rem;
+      align-items: flex-start;
+      margin-top: 0.75rem;
+      padding: 0.7rem 0.85rem;
+      border-radius: 4px;
+      background: rgba(192,57,43,0.1);
+      border: 1px solid var(--red-border);
+      font-size: 0.78rem;
+      color: #e07a6d;
+      line-height: 1.5;
+    }
+    #area-notice.show { display: flex; }
+
+    /* ── CONSENT CHECKBOX ──
+       Never `required`. Consent as a condition of submitting is a TCPA violation,
+       and the A2P campaign is registered on the promise that this box is optional
+       and unchecked by default. See netlify/functions/submission-created.js. */
+    .consent {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      margin-top: 1rem;
+      font-size: 0.76rem;
+      color: var(--dim);
+      line-height: 1.5;
+      cursor: pointer;
+    }
+    .consent input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .consent .box {
+      flex: none;
+      width: 15px; height: 15px;
+      margin-top: 1px;
+      border: 1px solid var(--border-md);
+      border-radius: 3px;
+      transition: var(--transition);
+    }
+    .consent input:checked ~ .box {
+      background: var(--blue);
+      border-color: var(--blue);
+      box-shadow: var(--blue-glow);
+    }
+    .consent input:focus-visible ~ .box { outline: 2px solid var(--blue); outline-offset: 3px; }
+
+    /* ── LOCKED CALENDAR ──
+       In-person requests answer the questions before they get the calendar.
+       Dimmed rather than hidden so the availability is visibly there to be earned. */
+    #window-section { position: relative; }
+    #window-section.locked .days-nav-row,
+    #window-section.locked .days-grid,
+    #window-section.locked .skeleton-grid {
+      opacity: 0.25;
+      filter: grayscale(1);
+      pointer-events: none;
+      user-select: none;
+    }
+    #lock-note {
+      display: none;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      background: var(--blue-dim);
+      border: 1px solid rgba(0,168,255,0.25);
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
+      color: var(--blue);
+      line-height: 1.5;
+    }
+    #window-section.locked #lock-note { display: flex; }
 
     /* ── CTA BUTTON ── */
     .btn-request {
@@ -825,7 +992,7 @@
       </a>
       <span class="header-logo-text">/ Booking</span>
     </div>
-    <div class="header-right">Exclusive Sessions</div>
+    <div class="header-right">By Request</div>
   </header>
 
   <!-- ── PAGE ── -->
@@ -833,9 +1000,9 @@
 
     <!-- Hero -->
     <div class="fade-in" id="intro">
-      <p class="page-eyebrow">Newsonic Age &nbsp;/ &nbsp;Session Booking</p>
+      <p class="page-eyebrow">Newsonic Age &nbsp;/ &nbsp;Request a Meeting</p>
       <h1 class="page-title">Select Your <span>Window.</span></h1>
-      <p class="page-sub">Availability is limited and controlled. Choose your session type, pick a window, and send your request. We'll confirm within 24–48 hours.</p>
+      <p class="page-sub">Two ways to talk. Both are requests — we confirm within one business day. Coming out to your business takes more from both of us, so that one asks more of you first.</p>
     </div>
 
     <!-- Status bar (errors / info) -->
@@ -850,13 +1017,13 @@
 
     <!-- ── STEP 1: Booking Type ── -->
     <div class="fade-in" id="type-section">
-      <p class="section-label">01 — Session Type</p>
+      <p class="section-label" id="label-type">01 — What Are You Requesting</p>
       <div class="type-grid">
 
-        <div class="type-card" data-type="SHOOT" onclick="selectType('SHOOT')" role="button" tabindex="0">
+        <div class="type-card" data-type="CALL" onclick="selectType('CALL')" role="button" tabindex="0">
           <div class="type-number">01 —</div>
-          <div class="type-name">Shoot</div>
-          <div class="type-desc">Full-day creative session. Blocks the entire day (8AM–10PM) to ensure complete focus on your project.</div>
+          <div class="type-name">Phone Call</div>
+          <div class="type-desc">Fifteen minutes, inside the window you pick. Video instead if you'd rather. Bring nothing — we'll ask the questions.</div>
           <div class="type-check">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#04070d" stroke-width="3" stroke-linecap="round">
               <polyline points="20 6 9 17 4 12"/>
@@ -864,10 +1031,10 @@
           </div>
         </div>
 
-        <div class="type-card" data-type="CONSULTATION" onclick="selectType('CONSULTATION')" role="button" tabindex="0">
+        <div class="type-card" data-type="IN_PERSON" onclick="selectType('IN_PERSON')" role="button" tabindex="0">
           <div class="type-number">02 —</div>
-          <div class="type-name">Consultation</div>
-          <div class="type-desc">A focused 15-minute discovery call within your chosen time window. Ideal for new projects and alignment.</div>
+          <div class="type-name">In-Person</div>
+          <div class="type-desc">Forty-five minutes at your place of business, where the work actually happens. Reviewed before we confirm — we'll ask about the business first.</div>
           <div class="type-check">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#04070d" stroke-width="3" stroke-linecap="round">
               <polyline points="20 6 9 17 4 12"/>
@@ -878,11 +1045,148 @@
       </div>
     </div>
 
+    <!-- ── STEP 2 (IN-PERSON ONLY): Qualification ── -->
+    <div class="panel" id="qualify-panel">
+      <div class="panel-clip">
+      <div class="panel-inner">
+        <p class="section-label">02 — About Your Business</p>
+        <p class="block-hint" style="margin-top:-0.6rem;margin-bottom:1.5rem;">
+          We drive out to one business at a time. These answers decide what we'd walk in
+          already knowing — and whether an in-person meeting is the right first step at all.
+        </p>
+
+        <form id="qualify-form" onsubmit="return false;">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="q-business">Business name <span class="required">*</span></label>
+              <input type="text" id="q-business" placeholder="The name on the truck" autocomplete="organization" required>
+            </div>
+            <div class="form-group">
+              <label for="q-website">Website <span style="color:var(--faint)">(if you have one)</span></label>
+              <input type="text" id="q-website" placeholder="yourbusiness.com" autocomplete="url">
+            </div>
+          </div>
+
+          <div class="field-block" style="margin-top:1.25rem;">
+            <span class="block-label">Where we'd be meeting <span class="required">*</span></span>
+            <div class="form-row">
+              <div class="form-group full">
+                <input type="text" id="q-street" placeholder="Street address" autocomplete="street-address" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <input type="text" id="q-city" placeholder="City" autocomplete="address-level2" required>
+              </div>
+              <div class="form-group">
+                <div class="form-row tight" style="margin-bottom:0;">
+                  <input type="text" id="q-state" placeholder="State" autocomplete="address-level1" maxlength="24" required>
+                  <input type="text" id="q-zip" placeholder="ZIP" autocomplete="postal-code" inputmode="numeric" maxlength="10" required>
+                </div>
+              </div>
+            </div>
+            <div id="area-notice">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none;margin-top:2px;">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/>
+              </svg>
+              <span>That's outside the area we normally drive. Send the request anyway — we'll
+                    look at it and work out the travel if it makes sense for both of us.</span>
+            </div>
+          </div>
+
+          <div class="form-row" style="margin-top:1.25rem;">
+            <div class="form-group">
+              <label for="q-team">How many people work there <span class="required">*</span></label>
+              <select id="q-team" required>
+                <option value="" disabled selected>— select —</option>
+                <option>Just me</option>
+                <option>2 – 5</option>
+                <option>6 – 15</option>
+                <option>16 – 40</option>
+                <option>40+</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="q-revenue">Annual revenue <span class="required">*</span></label>
+              <select id="q-revenue" required>
+                <option value="" disabled selected>— select a range —</option>
+                <option>Under $500K</option>
+                <option>$500K – $1M</option>
+                <option>$1M – $3M</option>
+                <option>$3M – $8M</option>
+                <option>$8M – $15M</option>
+                <option>$15M+</option>
+                <option>Rather discuss it</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-block" style="margin-top:1.5rem;">
+            <span class="block-label">What's getting in the way <span class="required">*</span></span>
+            <p class="block-hint">Pick everything that's true.</p>
+            <div class="chip-grid" id="q-bottlenecks">
+              <label class="chip"><input type="checkbox" name="bottleneck" value="Hard to find or hard to trust"><span class="box"></span><span>Hard to find online</span></label>
+              <label class="chip"><input type="checkbox" name="bottleneck" value="Nothing lives in one place"><span class="box"></span><span>Nothing lives in one place</span></label>
+              <label class="chip"><input type="checkbox" name="bottleneck" value="Routine work eats the day"><span class="box"></span><span>Routine work eats the day</span></label>
+              <label class="chip"><input type="checkbox" name="bottleneck" value="Crew runs on paper and texts"><span class="box"></span><span>Crew runs on paper and texts</span></label>
+              <label class="chip"><input type="checkbox" name="bottleneck" value="The phone never stops"><span class="box"></span><span>The phone never stops</span></label>
+              <label class="chip"><input type="checkbox" name="bottleneck" value="Not sure yet"><span class="box"></span><span>Not sure yet</span></label>
+            </div>
+          </div>
+
+          <div class="field-block">
+            <span class="block-label">How soon does this need to change <span class="required">*</span></span>
+            <div class="pick-row" id="q-urgency">
+              <label class="pick"><input type="radio" name="urgency" value="Bleeding now"><span class="box"></span><span>Bleeding now</span></label>
+              <label class="pick"><input type="radio" name="urgency" value="Next few weeks"><span class="box"></span><span>Next few weeks</span></label>
+              <label class="pick"><input type="radio" name="urgency" value="This quarter"><span class="box"></span><span>This quarter</span></label>
+              <label class="pick"><input type="radio" name="urgency" value="Mapping it out"><span class="box"></span><span>Mapping it out</span></label>
+            </div>
+          </div>
+
+          <div class="field-block">
+            <span class="block-label">What you're running today</span>
+            <p class="block-hint">Check anything you already have. Blank is a perfectly good answer.</p>
+            <div class="chip-grid" id="q-systems">
+              <label class="chip"><input type="checkbox" name="system" value="CRM"><span class="box"></span><span>A CRM</span></label>
+              <label class="chip"><input type="checkbox" name="system" value="QuickBooks / accounting software"><span class="box"></span><span>QuickBooks or similar</span></label>
+              <label class="chip"><input type="checkbox" name="system" value="Scheduling or dispatch software"><span class="box"></span><span>Scheduling or dispatch software</span></label>
+              <label class="chip"><input type="checkbox" name="system" value="Estimating or quoting software"><span class="box"></span><span>Estimating or quoting software</span></label>
+              <label class="chip"><input type="checkbox" name="system" value="A website someone actively maintains"><span class="box"></span><span>A website someone maintains</span></label>
+              <label class="chip"><input type="checkbox" name="system" value="A mobile app the crew uses"><span class="box"></span><span>An app the crew uses</span></label>
+              <label class="chip"><input type="checkbox" name="system" value="Automated follow-ups or review requests"><span class="box"></span><span>Automated follow-ups or reviews</span></label>
+              <label class="chip"><input type="checkbox" name="system" value="An answering service or receptionist"><span class="box"></span><span>An answering service</span></label>
+              <label class="chip"><input type="checkbox" name="system" value="None of the above"><span class="box"></span><span>None of the above</span></label>
+            </div>
+          </div>
+
+          <div class="field-block">
+            <span class="block-label">Have we spoken before <span class="required">*</span></span>
+            <div class="pick-row" id="q-relationship">
+              <label class="pick"><input type="radio" name="relationship" value="Current client"><span class="box"></span><span>I'm a current client</span></label>
+              <label class="pick"><input type="radio" name="relationship" value="We have spoken already"><span class="box"></span><span>We've spoken already</span></label>
+              <label class="pick"><input type="radio" name="relationship" value="Not yet"><span class="box"></span><span>Not yet</span></label>
+            </div>
+          </div>
+
+        </form>
+      </div>
+      </div>
+    </div>
+
     <div class="divider"></div>
 
     <!-- ── STEP 2: Select Window ── -->
     <div class="fade-in" id="window-section">
-      <p class="section-label">02 — Select Your Window</p>
+      <p class="section-label" id="label-window">02 — Select Your Window</p>
+
+      <div id="lock-note">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none;">
+          <rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+        </svg>
+        <span id="lock-note-text">Answer the questions above and the calendar opens.</span>
+      </div>
 
       <div class="days-nav-row">
         <button class="nav-btn" id="btn-prev" onclick="navigate(-1)" disabled>
@@ -926,14 +1230,15 @@
       <div class="days-grid" id="days-grid" style="display:none;"></div>
     </div>
 
-    <!-- ── STEP 3: Request Panel ── -->
-    <div id="request-panel">
+    <!-- ── FINAL STEP: Request Panel ── -->
+    <div class="panel" id="request-panel">
+      <div class="panel-clip">
       <div class="panel-inner">
-        <p class="section-label">03 — Confirm Request</p>
+        <p class="section-label" id="label-confirm">03 — Confirm Request</p>
 
         <div class="panel-summary" id="panel-summary">
           <div class="summary-item">
-            <div class="summary-label">Session Type</div>
+            <div class="summary-label">Requesting</div>
             <div class="summary-value" id="sum-type">—</div>
           </div>
           <div class="summary-item">
@@ -958,35 +1263,56 @@
             </div>
           </div>
           <div class="form-row">
-            <div class="form-group">
+            <div class="form-group full">
               <label for="input-phone">Phone <span class="required">*</span></label>
               <input type="tel" id="input-phone" placeholder="(555) 000-0000" required autocomplete="tel">
             </div>
-            <div class="form-group">
-              <label for="input-contact">Preferred Contact <span class="required">*</span></label>
-              <select id="input-contact" required>
-                <option value="" disabled selected>— Select method —</option>
-                <option value="PHONE CALL">Phone Call</option>
-                <option value="TEXT">Text</option>
-                <option value="EMAIL">Email</option>
-                <option value="IN-PERSON">In-Person</option>
-              </select>
-            </div>
           </div>
-          <div class="form-row">
-            <div class="form-group full">
-              <label for="input-notes">Project Notes <span style="color:var(--faint)">(optional)</span></label>
-              <textarea id="input-notes" placeholder="Brief description of your project or goals..."></textarea>
+
+          <!-- Call path only -->
+          <div id="call-fields">
+            <div class="field-block" style="margin-top:1.25rem;">
+              <span class="block-label">How should we reach you <span class="required">*</span></span>
+              <div class="pick-row" id="input-format">
+                <label class="pick"><input type="radio" name="format" value="Phone" checked><span class="box"></span><span>Phone</span></label>
+                <label class="pick"><input type="radio" name="format" value="Video"><span class="box"></span><span>Video</span></label>
+                <label class="pick"><input type="radio" name="format" value="Either is fine"><span class="box"></span><span>Either is fine</span></label>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group full">
+                <label for="input-topic">What do you want to talk about <span class="required">*</span></label>
+                <input type="text" id="input-topic" placeholder="One line is plenty.">
+              </div>
             </div>
           </div>
 
+          <!-- In-person path only -->
+          <div id="inperson-fields">
+            <div class="form-row" style="margin-top:1.25rem;">
+              <div class="form-group full">
+                <label for="input-notes">Anything we should know before we drive out <span style="color:var(--faint)">(optional)</span></label>
+                <textarea id="input-notes" placeholder="Gate codes, who else will be there, what you'd want to walk through..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Optional. Never `required` — see the CSS note above this element's rules. -->
+          <label class="consent">
+            <input type="checkbox" id="input-sms-consent">
+            <span class="box"></span>
+            <span>Text me about this request at the number above. Message and data rates may apply;
+                  reply STOP to opt out. Optional — leaving this unchecked changes nothing about your request.</span>
+          </label>
+
           <button type="submit" class="btn-request" id="btn-submit">
-            <span class="btn-label">Request This Window</span>
+            <span class="btn-label">Send This Request</span>
             <div class="btn-loading">
               <div class="spinner"></div>
             </div>
           </button>
         </form>
+      </div>
       </div>
     </div>
 
@@ -996,7 +1322,7 @@
   </main>
 
   <footer>
-    NEWSONIC AGE &nbsp;/&nbsp; ALL SESSIONS SUBJECT TO APPROVAL &nbsp;/&nbsp; 2026
+    NEWSONIC AGE &nbsp;/&nbsp; EVERY MEETING IS A REQUEST &nbsp;/&nbsp; 2026
   </footer>
 
   <!-- ── CONFIRMATION MODAL ── -->
@@ -1013,7 +1339,7 @@
       <div class="confirm-card-body">
         <div class="confirm-tag">Transmission Complete</div>
         <h2 class="confirm-headline">Request Received.</h2>
-        <p class="confirm-msg">Be on the lookout for a confirmation on your booking via text or email. We'll reach out within 24–48 hours.</p>
+        <p class="confirm-msg" id="confirm-msg">Nothing is on the calendar yet — this is a request. We'll confirm it within one business day.</p>
 
         <div class="confirm-terminal">
           <div class="confirm-terminal-bar">
@@ -1077,16 +1403,25 @@
     // ─── STATE ───────────────────────────────────
     let availability   = null; // { busy: [...], timezone: string }
     let dayOffset      = 0;    // which set of 3 days we're viewing
-    let selectedType   = null; // 'SHOOT' | 'CONSULTATION'
+    let selectedType   = null; // 'CALL' | 'IN_PERSON'
     let selectedDate   = null; // 'YYYY-MM-DD'
-    let selectedSlot   = null; // 'ALL_DAY' | 'EARLY_RISER' | 'MIDDAY_MOVER' | 'NIGHT_OWL'
+    let selectedSlot   = null; // 'EARLY_RISER' | 'MIDDAY_MOVER' | 'NIGHT_OWL'
 
     // ─── API HELPER ──────────────────────────────
     function api(path) { return window.API_BASE_URL + path; }
 
+    // ─── BOOKING TYPES ───────────────────────────
+    // `minutes` mirrors BOOKING_TYPES in server.js. The server is authoritative
+    // about what actually gets blocked; this is only what we tell the client.
+    const TYPES = {
+      CALL:      { label: 'Phone Call',        minutes: 15, gated: false },
+      IN_PERSON: { label: 'In-Person Meeting', minutes: 45, gated: true  },
+    };
+
     // ─── SLOT CONFIG ─────────────────────────────
+    // The window is when they are free. The meeting is shorter than the window and
+    // sits inside it; the exact time is settled when we confirm.
     const SLOTS = [
-      { key: 'ALL_DAY',      label: 'All Day',      hours: '',           startH: 8,  endH: 22 },
       { key: 'EARLY_RISER',  label: 'Early Riser',  hours: '8 – 10AM',   startH: 8,  endH: 10 },
       { key: 'MIDDAY_MOVER', label: 'Midday Mover', hours: '1 – 3PM',    startH: 13, endH: 15 },
       { key: 'NIGHT_OWL',    label: 'Night Owl',    hours: '8 – 10PM',   startH: 20, endH: 22 },
@@ -1096,13 +1431,21 @@
     // 0 = Sunday, 1 = Monday, 5 = Friday
     const BLOCKED_DAYS = new Set([0, 1, 5]);
 
-    // Returns an ordered array of available dateStrings (non-blocked, next ~60 days)
+    // A calendar date in local terms. `toISOString()` cannot do this job: it converts
+    // to UTC first, so anywhere west of Greenwich every evening rolls the date forward
+    // and the first offered day silently became the day after tomorrow.
+    function toLocalISO(d) {
+      const p = (n) => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+    }
+
+    // Returns an ordered array of available dateStrings (non-blocked, starting tomorrow)
     function getAvailableDates() {
       const dates = [];
       const d = new Date();
       d.setDate(d.getDate() + 1); // start tomorrow
       while (dates.length < 45) {
-        const iso = d.toISOString().split('T')[0];
+        const iso = toLocalISO(d);
         const dow = new Date(iso + 'T12:00:00Z').getUTCDay();
         if (!BLOCKED_DAYS.has(dow)) dates.push(iso);
         d.setDate(d.getDate() + 1);
@@ -1144,18 +1487,7 @@
       });
     }
 
-    // ALL_DAY is unavailable if ANY part of the working day (8am–10pm) is busy
-    function isAllDayBusy(dateStr) {
-      return isSlotBusy(dateStr, 8, 22);
-    }
-
     // ─── DATE UTILITIES ──────────────────────────
-    function getDateStr(offsetDays) {
-      const d = new Date();
-      d.setDate(d.getDate() + offsetDays);
-      return d.toISOString().split('T')[0];
-    }
-
     function formatDayName(dateStr) {
       return new Date(dateStr + 'T12:00:00Z').toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' });
     }
@@ -1181,8 +1513,19 @@
       document.getElementById('status-bar').className = '';
     }
 
+    // ─── PANEL OPEN / CLOSE ──────────────────────
+    // `inert` matters as much as the class does. A collapsed panel is only clipped
+    // by overflow, so without it the fields inside stay in the tab order and a
+    // keyboard user falls into a form that is not visibly on the page.
+    function setPanel(id, open) {
+      const panel = document.getElementById(id);
+      panel.classList.toggle('open', open);
+      panel.inert = !open;
+    }
+
     // ─── SELECT TYPE ─────────────────────────────
     function selectType(type) {
+      if (!TYPES[type]) return;
       selectedType = type;
       selectedDate = null;
       selectedSlot = null;
@@ -1191,9 +1534,30 @@
         card.classList.toggle('active', card.dataset.type === type);
       });
 
+      const gated = TYPES[type].gated;
+
+      // Step numbers shift because in-person inserts a step. Kept in sync here so
+      // the page never shows two 02s.
+      document.getElementById('label-window').textContent =
+        gated ? '03 — Select Your Window' : '02 — Select Your Window';
+      document.getElementById('label-confirm').textContent =
+        gated ? '04 — Confirm Request' : '03 — Confirm Request';
+
+      // Only the call path shows a format choice; only in-person shows the drive-out note.
+      document.getElementById('call-fields').hidden     = gated;
+      document.getElementById('inperson-fields').hidden = !gated;
+
+      setPanel('qualify-panel', gated);
+      updateLock();
+
       // Re-render days to clear slot selection highlighting
       if (availability) renderDays();
       updateRequestPanel();
+
+      if (gated) {
+        setTimeout(() => document.getElementById('qualify-panel')
+          .scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+      }
     }
 
     // Keyboard support for type cards
@@ -1203,11 +1567,87 @@
       });
     });
 
+    /* ─── QUALIFICATION GATE ─────────────────────
+       An in-person request earns the calendar. The windows stay visible while
+       locked so what is being withheld is obvious — a greyed calendar reads as
+       "answer these" where a hidden one reads as "the page is broken". */
+
+    const val    = (id) => document.getElementById(id).value.trim();
+    const picked = (name) => {
+      const el = document.querySelector(`input[name="${name}"]:checked`);
+      return el ? el.value : '';
+    };
+    const checkedValues = (name) =>
+      Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(el => el.value);
+
+    function qualifyComplete() {
+      return Boolean(
+        val('q-business') && val('q-street') && val('q-city') && val('q-state') && val('q-zip') &&
+        val('q-team') && val('q-revenue') &&
+        checkedValues('bottleneck').length &&
+        picked('urgency') && picked('relationship')
+      );
+    }
+
+    function updateLock() {
+      const section = document.getElementById('window-section');
+      const locked  = selectedType === null || (TYPES[selectedType].gated && !qualifyComplete());
+
+      section.classList.toggle('locked', locked);
+      document.getElementById('lock-note-text').textContent = selectedType === null
+        ? 'Choose what you are requesting and the calendar opens.'
+        : 'Answer the questions above and the calendar opens.';
+
+      // A window chosen before the answers were undone must not survive the relock.
+      if (locked && selectedSlot) {
+        selectedDate = null;
+        selectedSlot = null;
+        if (availability) renderDays();
+        updateRequestPanel();
+      }
+    }
+
+    document.getElementById('qualify-form')
+      .addEventListener('input',  updateLock);
+    document.getElementById('qualify-form')
+      .addEventListener('change', () => { updateLock(); checkServiceArea(); });
+
+    /* ─── SERVICE AREA ───────────────────────────
+       Advisory only — it warns, it never blocks, because a job worth the drive is
+       worth the drive. Georgia plus a 300/301/303 ZIP prefix covers Cobb, Cherokee,
+       north Fulton and the city itself. A prefix beats a city list here: a list has
+       to name Smyrna, Austell, Hiram and Powder Springs to stop crying wolf, and it
+       will still miss the next one. A false warning costs a sentence; the request
+       still sends either way. */
+    const SERVICE_AREA_ZIP_PREFIXES = ['300', '301', '303'];
+
+    function isInServiceArea(state, zip) {
+      const st     = String(state || '').trim().toLowerCase();
+      const digits = String(zip || '').replace(/\D/g, '');
+
+      // Half-typed input is not evidence of anything. Stay quiet until both are there.
+      if (!st || digits.length < 5) return true;
+
+      if (st !== 'ga' && st !== 'georgia') return false;
+      return SERVICE_AREA_ZIP_PREFIXES.includes(digits.slice(0, 3));
+    }
+
+    function checkServiceArea() {
+      const outside = !isInServiceArea(val('q-state'), val('q-zip'));
+      document.getElementById('area-notice').classList.toggle('show', outside);
+      return outside;
+    }
+
     // ─── SELECT SLOT ─────────────────────────────
     function selectSlot(dateStr, slotKey) {
       if (!selectedType) {
-        showStatus('Please select a session type first.', 'error');
+        showStatus('Choose what you are requesting first.', 'error');
         document.getElementById('type-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+      if (TYPES[selectedType].gated && !qualifyComplete()) {
+        showStatus('Finish the questions about your business first.', 'error');
+        document.getElementById('qualify-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
         return;
       }
       hideStatus();
@@ -1252,7 +1692,6 @@
 
       for (let i = 0; i < pageDates.length; i++) {
         const dateStr = pageDates[i];
-        const allDayBusy = isAllDayBusy(dateStr);
 
         const card = document.createElement('div');
         card.className = 'day-card';
@@ -1273,11 +1712,7 @@
         const slotsContainer = card.querySelector('.day-slots');
 
         SLOTS.forEach(slot => {
-          // ALL_DAY is busy if any part of the working day is busy
-          const isBusy = slot.key === 'ALL_DAY'
-            ? allDayBusy
-            : isSlotBusy(dateStr, slot.startH, slot.endH);
-
+          const isBusy = isSlotBusy(dateStr, slot.startH, slot.endH);
           const isSelected = selectedDate === dateStr && selectedSlot === slot.key;
 
           const btn = document.createElement('button');
@@ -1321,21 +1756,28 @@
     }
 
     // ─── REQUEST PANEL ───────────────────────────
+    function typeLabel() {
+      const meta = TYPES[selectedType];
+      return meta ? `${meta.label} — ${meta.minutes} min` : '—';
+    }
+    function slotLabel() {
+      const meta = SLOTS.find(s => s.key === selectedSlot);
+      return meta ? `${meta.label} — ${meta.hours}` : '—';
+    }
+
     function updateRequestPanel() {
-      const panel = document.getElementById('request-panel');
+      const ready = Boolean(selectedDate && selectedSlot && selectedType);
 
-      if (selectedDate && selectedSlot && selectedType) {
-        const slotMeta = SLOTS.find(s => s.key === selectedSlot);
-        document.getElementById('sum-type').textContent = selectedType === 'SHOOT' ? 'Shoot (Full Day)' : 'Consultation (15 min)';
+      if (ready) {
+        document.getElementById('sum-type').textContent = typeLabel();
         document.getElementById('sum-date').textContent = formatFullDate(selectedDate);
-        document.getElementById('sum-slot').textContent = slotMeta
-          ? (slotMeta.hours ? `${slotMeta.label} — ${slotMeta.hours}` : slotMeta.label)
-          : '—';
+        document.getElementById('sum-slot').textContent = slotLabel();
+      }
 
-        panel.classList.add('open');
-        setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
-      } else {
-        panel.classList.remove('open');
+      setPanel('request-panel', ready);
+      if (ready) {
+        setTimeout(() => document.getElementById('request-panel')
+          .scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
       }
     }
 
@@ -1343,16 +1785,63 @@
     async function submitRequest(e) {
       e.preventDefault();
 
-      const name          = document.getElementById('input-name').value.trim();
-      const email         = document.getElementById('input-email').value.trim();
-      const phone         = document.getElementById('input-phone').value.trim();
-      const contactMethod = document.getElementById('input-contact').value;
-      const notes         = document.getElementById('input-notes').value.trim();
+      const gated = TYPES[selectedType] ? TYPES[selectedType].gated : false;
 
-      if (!name || !email || !phone || !contactMethod) return;
+      const name  = val('input-name');
+      const email = val('input-email');
+      const phone = val('input-phone');
+      const smsConsent = document.getElementById('input-sms-consent').checked;
+
+      if (!name || !email || !phone) return;   // native validation already flagged these
       if (!selectedDate || !selectedSlot || !selectedType) {
-        showStatus('Please select a session type, date, and time window.', 'error');
+        showStatus('Choose what you are requesting, a date, and a window.', 'error');
         return;
+      }
+
+      // `required` on the topic field would block the in-person path, which never
+      // shows it. The gate lives here instead, where it knows which path is active.
+      const topic = val('input-topic');
+      if (!gated && !topic) {
+        showStatus('One line on what you want to talk about, and we are set.', 'error');
+        document.getElementById('input-topic').focus();
+        return;
+      }
+      if (gated && !qualifyComplete()) {
+        showStatus('Some of the business questions are still blank.', 'error');
+        document.getElementById('qualify-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+
+      const payload = {
+        date:        selectedDate,
+        timeSlot:    selectedSlot,
+        bookingType: selectedType,
+        clientName:  name,
+        clientEmail: email,
+        clientPhone: phone,
+        smsConsent,
+      };
+
+      if (gated) {
+        payload.notes         = val('input-notes') || undefined;
+        payload.business      = val('q-business');
+        payload.website       = val('q-website') || undefined;
+        payload.address       = {
+          street: val('q-street'),
+          city:   val('q-city'),
+          state:  val('q-state'),
+          zip:    val('q-zip'),
+        };
+        payload.teamSize      = val('q-team');
+        payload.revenueBand   = val('q-revenue');
+        payload.bottlenecks   = checkedValues('bottleneck');
+        payload.systems       = checkedValues('system');
+        payload.urgency       = picked('urgency');
+        payload.relationship  = picked('relationship');
+        payload.outsideServiceArea = !isInServiceArea(val('q-state'), val('q-zip'));
+      } else {
+        payload.meetingFormat = picked('format');
+        payload.topic         = topic;
       }
 
       const btn = document.getElementById('btn-submit');
@@ -1364,16 +1853,7 @@
         const res = await fetch(api('/request-booking'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            date:          selectedDate,
-            timeSlot:      selectedSlot,
-            bookingType:   selectedType,
-            clientName:    name,
-            clientEmail:   email,
-            clientPhone:   phone,
-            contactMethod: contactMethod,
-            notes:         notes || undefined,
-          }),
+          body: JSON.stringify(payload),
         });
 
         const data = await res.json();
@@ -1385,7 +1865,7 @@
         }
 
         // ── Success ──
-        showConfirmation({ name, email, phone, contactMethod });
+        showConfirmation(payload);
 
       } catch (err) {
         showStatus('Connection error. Please check your network and try again.', 'error');
@@ -1396,23 +1876,27 @@
     }
 
     // ─── CONFIRMATION MODAL ──────────────────────
-    function showConfirmation({ name, email, phone, contactMethod }) {
-      const slotMeta   = SLOTS.find(s => s.key === selectedSlot);
-      const slotDisplay = slotMeta
-        ? (slotMeta.hours ? `${slotMeta.label} — ${slotMeta.hours}` : slotMeta.label)
-        : '—';
-      const typeDisplay = selectedType === 'SHOOT' ? 'Shoot — Full Day' : 'Consultation — 15 min';
+    const escHtml = (v) => String(v == null ? '' : v)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    function showConfirmation(payload) {
+      document.getElementById('confirm-msg').textContent = TYPES[selectedType].gated
+        ? 'Nothing is on the calendar yet — this is a request. We read every one of these ' +
+          'properly before we answer, so give us a business day.'
+        : 'Nothing is on the calendar yet — this is a request. We\'ll confirm it within one business day.';
 
       document.getElementById('confirm-lines').innerHTML = [
-        ['Type',    typeDisplay],
-        ['Date',    formatFullDate(selectedDate)],
-        ['Window',  slotDisplay],
-        ['Client',  name],
-        ['Email',   email],
-        ['Phone',   phone],
-        ['Contact', contactMethod],
-      ].map(([k, v]) =>
-        `<div class="confirm-detail-row">${k.padEnd(8, '\u00a0')}: <span>${v}</span></div>`
+        ['Type',     typeLabel()],
+        ['Date',     formatFullDate(selectedDate)],
+        ['Window',   slotLabel()],
+        ['Client',   payload.clientName],
+        ['Email',    payload.clientEmail],
+        ['Phone',    payload.clientPhone],
+        ['Format',   payload.meetingFormat],
+        ['Business', payload.business],
+        ['Texts',    payload.smsConsent ? 'Yes' : ''],
+      ].filter(([, v]) => v).map(([k, v]) =>
+        `<div class="confirm-detail-row">${k.padEnd(8, '\u00a0')}: <span>${escHtml(v)}</span></div>`
       ).join('');
 
       document.getElementById('confirm-modal').classList.add('open');
@@ -1428,8 +1912,13 @@
       selectedType = null; selectedDate = null; selectedSlot = null; dayOffset = 0;
 
       document.querySelectorAll('.type-card').forEach(c => c.classList.remove('active'));
-      document.getElementById('request-panel').classList.remove('open');
       document.getElementById('booking-form').reset();
+      document.getElementById('qualify-form').reset();
+      document.getElementById('area-notice').classList.remove('show');
+
+      setPanel('request-panel', false);
+      setPanel('qualify-panel', false);
+      updateLock();
       hideStatus();
 
       renderDays();
@@ -1465,6 +1954,13 @@
     }
 
     // ─── INIT ────────────────────────────────────
+    // Both panels start closed, so both start inert. The calendar starts locked
+    // because nothing has been chosen yet.
+    setPanel('qualify-panel', false);
+    setPanel('request-panel', false);
+    document.getElementById('inperson-fields').hidden = true;
+    updateLock();
+
     fetchAvailability();
     addHoverListeners();
   </script>
