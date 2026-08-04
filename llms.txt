@@ -2,7 +2,7 @@
 
 > A systems implementation studio for service businesses. Newsonic Age implements one
 > operating system for a business, activated one capability at a time — a web foundation,
-> the BACK-BONE, an automation layer, a field console app, and an intelligence layer.
+> the BACK-BONE, an automation layer, a field console app, and VEIL, an intelligence layer.
 > Every engagement opens with a Business Assessment that identifies the bottleneck
 > currently costing the business the most, and the implementation that removes it. Based in
 > Kennesaw, Georgia, working across the Atlanta metro and remotely worldwide. Newsonic Age
@@ -52,7 +52,7 @@ Bottleneck: the business has outgrown spreadsheets, sticky notes, and memory.
 Implementation: customers, jobs, properties, service history, calendar, and communication
 in one operational center, with existing customers moved into it. Everything else plugs
 into this — the website writes to it, automation runs on it, the field console is an
-interface into it, the intelligence layer reads from it.
+interface into it, VEIL reads from it.
 Outcome: every customer and job lives in one place.
 
 **Automation Layer**
@@ -71,14 +71,16 @@ BACK-BONE. Because the automation is already running, the owner opens the app an
 is already there.
 Outcome: your entire operation travels with you.
 
-**Intelligence Layer**
-Bottleneck: the phone has become the owner's biggest interruption, and the business gets no
-smarter from the work it does.
-Implementation: an AI phone receptionist that answers, qualifies, and triages every call
-and message around the clock, separating true emergencies from routine requests. That is
-version one — the layer also covers AI triage, estimate intelligence, and review
-intelligence.
-Outcome: your business becomes progressively smarter.
+**VEIL Intelligence Layer**
+Bottleneck: the phone has become the owner's biggest interruption, and the work that needs
+the owner's judgment sits waiting until the owner gets to it.
+Implementation: VEIL, the intelligence layer that learns how the business actually operates.
+Version one is an AI phone receptionist that answers, qualifies, and triages every call and
+message around the clock, separating true emergencies from routine requests. The layer also
+covers AI triage, estimates written from the job history already in the BACK-BONE, and
+review intelligence. Every implementation gives VEIL more to work with, which is what makes
+each successive one possible.
+Outcome: work that needed your judgment stops waiting on you.
 
 **Custom Implementations**
 Bottleneck: the constraint is now specific to this business and no standard implementation
