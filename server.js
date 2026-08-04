@@ -36,11 +36,30 @@ const CLIENT_SECRET = process.env.CLIENT_SECRET || process.env.GOOGLE_CLIENT_SEC
 const REDIRECT_URI  = process.env.REDIRECT_URI  || process.env.GOOGLE_REDIRECT_URI || `http://localhost:${PORT}/auth/google/callback`;
 
 // ─── TIME SLOT DEFINITIONS ────────────────────
+// A slot is the window the client says they are available in. It is not the
+// length of the meeting — see BOOKING_TYPES for that.
 const TIME_SLOTS = {
-  ALL_DAY:      { label: 'All Day (8AM–10PM)',   startH: 8,  endH: 22 },
   EARLY_RISER:  { label: 'Early Riser (8–10AM)', startH: 8,  endH: 10 },
   MIDDAY_MOVER: { label: 'Midday Mover (1–3PM)', startH: 13, endH: 15 },
   NIGHT_OWL:    { label: 'Night Owl (8–10PM)',   startH: 20, endH: 22 },
+
+  // Legacy. The retired Shoot type blocked the whole day. Kept only so a browser
+  // running a cached copy of the old booking page does not get a 400 during the
+  // window between this deploy and the frontend deploy. Safe to delete after that.
+  ALL_DAY:      { label: 'All Day (8AM–10PM)',   startH: 8,  endH: 22, legacy: true },
+};
+
+// ─── BOOKING TYPES ────────────────────────────
+// `minutes` is how much calendar time the meeting actually consumes, starting at
+// the top of the chosen window. The exact arrival time is settled on approval.
+const BOOKING_TYPES = {
+  CALL:      { label: 'Phone Call',        minutes: 15 },
+  IN_PERSON: { label: 'In-Person Meeting', minutes: 45 },
+
+  // Legacy tokens — same reasoning as ALL_DAY above. CONSULTATION behaved
+  // exactly like CALL; SHOOT consumed the entire window it was given.
+  CONSULTATION: { label: 'Consultation',   minutes: 15, legacy: true },
+  SHOOT:        { label: 'Shoot',          wholeWindow: true, legacy: true },
 };
 
 // ─── OAUTH2 CLIENT ────────────────────────────
@@ -73,23 +92,83 @@ if (GMAIL_PASS && GMAIL_PASS !== 'your_16_char_app_password_here') {
   console.log('  ℹ  Email notifications disabled — add GMAIL_APP_PASSWORD to .env to enable');
 }
 
+// Escapes anything a client typed before it goes into the notification HTML.
+// The recipient is Brad, not the public, but a stray `<` still mangles the table.
+function esc(v) {
+  return String(v == null ? '' : v)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+const listOf = (v) => (Array.isArray(v) ? v : v ? [v] : []);
+
+// Consent has to be affirmative, so anything that is not an explicit yes is a no.
+// A checkbox that was never ticked can arrive as false, absent, "" or "No"
+// depending on how it was serialised; all four must land on the same answer.
+const consented = (v) => v === true || ['yes', 'true'].includes(String(v).trim().toLowerCase());
+
+function formatAddress(a) {
+  if (!a) return '';
+  const street = [a.street, a.street2].filter(Boolean).join(', ');
+  const cityLine = [a.city, [a.state, a.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+  return [street, cityLine].filter(Boolean).join(' · ');
+}
+
 async function sendBookingNotification(details) {
   if (!mailer) return;
-  const { clientName, clientEmail, clientPhone, contactMethod, date, timeSlot, bookingType } = details;
+  const {
+    clientName, clientEmail, clientPhone, date, timeSlot, bookingType, notes,
+    meetingFormat, topic,
+    business, website, address, teamSize, revenueBand,
+    bottlenecks, urgency, systems, relationship, outsideServiceArea,
+    smsConsent,
+  } = details;
+
   const slotLabel = TIME_SLOTS[timeSlot]?.label || timeSlot;
+  const typeLabel = BOOKING_TYPES[bookingType]?.label || bookingType;
+  const inPerson  = bookingType === 'IN_PERSON';
+
+  // Rows are built as [label, value] and dropped when the value is empty, so a
+  // 15-minute call does not arrive wearing an in-person form's empty skeleton.
+  const rows = [
+    ['Client',   clientName],
+    ['Email',    clientEmail],
+    ['Phone',    clientPhone],
+    ['Date',     date],
+    ['Window',   slotLabel],
+    ['Type',     typeLabel],
+    ['Format',   meetingFormat],
+    ['Topic',    topic],
+    ['Business', business],
+    ['Website',  website],
+    ['Address',  formatAddress(address)],
+    ['Team',     teamSize],
+    ['Revenue',  revenueBand],
+    ['Urgency',  urgency],
+    ['In the way', listOf(bottlenecks).join(' · ')],
+    ['Has today',  listOf(systems).join(' · ')],
+    ['Relationship', relationship],
+    ['Notes',    notes],
+    ['Texts OK', consented(smsConsent) ? 'Yes — consented' : ''],
+  ].filter(([, v]) => v);
+
+  const flag = outsideServiceArea
+    ? `<p style="margin:0 0 16px;padding:10px 12px;background:rgba(192,57,43,0.18);border:1px solid rgba(192,57,43,0.5);border-radius:4px;color:#e74c3c;font-size:0.78rem;">
+         OUTSIDE THE USUAL SERVICE AREA — travel would need to be arranged.
+       </p>`
+    : '';
 
   const html = `
-    <div style="font-family:monospace;background:#04070d;color:#fff;padding:32px;max-width:560px;border:1px solid rgba(0,168,255,0.2);border-radius:6px;">
+    <div style="font-family:monospace;background:#04070d;color:#fff;padding:32px;max-width:620px;border:1px solid rgba(0,168,255,0.2);border-radius:6px;">
       <p style="color:#00a8ff;letter-spacing:0.2em;font-size:0.8rem;margin:0 0 4px;">NEWSONIC AGE</p>
-      <h2 style="margin:0 0 20px;font-size:1.2rem;letter-spacing:-0.01em;">New Booking Request</h2>
+      <h2 style="margin:0 0 20px;font-size:1.2rem;letter-spacing:-0.01em;">
+        ${inPerson ? 'In-Person Request — review before approving' : 'New Call Request'}
+      </h2>
+      ${flag}
       <table style="width:100%;border-collapse:collapse;font-size:0.85rem;line-height:2;">
-        <tr><td style="color:rgba(255,255,255,0.5);padding-right:16px;">Client</td><td>${clientName}</td></tr>
-        <tr><td style="color:rgba(255,255,255,0.5);">Email</td><td>${clientEmail}</td></tr>
-        <tr><td style="color:rgba(255,255,255,0.5);">Phone</td><td>${clientPhone || '—'}</td></tr>
-        <tr><td style="color:rgba(255,255,255,0.5);">Contact Via</td><td>${contactMethod || '—'}</td></tr>
-        <tr><td style="color:rgba(255,255,255,0.5);">Date</td><td>${date}</td></tr>
-        <tr><td style="color:rgba(255,255,255,0.5);">Session Type</td><td>${bookingType}</td></tr>
-        <tr><td style="color:rgba(255,255,255,0.5);">Window</td><td>${slotLabel}</td></tr>
+        ${rows.map(([k, v]) =>
+          `<tr><td style="color:rgba(255,255,255,0.5);padding-right:16px;vertical-align:top;white-space:nowrap;">${esc(k)}</td><td>${esc(v)}</td></tr>`
+        ).join('')}
       </table>
       <p style="margin:20px 0 0;color:rgba(255,255,255,0.4);font-size:0.72rem;">
         This is an automated notification. Log in to Google Calendar to confirm or decline.
@@ -101,13 +180,123 @@ async function sendBookingNotification(details) {
     await mailer.sendMail({
       from:    `"Newsonic Age Booking" <${GMAIL_USER}>`,
       to:      GMAIL_USER,
-      subject: `📅 Booking Request — ${clientName} / ${date}`,
+      subject: `${inPerson ? '🚩 In-Person' : '📅 Call'} Request — ${clientName} / ${date}`,
       html,
-      text: `New booking request from ${clientName} (${clientEmail}, ${clientPhone})\nDate: ${date}\nType: ${bookingType}\nWindow: ${slotLabel}\nContact via: ${contactMethod}`,
+      text: rows.map(([k, v]) => `${k}: ${v}`).join('\n'),
     });
     console.log(`[Email] Notification sent for ${clientName} / ${date}`);
   } catch (err) {
     console.warn('[Email] Failed to send notification:', err.message);
+  }
+}
+
+/* ─────────────────────────────────────────────
+   SMS CONFIRMATION — Twilio
+
+   COMPLIANCE — read before changing anything in here. The same rules that
+   govern netlify/functions/submission-created.js govern this send; that file
+   carries the long-form reasoning and is worth reading alongside this one.
+
+     - Never send without explicit consent. The booking page's consent box is
+       optional and unchecked by default, and making it required would be a TCPA
+       violation. An unticked box arrives as absent/false, which is what gates below.
+     - Keep the body shaped like the registered A2P sample and keep "Reply STOP
+       to opt out" on it. Carriers compare what you send to what you registered.
+     - Send through the Messaging Service, never a bare From number.
+
+   AUTH — a Restricted API key scoped to `messages:create`, NOT the account auth
+   token, and NOT the same key the Netlify function uses. One key per app so any
+   one of them can be revoked alone. The ACCOUNT SID still goes in the URL path;
+   an API key does not replace it there. A 401 with code 20003 means the key
+   lacks the permission or was deleted — a credentials problem, not a bad message.
+
+   Requires four env vars on Render. Until they are set this logs and does nothing.
+   ───────────────────────────────────────────── */
+const SMS_CALLBACK = '(678) 903-1255';
+
+/** Digits to E.164. Returns null rather than guessing — the field is free text. */
+function toE164(raw) {
+  const s = String(raw || '').trim();
+  if (!s) return null;
+  if (/^\+[1-9]\d{7,14}$/.test(s)) return s;
+  const d = s.replace(/\D/g, '');
+  if (d.length === 10) return '+1' + d;
+  if (d.length === 11 && d[0] === '1') return '+' + d;
+  return null;
+}
+
+/** "2026-08-05" reads like a log line in a text message. "Wed, Aug 5" reads like a person. */
+function friendlyDate(dateStr) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(dateStr || ''))) return '';
+  return new Date(dateStr + 'T12:00:00Z').toLocaleDateString('en-US', {
+    weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC',
+  });
+}
+
+/** ASCII only. A curly apostrophe or em-dash flips the whole SMS to UCS-2, which
+ *  cuts the per-segment budget from 153 characters to 67. Keep the wording shaped
+ *  like the registered A2P sample — carriers compare the two. */
+function buildSmsBody(date) {
+  const when = friendlyDate(date).replace(/[^\x20-\x7E]/g, '');
+  const forWhen = when ? 'for ' + when : '';
+  return ('Newsonic Age: got your booking request ' + forWhen + '. You asked us to follow up by ' +
+    'text - we will confirm within one business day. Reply here or call ' + SMS_CALLBACK + '. ' +
+    'Reply STOP to opt out.').replace(/\s+/g, ' ');
+}
+
+async function sendBookingSms({ clientPhone, date, smsConsent }) {
+  if (!consented(smsConsent)) return;
+
+  const to = toE164(clientPhone);
+  if (!to) {
+    console.warn('[SMS] skip: consent given but phone is not dialable, left as typed');
+    return;
+  }
+
+  const sid       = process.env.TWILIO_ACCOUNT_SID;
+  const keySid    = process.env.TWILIO_API_KEY_SID;
+  const keySecret = process.env.TWILIO_API_KEY_SECRET;
+  const service   = process.env.TWILIO_MESSAGING_SERVICE_SID;
+
+  // Name the missing ones. "env vars are not set" sends you to the dashboard to
+  // compare four values by eye; this tells you which one to look at.
+  const missing = [
+    ['TWILIO_ACCOUNT_SID', sid],
+    ['TWILIO_API_KEY_SID', keySid],
+    ['TWILIO_API_KEY_SECRET', keySecret],
+    ['TWILIO_MESSAGING_SERVICE_SID', service],
+  ].filter(([, v]) => !v).map(([k]) => k);
+
+  if (missing.length) {
+    console.error('[SMS] skip: missing Twilio env vars on this service: ' + missing.join(', '));
+    return;
+  }
+
+  try {
+    const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Basic ' + Buffer.from(`${keySid}:${keySecret}`).toString('base64'),
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        To: to,
+        MessagingServiceSid: service,
+        Body: buildSmsBody(date),
+      }),
+    });
+    const out = await res.json().catch(() => ({}));
+
+    if (res.ok) {
+      // "queued" is Twilio accepting the request, NOT proof of delivery. A carrier
+      // block (A2P error 30034) lands later on the message record, which this
+      // function never sees. Check Monitor → Logs → Messaging to confirm delivery.
+      console.log(`[SMS] queued ${out.sid} to ${to}`);
+    } else {
+      console.error(`[SMS] Twilio rejected: ${res.status} code=${out.code} ${out.message || ''}`);
+    }
+  } catch (err) {
+    console.error('[SMS] send threw:', err.message);
   }
 }
 
@@ -239,7 +428,15 @@ app.get('/availability', requireAuth, async (req, res) => {
    BOOKING REQUEST — POST /request-booking
    ───────────────────────────────────────────── */
 app.post('/request-booking', requireAuth, async (req, res) => {
-  const { date, timeSlot, bookingType, clientName, clientEmail, clientPhone, contactMethod, notes } = req.body;
+  const {
+    date, timeSlot, bookingType, clientName, clientEmail, clientPhone, notes,
+    // Phone-call path
+    meetingFormat, topic,
+    // In-person qualification
+    business, website, address, teamSize, revenueBand,
+    bottlenecks, urgency, systems, relationship, outsideServiceArea,
+    smsConsent,
+  } = req.body;
 
   if (!date || !timeSlot || !bookingType) {
     return res.status(400).json({ error: 'date, timeSlot, and bookingType are required.' });
@@ -249,11 +446,30 @@ app.post('/request-booking', requireAuth, async (req, res) => {
   }
   if (!TIME_SLOTS[timeSlot]) {
     return res.status(400).json({
-      error: `Invalid timeSlot. Options: ${Object.keys(TIME_SLOTS).join(', ')}`,
+      error: `Invalid timeSlot. Options: ${Object.keys(TIME_SLOTS).filter(k => !TIME_SLOTS[k].legacy).join(', ')}`,
     });
   }
-  if (!['SHOOT', 'CONSULTATION'].includes(bookingType)) {
-    return res.status(400).json({ error: 'bookingType must be SHOOT or CONSULTATION.' });
+  if (!BOOKING_TYPES[bookingType]) {
+    return res.status(400).json({
+      error: `Invalid bookingType. Options: ${Object.keys(BOOKING_TYPES).filter(k => !BOOKING_TYPES[k].legacy).join(', ')}`,
+    });
+  }
+
+  // An in-person visit costs a drive. These are the answers that decide whether
+  // it is worth taking, so the request is not accepted without them. The browser
+  // enforces the same set; this is the copy that cannot be edited out.
+  if (bookingType === 'IN_PERSON') {
+    const required = {
+      business, teamSize, revenueBand, urgency, relationship,
+      'business address': address && address.street && address.city && address.state && address.zip,
+      'at least one bottleneck': listOf(bottlenecks).length,
+    };
+    const blank = Object.entries(required).filter(([, v]) => !v).map(([k]) => k);
+    if (blank.length) {
+      return res.status(400).json({
+        error: `An in-person request needs: ${blank.join(', ')}.`,
+      });
+    }
   }
 
   const todayUTC       = new Date();
@@ -266,14 +482,17 @@ app.post('/request-booking', requireAuth, async (req, res) => {
   try {
     const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
 
-    let startUTC, endUTC;
-    if (bookingType === 'SHOOT') {
-      startUTC = localToUTC(date, TIME_SLOTS.ALL_DAY.startH);
-      endUTC   = localToUTC(date, TIME_SLOTS.ALL_DAY.endH);
-    } else {
-      startUTC = localToUTC(date, TIME_SLOTS[timeSlot].startH);
-      endUTC   = new Date(startUTC.getTime() + 15 * 60 * 1000);
-    }
+    // The meeting starts at the top of the window they chose and runs for as long
+    // as its type needs. Every type must declare a duration — the old code gave
+    // anything that was not SHOOT a silent 15 minutes, which is exactly how a
+    // 45-minute site visit would have booked a quarter of an hour without erroring.
+    const slotMeta = TIME_SLOTS[timeSlot];
+    const typeMeta = BOOKING_TYPES[bookingType];
+
+    const startUTC = localToUTC(date, slotMeta.startH);
+    const endUTC   = typeMeta.wholeWindow
+      ? localToUTC(date, slotMeta.endH)
+      : new Date(startUTC.getTime() + typeMeta.minutes * 60 * 1000);
 
     // Double-check availability (race-condition guard)
     const check     = await calendar.freebusy.query({
@@ -290,27 +509,52 @@ app.post('/request-booking', requireAuth, async (req, res) => {
       });
     }
 
+    const inPerson = bookingType === 'IN_PERSON';
+
+    // Every field the client filled in lands in the event description, so the
+    // calendar entry alone is enough to decide on. Anything blank is left out.
     const lines = [
       'Client requested booking. Awaiting confirmation.',
       '',
-      `Booking Type : ${bookingType}`,
-      `Time Slot    : ${TIME_SLOTS[timeSlot].label}`,
+      `Booking Type : ${typeMeta.label}`,
+      `Window       : ${slotMeta.label}`,
       `Date         : ${date}`,
+      `Duration     : ${typeMeta.wholeWindow ? 'whole window' : typeMeta.minutes + ' minutes'}`,
       `Timezone     : ${TIMEZONE}`,
     ];
-    if (clientName)    lines.push(`Client Name  : ${clientName}`);
-    if (clientEmail)   lines.push(`Client Email : ${clientEmail}`);
-    if (clientPhone)   lines.push(`Client Phone : ${clientPhone}`);
-    if (contactMethod) lines.push(`Contact Via  : ${contactMethod}`);
-    if (notes)         lines.push(`Notes        : ${notes}`);
+    if (outsideServiceArea) lines.push('', '** OUTSIDE THE USUAL SERVICE AREA **');
+
+    const detail = [
+      ['Client Name  ', clientName],
+      ['Client Email ', clientEmail],
+      ['Client Phone ', clientPhone],
+      ['Format       ', meetingFormat],
+      ['Topic        ', topic],
+      ['Business     ', business],
+      ['Website      ', website],
+      ['Address      ', formatAddress(address)],
+      ['Team Size    ', teamSize],
+      ['Revenue      ', revenueBand],
+      ['Urgency      ', urgency],
+      ['In The Way   ', listOf(bottlenecks).join(' · ')],
+      ['Has Today    ', listOf(systems).join(' · ')],
+      ['Relationship ', relationship],
+      ['Texts OK     ', consented(smsConsent) ? 'Yes — consented' : ''],
+      ['Notes        ', notes],
+    ].filter(([, v]) => v);
+
+    if (detail.length) lines.push('', ...detail.map(([k, v]) => `${k}: ${v}`));
 
     const event = await calendar.events.insert({
       calendarId: CALENDAR_ID,
       requestBody: {
-        summary:     'BOOKING REQUEST — Pending Approval',
+        summary:     inPerson
+          ? `IN-PERSON REQUEST — ${business || clientName || 'Pending Approval'}`
+          : `CALL REQUEST — ${clientName || 'Pending Approval'}`,
         description: lines.join('\n'),
         start:       { dateTime: startUTC.toISOString(), timeZone: 'UTC' },
         end:         { dateTime: endUTC.toISOString(),   timeZone: 'UTC' },
+        location:    inPerson ? formatAddress(address) : undefined,
         colorId:     '11',
         status:      'tentative',
       },
@@ -318,8 +562,15 @@ app.post('/request-booking', requireAuth, async (req, res) => {
 
     console.log(`[Booking] Created: ${event.data.id} — ${date} / ${timeSlot} / ${bookingType}`);
 
-    // Fire-and-forget email notification (does not block response)
-    sendBookingNotification({ clientName, clientEmail, clientPhone, contactMethod, date, timeSlot, bookingType });
+    // Fire-and-forget notifications (neither blocks the response)
+    sendBookingNotification({
+      clientName, clientEmail, clientPhone, date, timeSlot, bookingType, notes,
+      meetingFormat, topic,
+      business, website, address, teamSize, revenueBand,
+      bottlenecks, urgency, systems, relationship, outsideServiceArea,
+      smsConsent,
+    });
+    sendBookingSms({ clientPhone, date, smsConsent });
 
     res.json({ success: true, message: 'Request sent. Awaiting confirmation.', eventId: event.data.id });
   } catch (err) {
