@@ -26,9 +26,10 @@ Disallow: /discovery.html
 # answer-engine corpora; the noindex in the page covers anything that ignores
 # this file.
 #
-# This is obscurity, not access control. Anyone holding the URL can still read
-# the source. If that stops being acceptable the fix is server-side auth on
-# the path, not another line in here.
+# The actual access control is netlify/edge-functions/discovery-gate.js, which
+# 404s the path without a cookie — a crawler could not read the page even if it
+# ignored every line above. These stay anyway: they cost nothing, and they keep
+# the URL out of an index if the gate is ever turned off.
 User-agent: Googlebot
 Allow: /
 Disallow: /discovery
