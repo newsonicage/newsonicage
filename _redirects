@@ -9,6 +9,16 @@
 /home.html   /home   301
 /home        /home.html  200
 
+# Internal in-meeting instrument. Unlinked from every nav, kept out of the
+# sitemap, noindex'd in the page, and refused in every robots.txt block.
+#
+# Deliberately NOT gated: a password prompt in a client's office on their
+# guest wifi is friction at the worst possible moment. The tradeoff is real
+# though — the page carries the pricing archetypes in its source, so anyone
+# holding this URL can read them. Everything above is obscurity, not access
+# control. The fix, if it ever matters, is server-side auth on this path.
+/discovery   /discovery.html  200
+
 # Legal pages. Linked from the A2P 10DLC campaign registration, so these
 # URLs are read by carrier reviewers — do not rename them.
 /privacy     /privacy.html  200

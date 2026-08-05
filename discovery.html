@@ -1,0 +1,2090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Not a public page. It is an in-meeting instrument, filled in FOR the
+       client while they watch. Kept out of search, out of the sitemap, and
+       unlinked from any nav. It renders quoted prices (client-facing by
+       definition — Brad says them out loud) but never the internal cost
+       basis, margin, or sourcing. Those must not enter this file. -->
+  <meta name="robots" content="noindex,nofollow,noarchive">
+
+  <title>Discovery — Newsonic Age</title>
+  <meta name="description" content="Newsonic Age discovery session.">
+  <link rel="icon" type="image/png" href="assets/nsa-logo.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* ══════════════════════════════════════════════════════════════════
+   TOKENS — the light surface. Verbatim from the brand's live values.
+   ══════════════════════════════════════════════════════════════════ */
+:root{
+  --paper:#FFFFFF; --paper-soft:#F4F8FC; --tint:#EAF6FF; --hairline:#E1E9F1;
+  --ink:#0E1A2B; --ink-secondary:#54637A; --ink-faint:#95A2B4;
+  --blue:#00A8FF; --blue-text:#0077B8; --blue-deep:#0A2A44;
+  --good:#12B76A; --good-text:#0E8F54; --warn:#E0533B; --warn-soft:#FDF1EE;
+  --ink900:#04070D; --on-dark:#FFFFFF; --on-dark-dim:rgba(255,255,255,.60);
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono','SF Mono',Menlo,monospace;
+  --lift:0 6px 24px rgba(0,168,255,.18);
+  --rail-h:56px; --strip-h:44px; --bar-h:66px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--rail-h) + var(--strip-h) + 20px);}
+body{
+  font-family:var(--sans);background:var(--paper);color:var(--ink);
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;
+  padding-bottom:calc(var(--bar-h) + 24px);
+}
+button{font:inherit;color:inherit;border:none;background:none;cursor:pointer;}
+input,select,textarea{font:inherit;color:inherit;}
+::selection{background:var(--tint);color:var(--blue-deep);}
+
+/* ── The signature devices ── */
+.rule{width:46px;height:3px;background:var(--blue);border-radius:2px;}
+.eyebrow{
+  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:2.4px;
+  text-transform:uppercase;color:var(--blue-text);
+}
+.micro{
+  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1.4px;
+  text-transform:uppercase;color:var(--ink-faint);
+}
+.mono{font-family:var(--mono);}
+.pill{
+  display:inline-block;background:var(--blue);color:#fff;border-radius:4px;padding:5px 10px;
+  font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;
+}
+.pill.grey{background:var(--ink-faint);}
+.pill.green{background:var(--good);}
+.pill.red{background:var(--warn);}
+.pill.hollow{background:none;color:var(--ink-faint);border:1px solid var(--hairline);}
+
+/* ══ RAIL ══ */
+.rail{
+  position:fixed;top:0;left:0;right:0;height:var(--rail-h);z-index:60;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--hairline);
+  display:flex;align-items:center;gap:16px;padding:0 20px;
+}
+.wordmark{display:flex;align-items:center;gap:10px;text-decoration:none;flex:none;}
+.wordmark img{width:26px;height:26px;display:block;}
+.wm-a{font-weight:800;letter-spacing:2.4px;font-size:14px;color:var(--ink);}
+.wm-b{font-weight:300;letter-spacing:2.4px;font-size:14px;color:var(--blue);margin-left:6px;}
+.rail-tag{
+  font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1.8px;
+  text-transform:uppercase;color:var(--ink-faint);
+  border-left:1px solid var(--hairline);padding-left:14px;margin-left:2px;
+}
+.rail-who{
+  font-size:13px;font-weight:600;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;
+}
+.rail-sp{flex:1;}
+.rail-btn{
+  display:inline-flex;align-items:center;gap:6px;border:1px solid var(--hairline);
+  border-radius:6px;padding:6px 11px;font-size:12px;font-weight:600;color:var(--ink-secondary);
+  transition:.15s;white-space:nowrap;
+}
+.rail-btn:hover{border-color:var(--blue);color:var(--blue-text);}
+/* An explicit display beats the UA rule for [hidden], so the Sessions button
+   would stay visible despite the attribute. Restate it. */
+.rail-btn[hidden]{display:none;}
+.rail-btn.on{background:var(--ink900);border-color:var(--ink900);color:#fff;}
+.saved{
+  font-family:var(--mono);font-size:10px;letter-spacing:.6px;color:var(--ink-faint);
+  display:flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.saved i{width:6px;height:6px;border-radius:50%;background:var(--good);display:block;}
+.saved.pending i{background:var(--blue);}
+
+/* ══ STEP STRIP ══ */
+.strip{
+  position:fixed;top:var(--rail-h);left:0;right:0;height:var(--strip-h);z-index:59;
+  background:var(--paper-soft);border-bottom:1px solid var(--hairline);
+  display:flex;align-items:center;gap:2px;padding:0 16px;overflow-x:auto;
+  scrollbar-width:none;
+}
+.strip::-webkit-scrollbar{display:none;}
+.strip a{
+  display:flex;align-items:center;gap:7px;padding:6px 11px;border-radius:6px;
+  text-decoration:none;white-space:nowrap;transition:.15s;
+}
+.strip a:hover{background:#fff;}
+.strip a.here{background:#fff;box-shadow:inset 0 0 0 1px var(--hairline);}
+.strip a .n{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--ink-faint);}
+.strip a .t{font-size:12px;font-weight:600;color:var(--ink-secondary);}
+.strip a.here .t{color:var(--ink);}
+.strip a .dot{width:6px;height:6px;border-radius:50%;background:var(--hairline);flex:none;}
+.strip a.done .dot{background:var(--blue);}
+.strip a.done .n{color:var(--blue-text);}
+
+/* ══ PAGE ══ */
+.page{max-width:960px;margin:0 auto;padding:calc(var(--rail-h) + var(--strip-h) + 40px) 24px 0;}
+
+.intro{margin-bottom:44px;}
+.intro h1{font-size:27px;font-weight:800;line-height:1.15;margin:14px 0 10px;letter-spacing:-.4px;}
+.intro h1 span{color:var(--blue);}
+.intro p{font-size:17px;color:var(--ink-secondary);line-height:1.55;max-width:640px;}
+
+section{margin-bottom:46px;scroll-margin-top:calc(var(--rail-h) + var(--strip-h) + 20px);}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px;}
+.sec-head h2{font-size:23px;font-weight:800;color:var(--blue);letter-spacing:-.3px;}
+.sec-head .num{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--blue);}
+.sec-sub{font-size:14px;color:var(--ink-secondary);margin-bottom:22px;max-width:660px;}
+.sec-sub em{color:var(--ink-faint);font-style:italic;}
+
+.beat{display:flex;justify-content:center;padding:14px 0 30px;}
+.beat svg{width:26px;height:26px;color:var(--blue);opacity:.7;}
+
+/* ══ FIELDS ══ */
+.block{margin-bottom:22px;}
+.block > .micro{display:block;margin-bottom:9px;}
+.hint{font-size:12.5px;color:var(--ink-faint);margin:-4px 0 9px;}
+.grid{display:grid;gap:14px;}
+.g2{grid-template-columns:1fr 1fr;}
+.g3{grid-template-columns:repeat(3,1fr);}
+.g4{grid-template-columns:repeat(4,1fr);}
+.fld{display:flex;flex-direction:column;gap:5px;}
+.fld > label{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink-faint);}
+.f{
+  width:100%;border:1px solid var(--hairline);border-radius:6px;background:#fff;
+  padding:9px 11px;font-size:15px;transition:.15s;
+}
+.f:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,168,255,.12);}
+.f::placeholder{color:var(--ink-faint);}
+textarea.f{resize:vertical;min-height:74px;line-height:1.5;}
+.f-money,.f-pct{position:relative;}
+.f-money span{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink-faint);font-size:15px;pointer-events:none;}
+.f-money .f{padding-left:24px;}
+.f-pct span{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--ink-faint);font-size:15px;pointer-events:none;}
+.f-pct .f{padding-right:28px;}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:7px;}
+.chip{
+  border:1px solid var(--hairline);border-radius:6px;background:#fff;
+  padding:7px 12px;font-size:13.5px;font-weight:500;color:var(--ink-secondary);
+  transition:.14s;line-height:1.35;text-align:left;
+}
+.chip:hover{border-color:var(--blue);color:var(--blue-text);}
+.chip.on{background:var(--tint);border-color:var(--blue);color:var(--blue-deep);font-weight:600;box-shadow:inset 0 0 0 .5px var(--blue);}
+.chip.on.red{background:var(--warn-soft);border-color:var(--warn);color:#8C2E1D;box-shadow:inset 0 0 0 .5px var(--warn);}
+
+/* ══ LEAK ══ */
+.leaks{display:flex;flex-direction:column;gap:10px;}
+.leak{
+  border:1px solid var(--hairline);border-radius:8px;background:#fff;
+  padding:15px 17px;transition:.18s;
+}
+.leak.off{opacity:.42;background:var(--paper-soft);}
+.leak.hot{border-color:rgba(224,83,59,.4);background:var(--warn-soft);}
+.leak-top{display:flex;align-items:center;gap:11px;}
+.leak-tog{
+  width:17px;height:17px;border-radius:4px;border:1.5px solid var(--hairline);background:#fff;
+  flex:none;display:flex;align-items:center;justify-content:center;transition:.14s;
+}
+.leak.on .leak-tog{background:var(--warn);border-color:var(--warn);}
+.leak-tog svg{width:11px;height:11px;color:#fff;opacity:0;}
+.leak.on .leak-tog svg{opacity:1;}
+.leak-name{font-size:15.5px;font-weight:700;flex:1;}
+.leak-amt{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--warn);white-space:nowrap;}
+.leak.off .leak-amt{color:var(--ink-faint);}
+.leak-body{margin-top:12px;padding-left:28px;}
+.leak.off .leak-body{display:none;}
+.leak-math{
+  font-family:var(--mono);font-size:12.5px;color:var(--ink-secondary);
+  background:#fff;border:1px solid var(--hairline);border-radius:6px;
+  padding:9px 11px;margin-bottom:11px;line-height:1.7;
+}
+.leak-math b{color:var(--ink);font-weight:700;}
+.leak-math .eq{color:var(--warn);font-weight:700;}
+.leak-in{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;}
+.leak-in .fld{width:150px;}
+.leak-phase{
+  margin-top:11px;font-size:12.5px;color:var(--ink-secondary);
+  display:flex;align-items:center;gap:8px;
+}
+.leak-phase b{color:var(--blue-text);font-weight:700;}
+.leak-miss{font-size:13px;color:var(--ink-faint);font-style:italic;}
+
+.leak-total{
+  margin-top:16px;border:1.5px solid var(--warn);border-radius:10px;background:var(--warn-soft);
+  padding:20px 22px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+}
+.leak-total .lt-l{flex:1;min-width:200px;}
+.leak-total .lt-k{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8C2E1D;}
+.leak-total .lt-v{font-family:var(--mono);font-size:40px;font-weight:700;color:var(--warn);line-height:1.05;letter-spacing:-1px;}
+.leak-total .lt-s{font-size:13px;color:#8C2E1D;margin-top:4px;}
+.leak-total .lt-r{text-align:right;font-family:var(--mono);font-size:13px;color:#8C2E1D;line-height:1.9;}
+.leak-total .lt-r b{font-size:16px;color:var(--warn);}
+
+/* The credibility governor. An unchecked leak figure is the fastest way to
+   lose the room — the owner divides it by their revenue in their head. */
+.sanity{margin-top:12px;display:flex;flex-direction:column;gap:8px;}
+.sanity .s-row{
+  display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:var(--ink-secondary);
+  border:1px solid var(--hairline);border-radius:7px;padding:11px 13px;background:#fff;line-height:1.45;
+}
+.sanity .s-row b{color:var(--ink);}
+.sanity .s-row svg{flex:none;margin-top:2px;color:var(--blue);}
+.sanity .s-row.warn{background:#FFF8EC;border-color:rgba(224,140,59,.4);color:#7A4A12;}
+.sanity .s-row.warn b{color:#7A4A12;}
+.sanity .s-row.warn svg{color:#D08C3B;}
+
+/* ══ DIAGNOSIS ══ */
+.dx-note{
+  border-left:3px solid var(--blue);border-radius:0 6px 6px 0;background:#fff;
+  padding:14px 16px;font-size:15px;font-style:italic;color:var(--ink-secondary);
+  margin-bottom:20px;box-shadow:inset 0 0 0 1px var(--hairline);
+}
+.dx-note b{font-style:normal;color:var(--ink);font-weight:700;}
+.phases{display:flex;flex-direction:column;gap:9px;}
+.ph{
+  border:1px solid var(--hairline);border-radius:8px;background:#fff;padding:15px 17px;
+  display:flex;gap:15px;align-items:flex-start;transition:.18s;
+}
+.ph.covered{background:var(--paper-soft);}
+.ph.covered .ph-name{color:var(--ink-secondary);}
+.ph.entry{background:var(--tint);border:1.5px solid var(--blue);box-shadow:var(--lift);}
+.ph.skip{opacity:.5;}
+.ph-i{
+  width:26px;height:26px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  border:1.5px solid var(--hairline);color:var(--ink-faint);background:#fff;margin-top:1px;
+}
+.ph.entry .ph-i{background:var(--blue);border-color:var(--blue);color:#fff;}
+.ph.covered .ph-i{background:var(--good);border-color:var(--good);color:#fff;}
+.ph-m{flex:1;min-width:0;}
+.ph-r1{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:3px;}
+.ph-name{font-size:16px;font-weight:700;}
+.ph-name .tm{font-size:.62em;vertical-align:super;font-weight:600;}
+.ph-out{font-size:13.5px;color:var(--ink-secondary);}
+.ph-why{font-size:12.5px;color:var(--blue-text);margin-top:5px;font-weight:500;}
+.ph.covered .ph-why{color:var(--good-text);}
+.ph-r{text-align:right;flex:none;}
+.ph-dur{font-family:var(--mono);font-size:11.5px;color:var(--ink-secondary);white-space:nowrap;}
+.ph-price{font-family:var(--mono);font-size:12px;color:var(--ink-faint);white-space:nowrap;margin-top:3px;}
+.ph-price.set{color:var(--blue-text);font-weight:700;}
+
+/* ══ INVESTMENT ══ */
+.est{
+  border:1.5px solid var(--blue);border-radius:10px;background:var(--tint);
+  padding:22px;box-shadow:var(--lift);
+}
+.est-arch{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
+.est-arch .micro{margin:0;}
+.est-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px;}
+.est-n{background:#fff;border-radius:8px;padding:15px 16px;border:1px solid rgba(0,168,255,.22);}
+.est-n .k{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--ink-faint);}
+.est-n .v{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--blue-deep);line-height:1.2;margin-top:6px;letter-spacing:-.6px;}
+.est-n .v.sm{font-size:17px;padding:6px 0;color:var(--ink-secondary);}
+.est-n .s{font-size:12px;color:var(--ink-secondary);margin-top:3px;}
+.est-quote{
+  background:#fff;border-left:3px solid var(--blue);border-radius:0 6px 6px 0;
+  padding:16px;font-size:15px;line-height:1.55;color:var(--ink-secondary);
+}
+.est-quote b{color:var(--ink);}
+.est-quote .win{color:var(--good-text);font-weight:700;}
+.est-scoped{
+  margin-top:14px;font-size:13px;color:var(--ink-secondary);
+  display:flex;align-items:center;gap:8px;
+}
+.payback{
+  margin-top:16px;background:var(--ink900);border-radius:10px;padding:18px 20px;color:#fff;
+}
+.payback .k{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--on-dark-dim);}
+.payback .v{font-size:19px;font-weight:700;margin-top:7px;line-height:1.45;}
+.payback .v b{color:var(--good);}
+.payback .v i{color:var(--blue);font-style:normal;}
+.payback .s{font-family:var(--mono);font-size:11.5px;color:var(--on-dark-dim);margin-top:8px;}
+
+/* ══ OPERATOR ══ */
+#s-op{display:none;}
+body.op #s-op{display:block;}
+.op-wrap{border:1.5px dashed var(--ink-faint);border-radius:10px;background:var(--paper-soft);padding:20px;}
+.op-flag{
+  display:flex;align-items:center;gap:10px;justify-content:space-between;
+  border-radius:8px;padding:16px 18px;margin-bottom:16px;
+}
+.op-flag.strong{background:rgba(18,183,106,.1);border:1px solid rgba(18,183,106,.35);}
+.op-flag.good{background:var(--tint);border:1px solid rgba(0,168,255,.35);}
+.op-flag.marginal{background:#FFF8EC;border:1px solid rgba(224,140,59,.35);}
+.op-flag.no{background:var(--warn-soft);border:1px solid rgba(224,83,59,.4);}
+.op-flag .l .k{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ink-faint);}
+.op-flag .l .v{font-size:22px;font-weight:800;margin-top:3px;}
+.op-flag.strong .l .v{color:var(--good-text);}
+.op-flag.good .l .v{color:var(--blue-text);}
+.op-flag.marginal .l .v{color:#B4661F;}
+.op-flag.no .l .v{color:var(--warn);}
+.op-flag .r{font-family:var(--mono);font-size:30px;font-weight:700;color:var(--ink-faint);}
+.op-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.op-list{list-style:none;display:flex;flex-direction:column;gap:7px;}
+.op-list li{font-size:13.5px;display:flex;gap:8px;align-items:flex-start;line-height:1.45;}
+.op-list li .b{flex:none;width:14px;height:14px;border-radius:50%;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:700;}
+.op-list li.pos .b{background:var(--good);}
+.op-list li.neg .b{background:var(--warn);}
+.op-say{
+  margin-top:16px;background:#fff;border-left:3px solid var(--ink900);border-radius:0 6px 6px 0;
+  padding:14px 16px;font-size:15px;line-height:1.55;
+}
+.op-say .k{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:6px;}
+
+/* ══ BOTTOM BAR ══ */
+.bar{
+  position:fixed;bottom:0;left:0;right:0;height:var(--bar-h);z-index:60;
+  background:var(--ink900);color:#fff;display:flex;align-items:center;gap:22px;padding:0 20px;
+}
+.bar-m{display:flex;align-items:baseline;gap:9px;}
+.bar-m .k{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--on-dark-dim);}
+.bar-m .v{font-family:var(--mono);font-size:21px;font-weight:700;letter-spacing:-.5px;}
+.bar-m .v.red{color:#FF7A5E;}
+.bar-m .v.blue{color:var(--blue);}
+.bar-m .v.sm{font-size:14px;font-weight:600;}
+.bar-sp{flex:1;}
+.bar-btn{
+  border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:8px 14px;
+  font-size:12.5px;font-weight:600;color:#fff;transition:.15s;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:7px;
+}
+.bar-btn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.4);}
+.bar-btn.prime{background:var(--blue);border-color:var(--blue);}
+.bar-btn.prime:hover{background:#0092e0;}
+.bar-div{width:1px;height:26px;background:rgba(255,255,255,.15);}
+
+/* ══ SESSIONS ══ */
+.sheet{
+  position:fixed;inset:0;z-index:90;background:rgba(14,26,43,.42);
+  display:none;align-items:flex-start;justify-content:center;padding:80px 20px;
+  backdrop-filter:blur(3px);
+}
+.sheet.open{display:flex;}
+.sheet-c{
+  background:#fff;border-radius:12px;max-width:520px;width:100%;
+  box-shadow:0 24px 60px rgba(14,26,43,.28);overflow:hidden;
+}
+.sheet-h{padding:18px 22px;border-bottom:1px solid var(--hairline);display:flex;align-items:center;justify-content:space-between;}
+.sheet-h h3{font-size:17px;font-weight:700;}
+.sheet-b{padding:12px 22px 22px;max-height:52vh;overflow-y:auto;}
+.sess{
+  display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--hairline);
+}
+.sess:last-child{border-bottom:none;}
+.sess-m{flex:1;min-width:0;}
+.sess-n{font-size:14.5px;font-weight:600;}
+.sess-d{font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-top:2px;}
+.sess-a{display:flex;gap:6px;}
+.sess-a button{
+  border:1px solid var(--hairline);border-radius:5px;padding:5px 10px;font-size:12px;font-weight:600;
+  color:var(--ink-secondary);transition:.14s;
+}
+.sess-a button:hover{border-color:var(--blue);color:var(--blue-text);}
+.sess-a button.del:hover{border-color:var(--warn);color:var(--warn);}
+.sheet-empty{padding:26px 0;text-align:center;color:var(--ink-faint);font-size:14px;}
+
+.toast{
+  position:fixed;bottom:calc(var(--bar-h) + 18px);left:50%;transform:translateX(-50%) translateY(14px);
+  background:var(--ink900);color:#fff;border-radius:8px;padding:11px 18px;font-size:13.5px;font-weight:600;
+  z-index:95;opacity:0;pointer-events:none;transition:.22s;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:820px){
+  .g2,.g3,.g4{grid-template-columns:1fr 1fr;}
+  .est-nums{grid-template-columns:1fr;}
+  .op-cols{grid-template-columns:1fr;}
+  .rail-who,.rail-tag{display:none;}
+  .leak-total .lt-r{text-align:left;}
+}
+@media(max-width:560px){
+  .g2,.g3,.g4{grid-template-columns:1fr;}
+  .page{padding-left:16px;padding-right:16px;}
+  .bar{gap:12px;overflow-x:auto;}
+  .bar-m .v{font-size:17px;}
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   PRINT — the deliverable. The screen UI is inputs; the PDF is a
+   document. So the page hides entirely and a purpose-built report is
+   rendered into #pdoc at print time.
+   ══════════════════════════════════════════════════════════════════ */
+#pdoc{display:none;}
+@media print{
+  @page{size:letter;margin:14mm 14mm 16mm;}
+  body{padding:0;background:#fff;font-size:11pt;}
+  .rail,.strip,.bar,.page,.sheet,.toast{display:none !important;}
+  #pdoc{display:block;}
+
+  .p-cover{margin-bottom:26px;padding-bottom:20px;border-bottom:2px solid var(--blue);}
+  .p-wm{display:flex;align-items:center;gap:9px;margin-bottom:20px;}
+  .p-wm img{width:24px;height:24px;}
+  .p-wm .a{font-weight:800;letter-spacing:2.4px;font-size:13px;}
+  .p-wm .b{font-weight:300;letter-spacing:2.4px;font-size:13px;color:var(--blue);margin-left:5px;}
+  .p-cover h1{font-size:24pt;font-weight:800;line-height:1.1;letter-spacing:-.5px;margin:10px 0 6px;}
+  .p-cover .sub{font-size:11pt;color:var(--ink-secondary);}
+  .p-meta{display:flex;gap:26px;flex-wrap:wrap;margin-top:16px;}
+  .p-meta div .k{font-family:var(--mono);font-size:7.5pt;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--ink-faint);}
+  .p-meta div .v{font-size:10.5pt;font-weight:600;margin-top:2px;}
+
+  .p-sec{margin-bottom:24px;break-inside:avoid;}
+  .p-sec > .rule{margin-bottom:7px;}
+  .p-sec > h2{font-size:14pt;font-weight:800;color:var(--blue);margin:0 0 10px;}
+  .p-lead{font-size:11pt;color:var(--ink-secondary);margin-bottom:12px;line-height:1.5;}
+
+  .p-kv{display:flex;flex-wrap:wrap;gap:9px 26px;margin-bottom:12px;}
+  .p-kv div{min-width:130px;}
+  .p-kv .k{font-family:var(--mono);font-size:7.5pt;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink-faint);}
+  .p-kv .v{font-size:10.5pt;font-weight:600;}
+
+  .p-tags{display:flex;flex-wrap:wrap;gap:5px;}
+  .p-tag{border:1px solid var(--hairline);border-radius:4px;padding:3px 8px;font-size:9pt;color:var(--ink-secondary);}
+  .p-tag.red{border-color:var(--warn);background:var(--warn-soft);color:#8C2E1D;}
+  .p-tag.green{border-color:var(--good);background:rgba(18,183,106,.08);color:var(--good-text);}
+
+  table.p-t{width:100%;border-collapse:collapse;margin-top:6px;}
+  table.p-t th{
+    font-family:var(--mono);font-size:7.5pt;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
+    color:var(--ink-faint);text-align:left;padding:0 0 6px;border-bottom:1px solid var(--hairline);
+  }
+  /* Fixed widths, not auto. The total row sets its figures at 15pt and the
+     two columns ran into each other ("$22,015$264,178") once the numbers got
+     six digits. */
+  table.p-t th.r,table.p-t td.r{text-align:right;width:96px;padding-left:16px;}
+  table.p-t td{padding:9px 0;border-bottom:1px solid var(--hairline);vertical-align:top;font-size:10pt;}
+  table.p-t td .nm{font-weight:700;}
+  table.p-t td .mth{font-family:var(--mono);font-size:8.5pt;color:var(--ink-secondary);margin-top:3px;}
+  /* .p-closer, not .ph — .ph is the on-screen phase card (bordered, padded,
+     flex) and those rules are not print-scoped, so the name collided and drew
+     a box around this line in the PDF. */
+  table.p-t td .p-closer{font-family:var(--mono);font-size:7.5pt;letter-spacing:1px;text-transform:uppercase;color:var(--blue-text);margin-top:3px;}
+  table.p-t td.amt{font-family:var(--mono);font-weight:700;color:var(--warn);white-space:nowrap;}
+  table.p-t tr.tot td{border-bottom:none;border-top:2px solid var(--warn);padding-top:11px;font-weight:800;}
+  table.p-t tr.tot td.amt{font-size:13pt;}
+  table.p-t tr.tot td .yr{font-family:var(--mono);font-size:8.5pt;color:var(--ink-secondary);font-weight:400;}
+
+  .p-ph{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--hairline);break-inside:avoid;}
+  .p-ph:last-child{border-bottom:none;}
+  .p-ph .i{
+    width:19px;height:19px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:8pt;font-weight:700;border:1.2px solid var(--hairline);color:var(--ink-faint);
+  }
+  .p-ph.entry .i{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .p-ph.covered .i{background:var(--good);border-color:var(--good);color:#fff;}
+  .p-ph .m{flex:1;}
+  .p-ph .nm{font-size:11pt;font-weight:700;}
+  .p-ph .nm .tm{font-size:.62em;vertical-align:super;}
+  .p-ph .tagx{font-family:var(--mono);font-size:7pt;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#fff;background:var(--blue);border-radius:3px;padding:2px 6px;margin-left:7px;vertical-align:middle;}
+  .p-ph .tagx.g{background:var(--good);}
+  .p-ph .tagx.f{background:none;color:var(--ink-faint);border:1px solid var(--hairline);}
+  .p-ph .ot{font-size:9.5pt;color:var(--ink-secondary);margin-top:2px;}
+  .p-ph .wy{font-size:9pt;color:var(--blue-text);margin-top:2px;}
+  .p-ph .r{text-align:right;flex:none;font-family:var(--mono);font-size:8.5pt;color:var(--ink-secondary);}
+  .p-ph .r .pr{color:var(--blue-text);font-weight:700;margin-top:2px;}
+
+  .p-est{border:1.5px solid var(--blue);border-radius:8px;background:var(--tint);padding:16px;break-inside:avoid;}
+  .p-est .row{display:flex;gap:16px;margin-bottom:12px;}
+  .p-est .row > div{flex:1;background:#fff;border-radius:6px;padding:11px 12px;border:1px solid rgba(0,168,255,.22);}
+  .p-est .k{font-family:var(--mono);font-size:7.5pt;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--ink-faint);}
+  .p-est .v{font-family:var(--mono);font-size:16pt;font-weight:700;color:var(--blue-deep);margin-top:3px;}
+  .p-est .v.sm{font-size:11pt;color:var(--ink-secondary);}
+  .p-est .s{font-size:8.5pt;color:var(--ink-secondary);margin-top:2px;}
+  .p-est .note{background:#fff;border-left:3px solid var(--blue);border-radius:0 5px 5px 0;padding:11px 13px;font-size:10pt;line-height:1.5;color:var(--ink-secondary);}
+  .p-est .note b{color:var(--ink);}
+
+  /* This card is nested inside .p-est, whose .k/.v rules have equal
+     specificity and set a near-black-on-near-black colour. Every inherited
+     property has to be restated here or the headline goes invisible. */
+  .p-pay{background:var(--ink900);border-radius:8px;padding:14px 16px;margin-top:12px;break-inside:avoid;}
+  .p-pay .k{font-family:var(--mono);font-size:7.5pt;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--on-dark-dim);}
+  .p-pay .v{font-family:var(--sans);font-size:12.5pt;font-weight:700;margin-top:5px;line-height:1.4;color:#fff;}
+  .p-pay .v b{color:var(--good);}
+  .p-pay .v i{color:var(--blue);font-style:normal;}
+  .p-pay .cap{font-size:9pt;color:var(--on-dark-dim);margin-top:7px;line-height:1.4;}
+
+  .p-quote{border-left:3px solid var(--blue);padding:10px 13px;font-size:10.5pt;font-style:italic;color:var(--ink-secondary);line-height:1.5;background:var(--paper-soft);border-radius:0 5px 5px 0;}
+
+  .p-op{border:1.5px dashed var(--ink-faint);border-radius:8px;padding:16px;background:var(--paper-soft);break-before:page;}
+  .p-op .stamp{font-family:var(--mono);font-size:8pt;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--warn);margin-bottom:12px;}
+  .p-op .verdict{font-size:16pt;font-weight:800;margin-bottom:3px;}
+  .p-op .score{font-family:var(--mono);font-size:9pt;color:var(--ink-secondary);margin-bottom:12px;}
+  .p-op ul{list-style:none;margin-bottom:12px;}
+  .p-op li{font-size:9.5pt;padding:3px 0;}
+  .p-op li.pos::before{content:"+ ";color:var(--good-text);font-weight:700;font-family:var(--mono);}
+  .p-op li.neg::before{content:"\2212 ";color:var(--warn);font-weight:700;font-family:var(--mono);}
+
+  .p-foot{
+    background:var(--ink900);border-radius:8px;padding:18px;margin-top:26px;break-inside:avoid;
+  }
+  .p-foot .p-wm .a{color:#fff;}
+  .p-foot .p-wm{margin-bottom:12px;}
+  .p-foot .tag{font-size:9.5pt;color:var(--on-dark-dim);letter-spacing:.4px;}
+  .p-foot .cx{font-size:9.5pt;color:var(--on-dark-dim);letter-spacing:.4px;margin-top:5px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ RAIL ═══ -->
+<header class="rail">
+  <a class="wordmark" href="/" aria-label="Newsonic Age">
+    <img src="assets/nsa-logo.png" alt="">
+    <span><span class="wm-a">NEWSONIC</span><span class="wm-b">AGE</span></span>
+  </a>
+  <span class="rail-tag">Discovery</span>
+  <span class="rail-who" id="rail-who"></span>
+  <span class="rail-sp"></span>
+  <span class="saved" id="saved"><i></i><span id="saved-t">Ready</span></span>
+  <!-- Operator-only: the list names every business Brad has sat with, and it
+       lives one click away on a screen a client is looking at. -->
+  <button class="rail-btn" id="btn-sessions" hidden>Sessions</button>
+  <button class="rail-btn" id="btn-op" title="Show the fit read. Client-visible when on — turn it off before you turn the screen.">Operator</button>
+</header>
+
+<!-- ═══ STEP STRIP ═══ -->
+<nav class="strip" id="strip" aria-label="Sections">
+  <a href="#s1" data-s="s1"><span class="dot"></span><span class="n">01</span><span class="t">Business</span></a>
+  <a href="#s2" data-s="s2"><span class="dot"></span><span class="n">02</span><span class="t">How work arrives</span></a>
+  <a href="#s3" data-s="s3"><span class="dot"></span><span class="n">03</span><span class="t">What they run</span></a>
+  <a href="#s4" data-s="s4"><span class="dot"></span><span class="n">04</span><span class="t">The numbers</span></a>
+  <a href="#s5" data-s="s5"><span class="dot"></span><span class="n">05</span><span class="t">In the red</span></a>
+  <a href="#s6" data-s="s6"><span class="dot"></span><span class="n">06</span><span class="t">Bottlenecks</span></a>
+  <a href="#s7" data-s="s7"><span class="dot"></span><span class="n">07</span><span class="t">What good looks like</span></a>
+  <a href="#s8" data-s="s8"><span class="dot"></span><span class="n">08</span><span class="t">Diagnosis</span></a>
+  <a href="#s9" data-s="s9"><span class="dot"></span><span class="n">09</span><span class="t">Investment</span></a>
+</nav>
+
+<main class="page">
+
+  <div class="intro">
+    <div class="rule"></div>
+    <h1>Let's find out what this business is <span>actually losing.</span></h1>
+    <p>We'll walk through how the work comes in, what it runs on today, and where it's getting stuck. Everything gets written down as we go. At the end you'll see the number, and what it would take to close it.</p>
+  </div>
+
+  <!-- ═══ 01 · THE BUSINESS ═══ -->
+  <section id="s1">
+    <div class="rule"></div>
+    <div class="sec-head"><span class="num">01</span><h2>The business</h2></div>
+    <p class="sec-sub">The frame. Who we're talking to and what they've built.</p>
+
+    <div class="grid g2 block">
+      <div class="fld"><label>Business name</label><input class="f" data-k="biz" placeholder="The name on the truck"></div>
+      <div class="fld"><label>What they do</label><input class="f" data-k="trade" placeholder="Tree service, HVAC, landscaping…"></div>
+    </div>
+    <div class="grid g3 block">
+      <div class="fld"><label>Who we're sitting with</label><input class="f" data-k="who" placeholder="First and last"></div>
+      <div class="fld"><label>Their number</label><input class="f" data-k="phone" placeholder="(000) 000-0000"></div>
+      <div class="fld"><label>Their email</label><input class="f" data-k="email" placeholder="name@business.com"></div>
+    </div>
+    <div class="grid g3 block">
+      <div class="fld"><label>Years in business</label><input class="f" data-k="years" inputmode="numeric" placeholder="0"></div>
+      <div class="fld"><label>Crews in the field</label><input class="f" data-k="crews" inputmode="numeric" placeholder="0"></div>
+      <div class="fld"><label>Where they work</label><input class="f" data-k="area" placeholder="Cities or counties"></div>
+    </div>
+
+    <div class="block">
+      <span class="micro">Their role</span>
+      <div class="chips" data-k="role">
+        <button class="chip" data-v="Owner">Owner</button>
+        <button class="chip" data-v="Co-owner">Co-owner</button>
+        <button class="chip" data-v="Operations">Operations</button>
+        <button class="chip" data-v="Office manager">Office manager</button>
+        <button class="chip" data-v="Someone else">Someone else</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">Can this person say yes</span>
+      <div class="chips" data-k="decider">
+        <button class="chip" data-v="Yes">Yes, on their own</button>
+        <button class="chip" data-v="Partly">With a partner or spouse</button>
+        <button class="chip" data-v="No">No — someone else decides</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">People on payroll</span>
+      <div class="chips" data-k="team">
+        <button class="chip" data-v="Just me">Just them</button>
+        <button class="chip" data-v="2–5">2–5</button>
+        <button class="chip" data-v="6–15">6–15</button>
+        <button class="chip" data-v="16–40">16–40</button>
+        <button class="chip" data-v="40+">40+</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">Annual revenue</span>
+      <div class="chips" data-k="rev">
+        <button class="chip" data-v="Under $250K">Under $250K</button>
+        <button class="chip" data-v="$250K–500K">$250K–500K</button>
+        <button class="chip" data-v="$500K–1M">$500K–1M</button>
+        <button class="chip" data-v="$1M–3M">$1M–3M</button>
+        <button class="chip" data-v="$3M–8M">$3M–8M</button>
+        <button class="chip" data-v="$8M–15M">$8M–15M</button>
+        <button class="chip" data-v="$15M+">$15M+</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">Have we worked together</span>
+      <div class="chips" data-k="rel">
+        <button class="chip" data-v="Current client">Current client</button>
+        <button class="chip" data-v="Past client">Past client</button>
+        <button class="chip" data-v="We've spoken">We've spoken before</button>
+        <button class="chip" data-v="New">New to us</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 02 · HOW WORK ARRIVES ═══ -->
+  <section id="s2">
+    <div class="rule"></div>
+    <div class="sec-head"><span class="num">02</span><h2>How the work arrives</h2></div>
+    <p class="sec-sub">Every business has a front door. This is where most of the money goes missing, and almost nobody is watching it.</p>
+
+    <div class="block">
+      <span class="micro">Where the work comes from</span>
+      <p class="hint">Pick everything that's true.</p>
+      <div class="chips" data-k="sources" data-multi>
+        <button class="chip" data-v="Word of mouth">Word of mouth</button>
+        <button class="chip" data-v="Repeat customers">Repeat customers</button>
+        <button class="chip" data-v="Google search">Google search</button>
+        <button class="chip" data-v="Google Maps">Google Maps</button>
+        <button class="chip" data-v="Referrals from other trades">Referrals from other trades</button>
+        <button class="chip" data-v="Trucks and yard signs">Trucks and yard signs</button>
+        <button class="chip" data-v="Social">Social</button>
+        <button class="chip" data-v="Paid ads">Paid ads</button>
+        <button class="chip" data-v="A lead marketplace">A lead marketplace</button>
+        <button class="chip" data-v="Door knocking">Door knocking</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">Who answers the phone</span>
+      <div class="chips" data-k="answers">
+        <button class="chip" data-v="The owner">The owner</button>
+        <button class="chip" data-v="Whoever is free">Whoever's free</button>
+        <button class="chip" data-v="An office person">An office person</button>
+        <button class="chip" data-v="An answering service">An answering service</button>
+        <button class="chip" data-v="It goes to voicemail">It goes to voicemail</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">After hours and weekends</span>
+      <div class="chips" data-k="after">
+        <button class="chip" data-v="Owner's cell">It rings the owner's cell</button>
+        <button class="chip" data-v="Voicemail">Voicemail</button>
+        <button class="chip" data-v="Nobody">Nobody</button>
+        <button class="chip" data-v="An answering service">An answering service</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">How fast a new lead gets a real answer</span>
+      <div class="chips" data-k="speed">
+        <button class="chip" data-v="Minutes">Minutes</button>
+        <button class="chip" data-v="Within the hour">Within the hour</button>
+        <button class="chip" data-v="Same day">Same day</button>
+        <button class="chip" data-v="Next day">Next day</button>
+        <button class="chip" data-v="It varies">Honestly, it varies</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">Walk me through what happens after that call</span>
+      <p class="hint">Their words. Where does the note go, who picks it up, what triggers the next step.</p>
+      <textarea class="f" data-k="flow" placeholder="They call → written on a pad → I text the estimate → …"></textarea>
+    </div>
+  </section>
+
+  <div class="beat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+
+  <!-- ═══ 03 · WHAT THEY RUN ═══ -->
+  <section id="s3">
+    <div class="rule"></div>
+    <div class="sec-head"><span class="num">03</span><h2>What it runs on today</h2></div>
+    <p class="sec-sub">This decides where we'd start. Something already working stays and gets aligned — we don't rebuild what isn't broken.</p>
+
+    <div class="block">
+      <span class="micro">In place today</span>
+      <p class="hint">Check anything real. Blank is a perfectly good answer.</p>
+      <div class="chips" data-k="have" data-multi>
+        <button class="chip" data-v="A website someone maintains">A website someone maintains</button>
+        <button class="chip" data-v="A CRM">A CRM</button>
+        <button class="chip" data-v="QuickBooks or similar">QuickBooks or similar</button>
+        <button class="chip" data-v="Scheduling or dispatch software">Scheduling or dispatch software</button>
+        <button class="chip" data-v="Estimating or quoting software">Estimating or quoting software</button>
+        <button class="chip" data-v="An app the crew uses">An app the crew uses</button>
+        <button class="chip" data-v="Automated follow-ups">Automated follow-ups</button>
+        <button class="chip" data-v="Automated review requests">Automated review requests</button>
+        <button class="chip" data-v="An answering service">An answering service</button>
+        <button class="chip" data-v="Spreadsheets">Spreadsheets</button>
+        <button class="chip" data-v="Text threads">Text threads</button>
+        <button class="chip" data-v="Paper and a whiteboard">Paper and a whiteboard</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">The website</span>
+      <div class="chips" data-k="site">
+        <button class="chip" data-v="None">There isn't one</button>
+        <button class="chip" data-v="Out of date">One, but it's out of date</button>
+        <button class="chip" data-v="Looks fine, brings nothing">Looks fine, brings no work</button>
+        <button class="chip" data-v="Actively brings work">It actively brings work</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">Where a customer's history lives</span>
+      <div class="chips" data-k="records">
+        <button class="chip" data-v="One system">One system, everyone can see it</button>
+        <button class="chip" data-v="A few systems">Split across a few systems</button>
+        <button class="chip" data-v="Files and folders">Files and folders</button>
+        <button class="chip" data-v="On paper">On paper</button>
+        <button class="chip" data-v="In someone's head">In someone's head</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">Do those systems talk to each other</span>
+      <div class="chips" data-k="integrated">
+        <button class="chip" data-v="Yes">Yes</button>
+        <button class="chip" data-v="Some do">Some do</button>
+        <button class="chip" data-v="No">No — it's all re-typed</button>
+        <button class="chip" data-v="N/A">Nothing to connect yet</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 04 · THE NUMBERS ═══ -->
+  <section id="s4">
+    <div class="rule"></div>
+    <div class="sec-head"><span class="num">04</span><h2>The numbers</h2></div>
+    <p class="sec-sub">Rough is fine — we're finding the shape, not auditing the books. Every figure below feeds the arithmetic in the next section, so nothing is invented.</p>
+
+    <div class="block">
+      <span class="micro">The core three</span>
+      <div class="grid g3">
+        <div class="fld"><label>Average job value</label><div class="f-money"><span>$</span><input class="f" data-k="avgJob" inputmode="numeric" placeholder="850"></div></div>
+        <div class="fld"><label>Jobs completed / month</label><input class="f" data-k="jobsMo" inputmode="numeric" placeholder="40"></div>
+        <div class="fld"><label>Calls / week</label><input class="f" data-k="callsWk" inputmode="numeric" placeholder="60"></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">The phone</span>
+      <div class="grid g2">
+        <div class="fld"><label>Calls a week nobody answers</label><input class="f" data-k="missedWk" inputmode="numeric" placeholder="12"></div>
+        <div class="fld"><label>Calls a week after hours</label><input class="f" data-k="afterWk" inputmode="numeric" placeholder="8"></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">Quotes</span>
+      <div class="grid g2">
+        <div class="fld"><label>Quotes sent / month</label><input class="f" data-k="quotesMo" inputmode="numeric" placeholder="30"></div>
+        <div class="fld"><label>…that never get a yes or a no</label><input class="f" data-k="coldMo" inputmode="numeric" placeholder="9"></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">Hours that aren't the work</span>
+      <div class="grid g4">
+        <div class="fld"><label>Office hours / week on admin</label><input class="f" data-k="adminHrs" inputmode="numeric" placeholder="14"></div>
+        <div class="fld"><label>What that hour costs</label><div class="f-money"><span>$</span><input class="f" data-k="adminRate" inputmode="numeric" placeholder="30"></div></div>
+        <div class="fld"><label>Owner hours / week below their rate</label><input class="f" data-k="ownerHrs" inputmode="numeric" placeholder="10"></div>
+        <div class="fld"><label>What the owner's hour is worth</label><div class="f-money"><span>$</span><input class="f" data-k="ownerRate" inputmode="numeric" placeholder="85"></div></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">The back catalogue</span>
+      <div class="grid g3">
+        <div class="fld"><label>Past customers, no contact in a year</label><input class="f" data-k="dormant" inputmode="numeric" placeholder="400"></div>
+        <div class="fld"><label>Google reviews today</label><input class="f" data-k="reviews" inputmode="numeric" placeholder="31"></div>
+        <div class="fld"><label>Reviews asked for / month</label><input class="f" data-k="reviewAsks" inputmode="numeric" placeholder="0"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="beat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+
+  <!-- ═══ 05 · IN THE RED ═══ -->
+  <section id="s5">
+    <div class="rule"></div>
+    <div class="sec-head"><span class="num">05</span><h2>Where it's going</h2></div>
+    <p class="sec-sub">Every line is arithmetic on the numbers they just gave us — nothing is estimated on their behalf. <em>The assumptions are editable. When they say "no, we'd close more like half of those," change it in front of them.</em> Turn off any line that doesn't apply.</p>
+
+    <div class="leaks" id="leaks"></div>
+
+    <div class="leak-total" id="leak-total">
+      <div class="lt-l">
+        <div class="lt-k">Leaving the business each year</div>
+        <div class="lt-v" id="lt-year">$0</div>
+        <div class="lt-s" id="lt-note">Fill in section 04 and this fills itself in.</div>
+      </div>
+      <div class="lt-r" id="lt-right"></div>
+    </div>
+    <div class="sanity" id="sanity"></div>
+  </section>
+
+  <!-- ═══ 06 · BOTTLENECKS ═══ -->
+  <section id="s6">
+    <div class="rule"></div>
+    <div class="sec-head"><span class="num">06</span><h2>What's getting in the way</h2></div>
+    <p class="sec-sub">Read these out. Let them stop you on the ones that sting — those are the ones that decide the order.</p>
+
+    <div class="block">
+      <span class="micro">Being found and believed</span>
+      <div class="chips red" data-k="bn" data-multi>
+        <button class="chip" data-v="Hard to find online" data-p="WEB">Hard to find online</button>
+        <button class="chip" data-v="The website brings nothing" data-p="WEB">The website brings nothing</button>
+        <button class="chip" data-v="Losing bids to worse companies" data-p="WEB">Losing bids to worse companies</button>
+        <button class="chip" data-v="Reviews only happen by accident" data-p="CONSOLE">Reviews only happen by accident</button>
+      </div>
+    </div>
+    <div class="block">
+      <span class="micro">Holding onto what comes in</span>
+      <div class="chips red" data-k="bn" data-multi>
+        <button class="chip" data-v="Leads slip through the cracks" data-p="BACKBONE">Leads slip through the cracks</button>
+        <button class="chip" data-v="Nothing lives in one place" data-p="BACKBONE">Nothing lives in one place</button>
+        <button class="chip" data-v="The same thing gets typed twice" data-p="BACKBONE">The same thing gets typed twice</button>
+        <button class="chip" data-v="No idea what a customer had done before" data-p="BACKBONE">No idea what a customer had done before</button>
+      </div>
+    </div>
+    <div class="block">
+      <span class="micro">The work that repeats</span>
+      <div class="chips red" data-k="bn" data-multi>
+        <button class="chip" data-v="Follow-up only happens when someone remembers" data-p="AUTO">Follow-up only when someone remembers</button>
+        <button class="chip" data-v="Scheduling eats the day" data-p="AUTO">Scheduling eats the day</button>
+        <button class="chip" data-v="Invoices go out late" data-p="AUTO">Invoices go out late</button>
+        <button class="chip" data-v="Reminders are manual" data-p="AUTO">Reminders are manual</button>
+      </div>
+    </div>
+    <div class="block">
+      <span class="micro">The field</span>
+      <div class="chips red" data-k="bn" data-multi>
+        <button class="chip" data-v="The crew runs on paper and texts" data-p="CONSOLE">The crew runs on paper and texts</button>
+        <button class="chip" data-v="Nobody knows where the crews are" data-p="CONSOLE">Nobody knows where the crews are</button>
+        <button class="chip" data-v="Job details get lost between office and field" data-p="CONSOLE">Details get lost between office and field</button>
+        <button class="chip" data-v="Photos and notes live on someone's phone" data-p="CONSOLE">Photos and notes live on a phone</button>
+      </div>
+    </div>
+    <div class="block">
+      <span class="micro">The owner</span>
+      <div class="chips red" data-k="bn" data-multi>
+        <button class="chip" data-v="The phone never stops" data-p="INTEL">The phone never stops</button>
+        <button class="chip" data-v="Calls come in while you're on a job" data-p="INTEL">Calls come in while you're on a job</button>
+        <button class="chip" data-v="Every quote waits on the owner" data-p="INTEL">Every quote waits on the owner</button>
+        <button class="chip" data-v="Growth is capped by the office, not the field" data-p="INTEL">Growth is capped by the office, not the field</button>
+        <button class="chip" data-v="Can't take a day off" data-p="INTEL">Can't take a day off</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">If one of these stopped tomorrow, which one changes the most</span>
+      <textarea class="f" data-k="worst" placeholder="Their answer, in their words."></textarea>
+    </div>
+  </section>
+
+  <!-- ═══ 07 · WHAT GOOD LOOKS LIKE ═══ -->
+  <section id="s7">
+    <div class="rule"></div>
+    <div class="sec-head"><span class="num">07</span><h2>What good looks like</h2></div>
+    <p class="sec-sub">The other side of it. This is what the recommendation gets measured against.</p>
+
+    <div class="block">
+      <span class="micro">A year from now, this business…</span>
+      <div class="chips" data-k="goals" data-multi>
+        <button class="chip" data-v="Takes more work without adding office staff">Takes more work without adding office staff</button>
+        <button class="chip" data-v="Gets the owner off the phone">Gets the owner off the phone</button>
+        <button class="chip" data-v="Gets the owner out of the truck">Gets the owner out of the truck</button>
+        <button class="chip" data-v="Knows what every crew is doing">Knows what every crew is doing</button>
+        <button class="chip" data-v="Stops losing quotes">Stops losing quotes</button>
+        <button class="chip" data-v="Gets found for the work it actually wants">Gets found for the work it wants</button>
+        <button class="chip" data-v="Runs without the owner for a week">Runs a week without the owner</button>
+        <button class="chip" data-v="Opens a second location">Opens a second location</button>
+        <button class="chip" data-v="Is worth selling one day">Is worth selling one day</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">In their words</span>
+      <textarea class="f" data-k="vision" placeholder="What does a good year look like from where they're sitting?"></textarea>
+    </div>
+
+    <div class="block">
+      <span class="micro">How urgent</span>
+      <div class="chips" data-k="urgency">
+        <button class="chip" data-v="Bleeding now">Bleeding now</button>
+        <button class="chip" data-v="Next few weeks">Next few weeks</button>
+        <button class="chip" data-v="This quarter">This quarter</button>
+        <button class="chip" data-v="Mapping it out">Just mapping it out</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">Are they willing to change how the work gets done</span>
+      <p class="hint">The honest one. A business that won't change its process can't be helped by a better one.</p>
+      <div class="chips" data-k="change">
+        <button class="chip" data-v="Yes">Yes — that's the point</button>
+        <button class="chip" data-v="Some">Some of it</button>
+        <button class="chip" data-v="Not really">Not really</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="micro">What they've tried before</span>
+      <textarea class="f" data-k="tried" placeholder="Software they bought and stopped using, an agency that didn't work out, a nephew who built the site…"></textarea>
+    </div>
+  </section>
+
+  <div class="beat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+
+  <!-- ═══ 08 · DIAGNOSIS ═══ -->
+  <section id="s8">
+    <div class="rule"></div>
+    <div class="sec-head"><span class="num">08</span><h2>What we'd do, and in what order</h2></div>
+    <p class="sec-sub">One operating system. Each phase activates another capability. What's already working stays and gets aligned — the order comes out of what we just wrote down.</p>
+
+    <div class="dx-note" id="dx-note">Answer sections 03 through 06 and the sequence writes itself.</div>
+    <div class="phases" id="phases"></div>
+  </section>
+
+  <!-- ═══ 09 · INVESTMENT ═══ -->
+  <section id="s9">
+    <div class="rule"></div>
+    <div class="sec-head"><span class="num">09</span><h2>The investment</h2></div>
+    <p class="sec-sub">The diagnosis comes before the number. Now there's a diagnosis.</p>
+
+    <div class="block">
+      <span class="micro">Terms</span>
+      <p class="hint">Set from the relationship in section 01. Override it if the room calls for it.</p>
+      <div class="chips" data-k="arch">
+        <button class="chip" data-v="NEW">New Client</button>
+        <button class="chip" data-v="SHARED">Shared Investment</button>
+        <button class="chip" data-v="LEGACY">Legacy Partner</button>
+      </div>
+    </div>
+
+    <div class="est" id="est"></div>
+    <div class="payback" id="payback" style="display:none;"></div>
+
+    <div class="block" style="margin-top:26px;">
+      <span class="micro">What we agreed to next</span>
+      <textarea class="f" data-k="next" placeholder="The one thing that happens before we speak again — and who does it."></textarea>
+    </div>
+  </section>
+
+  <!-- ═══ OPERATOR ═══ -->
+  <section id="s-op">
+    <div class="rule"></div>
+    <div class="sec-head"><span class="num">—</span><h2>Operator read</h2></div>
+    <p class="sec-sub">Not for the client's eyes. Turn Operator off before you turn the screen around. This appears in the PDF only while it's on.</p>
+
+    <div class="op-wrap">
+      <div class="op-flag" id="fit-flag">
+        <div class="l"><div class="k">Fit</div><div class="v" id="fit-v">—</div></div>
+        <div class="r" id="fit-s">—</div>
+      </div>
+      <div class="op-cols">
+        <div><span class="micro" style="display:block;margin-bottom:9px;">For it</span><ul class="op-list" id="fit-pos"></ul></div>
+        <div><span class="micro" style="display:block;margin-bottom:9px;">Against it</span><ul class="op-list" id="fit-neg"></ul></div>
+      </div>
+      <div class="op-say"><span class="k">What to say out loud</span><span id="fit-say">—</span></div>
+      <div class="block" style="margin-top:18px;margin-bottom:0;">
+        <span class="micro">Private notes</span>
+        <textarea class="f" data-k="opnotes" placeholder="Anything you wouldn't write on the client copy."></textarea>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══ BOTTOM BAR ═══ -->
+<div class="bar">
+  <div class="bar-m"><span class="k">Leak / yr</span><span class="v red" id="bar-leak">$0</span></div>
+  <div class="bar-div"></div>
+  <div class="bar-m"><span class="k">Start</span><span class="v blue sm" id="bar-entry">—</span></div>
+  <div class="bar-div"></div>
+  <div class="bar-m"><span class="k">Monthly</span><span class="v sm" id="bar-mo">—</span></div>
+  <span class="bar-sp"></span>
+  <button class="bar-btn" id="btn-new">New session</button>
+  <button class="bar-btn" id="btn-copy">Copy recap</button>
+  <button class="bar-btn prime" id="btn-pdf">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    <span id="pdf-label">PDF — client copy</span>
+  </button>
+</div>
+
+<!-- ═══ SESSIONS ═══ -->
+<div class="sheet" id="sheet">
+  <div class="sheet-c">
+    <div class="sheet-h">
+      <h3>Saved sessions</h3>
+      <button class="rail-btn" id="sheet-x">Close</button>
+    </div>
+    <div class="sheet-b" id="sheet-b"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- The PDF. Built on demand, never shown on screen. -->
+<div id="pdoc"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════════════
+   DISCOVERY — an in-meeting instrument.
+
+   Three engines, in order:
+     1. LEAK      what the numbers they gave us are costing, with the
+                  arithmetic on screen so it can be checked and argued with.
+     2. SEQUENCE  which phase they enter at. NOT hardcoded to the first one —
+                  a business already carrying a working site and real records
+                  enters further down, and the phases behind it are marked
+                  in place rather than rebuilt.
+     3. FIT       whether this is our client at all. Operator-only: a score on
+                  screen in front of a prospect is a way to lose one.
+
+   Pricing rule (load-bearing): only the foundation phase has a settled price,
+   and it prices by RELATIONSHIP, not scope — that is the archetype system.
+   Every other phase reads "scoped at assessment" until a real range is set in
+   PRICE.phase below. Do not compute a phase price from anything else.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+const KEY = 'nsa.discovery.v1';
+const ARCHIVE = 'nsa.discovery.sessions.v1';
+
+/* ── State ─────────────────────────────────────────────────────────────── */
+/* Assumption defaults are deliberately conservative. A leak number that
+   overshoots is worse than one that undershoots: the owner does the division
+   in their head, lands on a figure bigger than a third of their revenue, and
+   stops believing the rest of the page. Undersell it and let them argue it
+   upward — which is exactly what the editable fields are for. */
+const DEFAULTS = {
+  callNew: 50, callClose: 30, coldRecover: 40, dormantBack: 8,
+  leakOff: {}, arch: 'NEW'
+};
+let S = Object.assign({}, DEFAULTS);
+
+/* ── Phases — names, durations and outcomes are the site's, verbatim ────── */
+const PHASES = [
+  { id:'ASSESS',  name:'Business Assessment',   dur:'1 wk',    out:'You know exactly what to fix first, and in what order.', always:true },
+  { id:'WEB',     name:'Web Foundation',        dur:'2–4 wk',  out:'More qualified opportunities.' },
+  { id:'BACKBONE',name:'BACK-BONE<span class="tm">™</span>', plain:'BACK-BONE™', dur:'3–4 wk', out:'Every customer and job lives in one place.' },
+  { id:'AUTO',    name:'Automation Layer',      dur:'2–3 wk',  out:'Routine work happens automatically.' },
+  { id:'CONSOLE', name:'Field Console',         dur:'4–6 wk',  out:'Your entire operation travels with you.' },
+  { id:'INTEL',   name:'VEIL Intelligence',     dur:'2–3 wk',  out:'Work that needed your judgment stops waiting on you.' },
+  { id:'CUSTOM',  name:'Custom Implementations',dur:'scoped',  out:'The system keeps adapting as the business changes.' }
+];
+const PH = id => PHASES.find(p => p.id === id);
+const phName = id => { const p = PH(id); return p ? (p.plain || p.name) : id; };
+
+/* ── Pricing ────────────────────────────────────────────────────────────
+   Archetypes price a whole foundation phase by relationship. Setup trades
+   AGAINST monthly — the Legacy Partner pays the highest monthly precisely
+   because they pay no setup. That inversion is deliberate; never present a
+   $0 setup as a waived fee.
+
+   PRICE.phase: null means "scoped at assessment" and the page says so. When
+   a phase gets a settled range, put it here as {setup:[lo,hi],monthly:[lo,hi]}
+   and every surface picks it up — no other edit needed.                    */
+const PRICE = {
+  arch: {
+    NEW:    { label:'New Client',        note:'Starting fresh.',                      setup:[3500,5000], monthly:[149,199] },
+    SHARED: { label:'Shared Investment', note:'Cash flow matters, or better terms.',  setup:[1500,1500], monthly:[179,179] },
+    LEGACY: { label:'Legacy Partner',    note:'A client of years’ standing.',    setup:[0,0],       monthly:[249,249] }
+  },
+  phase: { WEB:'ARCH', BACKBONE:null, AUTO:null, CONSOLE:null, INTEL:null, CUSTOM:null }
+};
+
+/* ── Leak lines ─────────────────────────────────────────────────────────
+   Each returns a MONTHLY figure and shows its own arithmetic. `need` lists
+   the inputs without which the line can't be computed — a line with nothing
+   behind it says so instead of printing $0 as if that were a finding.      */
+const LEAKS = [
+  {
+    id:'calls', phase:'INTEL',
+    name:'Calls that nobody answered',
+    need:['missedWk','avgJob'],
+    // Two factors, not one. A raw missed-call count times a close rate treats
+    // every unanswered ring as a new customer at full job value — it isn't.
+    // Vendors, wrong numbers, repeat callers and the ones who ring back all
+    // sit in that number, and leaving them in is how the total stops being
+    // believable.
+    assume:[
+      { k:'callNew',   label:'Were new work' },
+      { k:'callClose', label:'Of those, would have closed' }
+    ],
+    calc: () => num('missedWk') * 4.33 * (num('callNew',50)/100) * (num('callClose',30)/100) * num('avgJob'),
+    math: () => `<b>${n0(num('missedWk'))}</b> missed/wk &times; <b>4.33</b> wks &times; <b>${num('callNew',50)}%</b> new work &times; <b>${num('callClose',30)}%</b> close &times; <b>${money(num('avgJob'))}</b> avg job = <span class="eq">${money(calcOf('calls'))}/mo</span>`
+  },
+  {
+    id:'cold', phase:'AUTO',
+    name:'Quotes that went cold',
+    need:['coldMo','avgJob'],
+    assume:{ k:'coldRecover', label:'Recoverable with follow-up' },
+    calc: () => num('coldMo') * (num('coldRecover',40)/100) * num('avgJob'),
+    math: () => `<b>${n0(num('coldMo'))}</b> quotes/mo with no answer &times; <b>${num('coldRecover',40)}%</b> recoverable &times; <b>${money(num('avgJob'))}</b> = <span class="eq">${money(calcOf('cold'))}/mo</span>`
+  },
+  {
+    id:'admin', phase:'BACKBONE',
+    name:'Office hours spent re-typing and chasing',
+    need:['adminHrs','adminRate'],
+    calc: () => num('adminHrs') * 4.33 * num('adminRate'),
+    math: () => `<b>${n0(num('adminHrs'))}</b> hrs/wk &times; <b>4.33</b> wks &times; <b>${money(num('adminRate'))}</b>/hr = <span class="eq">${money(calcOf('admin'))}/mo</span>`
+  },
+  {
+    id:'owner', phase:'CONSOLE',
+    name:'Owner hours on work below their rate',
+    need:['ownerHrs','ownerRate'],
+    calc: () => num('ownerHrs') * 4.33 * num('ownerRate'),
+    math: () => `<b>${n0(num('ownerHrs'))}</b> hrs/wk &times; <b>4.33</b> wks &times; <b>${money(num('ownerRate'))}</b>/hr = <span class="eq">${money(calcOf('owner'))}/mo</span>`
+  },
+  {
+    id:'dormant', phase:'BACKBONE',
+    name:'Customers who never came back',
+    need:['dormant','avgJob'],
+    assume:{ k:'dormantBack', label:'Win back in a year' },
+    calc: () => num('dormant') * (num('dormantBack',8)/100) * num('avgJob') / 12,
+    math: () => `<b>${n0(num('dormant'))}</b> dormant &times; <b>${num('dormantBack',8)}%</b> won back &times; <b>${money(num('avgJob'))}</b> &divide; <b>12</b> mo = <span class="eq">${money(calcOf('dormant'))}/mo</span>`
+  }
+];
+
+/* ── Helpers ───────────────────────────────────────────────────────────── */
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const num = (k, dflt) => {
+  const raw = S[k];
+  if (raw === undefined || raw === null || raw === '') return dflt !== undefined ? dflt : 0;
+  const v = parseFloat(String(raw).replace(/[^0-9.\-]/g, ''));
+  return isFinite(v) ? v : (dflt !== undefined ? dflt : 0);
+};
+const has = k => S[k] !== undefined && S[k] !== null && String(S[k]).trim() !== '';
+const money = v => '$' + Math.round(v || 0).toLocaleString('en-US');
+const n0 = v => Math.round(v || 0).toLocaleString('en-US');
+const arr = k => Array.isArray(S[k]) ? S[k] : [];
+const hasV = (k, v) => arr(k).indexOf(v) !== -1;
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const leakOn  = id => !(S.leakOff || {})[id];
+const leakLive = L => L.need.every(has);
+const calcOf = id => { const L = LEAKS.find(x => x.id === id); return (L && leakLive(L)) ? L.calc() : 0; };
+const leakMo = () => LEAKS.reduce((t, L) => t + (leakOn(L.id) && leakLive(L) ? L.calc() : 0), 0);
+
+/* ══ 1 · LEAK ═══════════════════════════════════════════════════════════ */
+function renderLeaks(){
+  $('#leaks').innerHTML = LEAKS.map(L => {
+    const on = leakOn(L.id), live = leakLive(L), v = live ? L.calc() : 0;
+    const missing = L.need.filter(k => !has(k));
+    return `
+    <div class="leak ${on?'on':'off'} ${on&&live&&v>0?'hot':''}" data-leak="${L.id}">
+      <div class="leak-top">
+        <button class="leak-tog" data-tog="${L.id}" aria-label="Toggle ${esc(L.name)}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <span class="leak-name">${esc(L.name)}</span>
+        <span class="leak-amt">${live ? money(v)+'/mo' : '—'}</span>
+      </div>
+      <div class="leak-body">
+        ${live
+          ? `<div class="leak-math">${L.math()}</div>`
+          : `<p class="leak-miss">Needs ${missing.map(labelOf).join(' and ')} in section 04.</p>`}
+        ${L.assume ? `
+          <div class="leak-in">
+            ${[].concat(L.assume).map(a => `
+            <div class="fld"><label>${esc(a.label)}</label>
+              <div class="f-pct"><input class="f" data-k="${a.k}" inputmode="numeric" value="${esc(S[a.k] ?? DEFAULTS[a.k])}"><span>%</span></div>
+            </div>`).join('')}
+          </div>` : ''}
+        <div class="leak-phase">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="color:var(--blue);flex:none;"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Closed by <b>${phName(L.phase)}</b> — ${esc(PH(L.phase).out)}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const mo = leakMo(), yr = mo * 12;
+  $('#lt-year').textContent = money(yr);
+  $('#bar-leak').textContent = money(yr);
+
+  const active = LEAKS.filter(L => leakOn(L.id) && leakLive(L) && L.calc() > 0);
+  if (!active.length){
+    $('#lt-note').textContent = 'Fill in section 04 and this fills itself in.';
+    $('#lt-right').innerHTML = '';
+    return;
+  }
+  $('#lt-note').textContent = `${money(mo)} every month, across ${active.length} line${active.length>1?'s':''} — all of it arithmetic on their own numbers.`;
+
+  // Group the leak by the phase that closes it. This is the bridge from
+  // section 05 to section 08: the money itself argues the order.
+  const byPhase = {};
+  active.forEach(L => { byPhase[L.phase] = (byPhase[L.phase] || 0) + L.calc(); });
+  $('#lt-right').innerHTML = Object.entries(byPhase)
+    .sort((a,b) => b[1]-a[1])
+    .map(([p,v]) => `<div>${esc(phName(p))} &nbsp;<b>${money(v*12)}/yr</b></div>`)
+    .join('');
+
+  renderSanity(mo, yr);
+}
+
+/* Two checks, both aimed at the same failure: a number so large the owner
+   stops believing the page. The jobs-equivalent is the one to read out loud —
+   it converts an abstract figure into something they can weigh against their
+   own calendar. The revenue check is the brake: over a quarter of stated
+   revenue and the assumptions are wrong, not the business. */
+const REV_MID = {
+  'Under $250K':175000, '$250K–500K':375000, '$500K–1M':750000,
+  '$1M–3M':2000000, '$3M–8M':5500000, '$8M–15M':11500000, '$15M+':20000000
+};
+function renderSanity(mo, yr){
+  const el = $('#sanity');
+  if (!el) return;
+  if (mo <= 0){ el.innerHTML = ''; return; }
+  const rows = [];
+  const icon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>`;
+
+  const aj = num('avgJob'), jm = num('jobsMo');
+  if (aj > 0){
+    const eq = mo / aj;
+    rows.push(`<div class="s-row">${icon}<span>That is the equivalent of about <b>${eq.toFixed(eq < 10 ? 1 : 0)} jobs a month</b> this business isn’t doing${jm > 0 ? ` — against the <b>${n0(jm)}</b> it does today` : ''}.</span></div>`);
+    if (jm > 0 && eq > jm * 0.6){
+      rows.push(`<div class="s-row warn">${icon}<span><b>Check this before you say it out loud.</b> The arithmetic is claiming a ${Math.round((eq/jm)*100)}% lift on current volume. Tighten the assumptions above until the number is one they’ll nod at — an understated leak they believe beats an accurate one they don’t.</span></div>`);
+    }
+  }
+  const mid = REV_MID[S.rev];
+
+  // Cross-check the two things they told us independently. Jobs × job value
+  // should land somewhere near stated revenue; when it doesn't, every figure
+  // downstream is built on one of two numbers that can't both be right — and
+  // the revenue check above would quietly pass while the jobs check fails.
+  if (mid && aj > 0 && jm > 0){
+    const implied = aj * jm * 12;
+    const ratio = implied / mid;
+    if (ratio < 0.5 || ratio > 2){
+      rows.push(`<div class="s-row warn">${icon}<span><b>These two don’t line up.</b> ${n0(jm)} jobs a month at ${money(aj)} works out to about <b>${money(implied)}</b> a year, against the <b>${esc(S.rev)}</b> in section 01. ${ratio < 0.5 ? 'There’s revenue coming from somewhere this doesn’t capture — bigger jobs, contracts, another line of work.' : 'One of the two is high.'} Worth asking before either number goes on the page.</span></div>`);
+    }
+  }
+
+  if (mid){
+    const share = yr / mid;
+    if (share > 0.25){
+      rows.push(`<div class="s-row warn">${icon}<span><b>This reads high.</b> ${money(yr)} is roughly <b>${Math.round(share*100)}%</b> of stated revenue. Walk the assumptions down, or turn off a line that doesn’t really apply.</span></div>`);
+    } else {
+      rows.push(`<div class="s-row">${icon}<span>About <b>${Math.round(share*100)}%</b> of stated revenue — a figure in the range owners recognise.</span></div>`);
+    }
+  }
+  el.innerHTML = rows.join('');
+}
+function labelOf(k){
+  return ({
+    missedWk:'unanswered calls', avgJob:'average job value', coldMo:'cold quotes',
+    adminHrs:'admin hours', adminRate:'the admin rate', ownerHrs:'owner hours',
+    ownerRate:'the owner rate', dormant:'dormant customers'
+  })[k] || k;
+}
+
+/* ══ 2 · SEQUENCE ═══════════════════════════════════════════════════════
+   Coverage decides the entry point. A business already carrying a working
+   site and real records does not start at the foundation — it starts where
+   the gap is. But the phases behind it are never presented as skipped:
+   they're in place, and they get aligned rather than rebuilt, because the
+   sequence is what makes each phase work better than it would alone.      */
+function coverage(){
+  const c = {};
+  const bn = arr('bn');
+  const bnFor = id => bn.some(v => (BN_PHASE[v] === id));
+
+  c.WEB = (S.site === 'Actively brings work' && hasV('have','A website someone maintains')) ? 'IN'
+        : (S.site === 'Looks fine, brings nothing' || S.site === 'Out of date') ? 'PART'
+        : 'GAP';
+
+  c.BACKBONE = (hasV('have','A CRM') && S.records === 'One system') ? 'IN'
+             : (hasV('have','A CRM') || S.records === 'A few systems') ? 'PART'
+             : 'GAP';
+
+  c.AUTO = (hasV('have','Automated follow-ups') && hasV('have','Automated review requests')) ? 'IN'
+         : (hasV('have','Automated follow-ups') || hasV('have','Automated review requests') || hasV('have','Scheduling or dispatch software')) ? 'PART'
+         : 'GAP';
+
+  c.CONSOLE = hasV('have','An app the crew uses') ? 'IN' : 'GAP';
+
+  c.INTEL = hasV('have','An answering service') ? 'PART' : 'GAP';
+
+  c.CUSTOM = 'GAP';
+
+  // A named bottleneck outranks an inventory check. Owning a CRM and still
+  // losing leads in it is not coverage.
+  ['WEB','BACKBONE','AUTO','CONSOLE','INTEL'].forEach(id => {
+    if (c[id] === 'IN' && bnFor(id)) c[id] = 'PART';
+  });
+  return c;
+}
+
+const BN_PHASE = {};
+function indexBottlenecks(){
+  $$('[data-k="bn"] .chip').forEach(ch => { BN_PHASE[ch.dataset.v] = ch.dataset.p; });
+}
+
+function leakByPhase(){
+  const m = {};
+  LEAKS.forEach(L => { if (leakOn(L.id) && leakLive(L)) m[L.phase] = (m[L.phase]||0) + L.calc(); });
+  return m;
+}
+
+function sequence(){
+  const c = coverage(), lp = leakByPhase(), bn = arr('bn');
+  const order = ['WEB','BACKBONE','AUTO','CONSOLE','INTEL','CUSTOM'];
+
+  const rows = order.map(id => {
+    const cov = c[id];
+    const wanted = cov !== 'IN' || (lp[id] > 0);
+    const bnHits = bn.filter(v => BN_PHASE[v] === id);
+    return { id, cov, wanted, leak: lp[id] || 0, bn: bnHits };
+  });
+
+  // Custom is only proposed when nothing else explains what they described.
+  const customRow = rows.find(r => r.id === 'CUSTOM');
+  customRow.wanted = bn.length === 0 ? false : customRow.bn.length > 0;
+
+  const first = rows.find(r => r.wanted && r.cov !== 'IN');
+  const entry = first ? first.id : null;
+
+  // Where the sharpest pain actually sits — may be downstream of the entry.
+  let sharpest = null, top = 0;
+  rows.forEach(r => { if (r.leak > top){ top = r.leak; sharpest = r.id; } });
+  if (!sharpest){
+    const withBn = rows.filter(r => r.bn.length).sort((a,b) => b.bn.length - a.bn.length)[0];
+    sharpest = withBn ? withBn.id : null;
+  }
+  return { rows, entry, sharpest, cov:c };
+}
+
+const WHY_IN = {
+  WEB:'Already working. Reviewed and aligned, not rebuilt.',
+  BACKBONE:'Records already live in one place. We connect to it rather than replace it.',
+  AUTO:'Already running. We extend it rather than start over.',
+  CONSOLE:'The crew already has something. We look at it before we touch it.',
+  INTEL:'Something is already answering. We look at what it misses.'
+};
+
+function renderSequence(){
+  const { rows, entry, sharpest } = sequence();
+  const anyInput = arr('bn').length || has('site') || has('records') || arr('have').length;
+
+  $('#phases').innerHTML = [
+    phaseRow({ id:'ASSESS', cov:'GAP', wanted:true, leak:0, bn:[] }, null, true),
+    ...rows.map(r => phaseRow(r, entry, false))
+  ].join('');
+
+  // The note carries the one thing a phase list can't: why this order, and
+  // what to do when the sharpest pain is further down than the entry.
+  const note = $('#dx-note');
+  if (!anyInput){
+    note.innerHTML = 'Answer sections 03 through 06 and the sequence writes itself.';
+  } else if (!entry){
+    note.innerHTML = 'Nothing here reads as a gap yet. Keep going — or this may not be a business with a problem worth solving right now.';
+  } else if (sharpest && sharpest !== entry && PH(sharpest)){
+    note.innerHTML = `The sharpest pain is <b>${phName(sharpest)}</b> — that's the one they feel. It runs on <b>${phName(entry)}</b>, so that's where we start. Getting the order right is most of the value: each phase makes the next one work better than it would alone. <b>The order is settled in the Business Assessment</b>, not before it.`;
+  } else {
+    note.innerHTML = `Everything they described points at <b>${phName(entry)}</b> first. What's already in place stays and gets aligned — we don't rebuild what's working. <b>The order is settled in the Business Assessment</b>, not before it.`;
+  }
+
+  $('#bar-entry').textContent = entry ? phName(entry) : '—';
+  return entry;
+}
+
+function phaseRow(r, entry, isAssess){
+  const p = PH(r.id);
+  const isEntry = !isAssess && r.id === entry;
+  const covered = r.cov === 'IN';
+  const skip = !isAssess && !r.wanted && !covered;
+
+  let tag = '';
+  if (isAssess)      tag = '<span class="pill">Always first</span>';
+  else if (isEntry)  tag = '<span class="pill">Start here</span>';
+  else if (covered)  tag = '<span class="pill green">In place</span>';
+  else if (r.cov === 'PART') tag = '<span class="pill hollow">Partly there</span>';
+  else if (skip)     tag = '<span class="pill hollow">Not yet</span>';
+  else               tag = '<span class="pill hollow">Then</span>';
+
+  let why = '';
+  if (isAssess) why = 'No cost. Nothing gets recommended before this.';
+  else if (covered) why = WHY_IN[r.id] || 'Already in place.';
+  else if (r.leak > 0) why = `Holds ${money(r.leak*12)}/yr of the leak.`;
+  else if (r.bn.length) why = r.bn.join(' · ');
+  // The entry phase often carries no leak of its own — it's the ground the
+  // expensive ones stand on. Say that, rather than leaving the one card the
+  // eye lands on as the only blank one.
+  else if (isEntry) why = 'Everything after this runs on it.';
+
+  const price = phasePrice(r.id, isAssess);
+
+  return `
+  <div class="ph ${isEntry?'entry':''} ${covered?'covered':''} ${skip?'skip':''}">
+    <span class="ph-i">${covered ? '&#10003;' : (isAssess ? '0' : String(['WEB','BACKBONE','AUTO','CONSOLE','INTEL','CUSTOM'].indexOf(r.id)+1))}</span>
+    <div class="ph-m">
+      <div class="ph-r1"><span class="ph-name">${isAssess ? 'Business Assessment' : p.name}</span>${tag}</div>
+      <div class="ph-out">${esc(p.out)}</div>
+      ${why ? `<div class="ph-why">${esc(why)}</div>` : ''}
+    </div>
+    <div class="ph-r">
+      <div class="ph-dur">${esc(p.dur)}</div>
+      <div class="ph-price ${price.settled?'set':''}">${price.text}</div>
+    </div>
+  </div>`;
+}
+
+/* Only the foundation is priced. Everything else says so, plainly — that is
+   the doctrine, not a gap in the tool. */
+function phasePrice(id, isAssess){
+  if (isAssess) return { text:'No cost', settled:true };
+  const spec = PRICE.phase[id];
+  if (spec === 'ARCH'){
+    const a = PRICE.arch[S.arch || 'NEW'];
+    return { text: a.setup[0] === 0 ? 'No setup' : rng(a.setup), settled:true };
+  }
+  if (spec && spec.setup) return { text: rng(spec.setup), settled:true };
+  return { text:'Scoped at assessment', settled:false };
+}
+const rng = ([lo,hi]) => lo === hi ? money(lo) : `${money(lo)}–${money(hi)}`;
+
+/* ══ 3 · INVESTMENT ═════════════════════════════════════════════════════ */
+function renderInvestment(entry){
+  const a = PRICE.arch[S.arch || 'NEW'];
+  const { rows } = sequence();
+  const priced = rows.filter(r => r.wanted && r.cov !== 'IN' && PRICE.phase[r.id] === 'ARCH');
+  const later = rows.filter(r => r.wanted && r.cov !== 'IN' && PRICE.phase[r.id] !== 'ARCH');
+  const entryIsFoundation = entry === 'WEB';
+
+  const startText = entryIsFoundation
+    ? (a.setup[0] === 0 ? 'No setup' : money(a.setup[0]))
+    : 'Scoped';
+  const rangeText = entryIsFoundation ? rng(a.setup) : 'After the assessment';
+  const monthText = rng(a.monthly).replace(/\$/g,'$') + '/mo';
+
+  $('#est').innerHTML = `
+    <div class="est-arch">
+      <span class="micro">Terms</span>
+      <span class="pill">${esc(a.label)}</span>
+      <span style="font-size:13px;color:var(--ink-secondary);">${esc(a.note)}</span>
+    </div>
+    <div class="est-nums">
+      <div class="est-n">
+        <div class="k">Starts at</div>
+        <div class="v ${entryIsFoundation?'':'sm'}">${esc(startText)}</div>
+        <div class="s">${entryIsFoundation ? 'To begin the first implementation.' : 'The first phase here isn’t the foundation.'}</div>
+      </div>
+      <div class="est-n">
+        <div class="k">First implementation</div>
+        <div class="v ${entryIsFoundation?'':'sm'}">${esc(rangeText)}</div>
+        <div class="s">${entryIsFoundation ? esc(phName('WEB')) + ' · ' + esc(PH('WEB').dur) : 'The assessment sets the number.'}</div>
+      </div>
+      <div class="est-n">
+        <div class="k">Ongoing</div>
+        <div class="v">${esc(monthText)}</div>
+        <div class="s">Maintained, updated, and improved. We never build and leave.</div>
+      </div>
+    </div>
+    <div class="est-quote">
+      ${entryIsFoundation
+        ? `The foundation is priced as a whole phase, not a list of parts — <b>${esc(a.label.toLowerCase())}</b> terms. Setup trades against the monthly rather than adding to it.`
+        : `<b>${esc(phName(entry||'WEB'))}</b> is where this business needs to start, and it isn’t the foundation — so the number comes out of the assessment rather than a list. The monthly is the same either way: the system stays maintained and keeps improving.`}
+      ${later.length ? ` <span class="win">Each phase after this one is only proposed once the last one has visibly paid for itself.</span>` : ''}
+    </div>
+    ${later.length ? `
+    <div class="est-scoped">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="color:var(--blue);flex:none;"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>
+      <span><b>${later.length}</b> further implementation${later.length>1?'s':''} in the sequence — ${later.map(r=>esc(phName(r.id))).join(', ')} — scoped as each one is reached.</span>
+    </div>` : ''}`;
+
+  $('#bar-mo').textContent = rng(a.monthly);
+
+  // The comparison has to be one they can't knock down. Setting the WHOLE
+  // counted leak against the FIRST phase's cost implies that phase closes all
+  // of it on day one — it doesn't, and "the website fixes my phone problem in
+  // a week" is the challenge that ends the meeting. So: cost of starting
+  // against cost of standing still, stated as a share, with the phase-by-phase
+  // caveat said out loud rather than buried.
+  const mo = leakMo(), pay = $('#payback');
+  const yearOne = (entryIsFoundation ? a.setup[1] : 0) + a.monthly[1] * 12;
+  if (mo > 0 && yearOne > 0){
+    const yr = mo * 12;
+    const share = (yearOne / yr) * 100;
+    const entryLeak = (leakByPhase()[entry] || 0) * 12;
+    pay.style.display = 'block';
+    pay.innerHTML = `
+      <div class="k">Starting, against standing still</div>
+      <div class="v">A full first year — ${entryIsFoundation ? 'the first implementation plus twelve months of the partnership' : 'twelve months of the partnership'} — comes to <i>${money(yearOne)}</i>. That is <b>${share < 1 ? share.toFixed(1) : Math.round(share)}%</b> of the ${money(yr)} the business is losing anyway.</div>
+      <div class="s">${entryIsFoundation ? `${money(a.setup[1])} setup + ${money(a.monthly[1]*12)} monthly` : `${money(a.monthly[1]*12)} monthly`}, against ${money(yr)} counted above. ${entryLeak > 0 ? `${phName(entry)} alone closes ${money(entryLeak)}/yr of it.` : 'The leak closes phase by phase, not on day one — this is what it costs to start.'}</div>`;
+  } else {
+    pay.style.display = 'none';
+  }
+}
+
+/* ══ 4 · FIT — operator only ════════════════════════════════════════════
+   Scored, never shown as a grade to the room. A prospect who sees a number
+   next to their own name is a prospect you have lost. What surfaces on the
+   client copy is a sentence, not a score.                                  */
+const REV_W  = {'Under $250K':-30,'$250K–500K':-8,'$500K–1M':12,'$1M–3M':22,'$3M–8M':22,'$8M–15M':16,'$15M+':2};
+const TEAM_W = {'Just me':-22,'2–5':8,'6–15':20,'16–40':16,'40+':8};
+const URG_W  = {'Bleeding now':14,'Next few weeks':10,'This quarter':2,'Mapping it out':-12};
+const CHG_W  = {'Yes':16,'Some':2,'Not really':-32};
+const DEC_W  = {'Yes':14,'Partly':4,'No':-20};
+// Keys must match the chips' data-v exactly — straight apostrophe, not curly.
+const REL_W  = {'Current client':16,'Past client':8,"We've spoken":4,'New':0};
+
+function fit(){
+  let score = 30;
+  let answered = 0;
+  const pos = [], neg = [];
+  // Two disqualifiers are not weights — no total of good news makes up for
+  // them. A great business with the wrong person in the room is still a
+  // second meeting, and a business that won't change its process cannot be
+  // helped by a better one. So they cap the band outright.
+  let cap = 100;
+  const add = (v, msg) => {
+    if (!v) return;
+    score += v;
+    (v > 0 ? pos : neg).push(msg);
+  };
+
+  if (has('rev'))  { answered++; add(REV_W[S.rev]   ?? 0, `${S.rev} revenue`); }
+  if (has('team')) { answered++; add(TEAM_W[S.team] ?? 0, S.team === 'Just me' ? 'One-person operation — no crew to systematise' : `${S.team} on payroll`); }
+  if (has('urgency')) { answered++; add(URG_W[S.urgency] ?? 0, S.urgency); }
+  if (has('rel'))     { answered++; add(REL_W[S.rel] ?? 0, S.rel); }
+
+  if (has('change')){
+    answered++;
+    add(CHG_W[S.change] ?? 0, S.change === 'Not really' ? 'Unwilling to change how the work gets done' : `Willing to change: ${S.change.toLowerCase()}`);
+    if (S.change === 'Not really') cap = 25;   // nothing else can rescue this
+    if (S.change === 'Some')       cap = Math.min(cap, 72);
+  }
+  if (has('decider')){
+    answered++;
+    add(DEC_W[S.decider] ?? 0, S.decider === 'No' ? 'Not the decision maker — today is a first meeting, not a close' : (S.decider === 'Yes' ? 'Can decide in the room' : 'Decides with a partner'));
+    if (S.decider === 'No') cap = Math.min(cap, 60);
+  }
+
+  // The leak is weighted lightly on purpose: revenue and team already carry
+  // business size, and letting the dollar figure dominate would just score
+  // our own arithmetic back to us.
+  const yr = leakMo() * 12;
+  if (yr > 0){
+    answered++;
+    if (yr < 25000)       add(-18, `Only ${money(yr)}/yr found — the case may not carry the investment`);
+    else if (yr < 60000)  add(4,   `${money(yr)}/yr found`);
+    else if (yr < 150000) add(12,  `${money(yr)}/yr found — a clear case`);
+    else                  add(14,  `${money(yr)}/yr found — the case argues itself`);
+  }
+
+  const bn = arr('bn').length;
+  if (bn){
+    answered++;
+    if (bn >= 6)      add(10, `${bn} bottlenecks named — systemic, not a one-off`);
+    else if (bn >= 3) add(5,  `${bn} bottlenecks named`);
+    else              add(-6, 'One or two bottlenecks — may be a point fix, not a system');
+  }
+
+  if (arr('goals').length >= 3) add(6, 'Clear picture of where they want to be');
+  if (S.site === 'None' && bn <= 2 && yr < 25000) add(-14, 'Reads as a website shopper');
+  if (num('years') > 0 && num('years') < 2) add(-10, `Only ${n0(num('years'))} year${num('years')===1?'':'s'} in business`);
+  if (num('years') >= 8) add(5, `${n0(num('years'))} years in business`);
+
+  // Diminishing returns, so the scale doesn't pin at 100 the moment a client
+  // is merely good. Past a point more good news doesn't make them likelier to
+  // buy, and a score that saturates can't tell an ideal client from a solid
+  // one. Raw ~40 reads 43, ~80 reads 68, ~150 reads 88.
+  score = score <= 0 ? 0 : Math.round(100 * (1 - Math.exp(-score / 70)));
+  score = Math.max(0, Math.min(cap, score));
+
+  // Don't pass judgement on an empty form. Early in a meeting the honest
+  // answer is that we don't know yet.
+  if (answered < 3){
+    return { score:null, band:'Too early to say', cls:'good', pos, neg,
+      say:'Keep going. Sections 01, 06 and 07 are what this reads from — revenue, team, urgency, the bottlenecks, and whether they’ll change how they work.' };
+  }
+
+  let band, cls, say;
+  if (score >= 68){
+    band = 'Strong fit'; cls = 'strong';
+    say = 'This is our client. Name the number, name the first phase, and ask for the assessment before you leave the room.';
+  } else if (score >= 45){
+    band = 'Worth pursuing'; cls = 'good';
+    say = 'Real, but not settled. Get the assessment booked and let the diagnosis do the convincing — don’t push the phases today.';
+  } else if (score >= 26){
+    band = 'Marginal'; cls = 'marginal';
+    say = 'Be honest with them: the foundation matters more than anything we’d build on top of it right now. Offer the assessment, and be willing to hear no.';
+  } else {
+    band = 'Not our client'; cls = 'no';
+    say = 'Say it kindly and say it today: this isn’t the right time for what we do. Point them at the one thing that would help most and leave the door open. We are not for everyone.';
+  }
+  // Say why the ceiling is there, so a capped score doesn't read as a bug.
+  if (cap < 100 && score === cap){
+    if (S.change === 'Not really') say = 'Held back by one thing: they aren’t willing to change how the work gets done. Nothing we implement survives that. Ask the question again a different way before you write them off — and if the answer holds, say so kindly.';
+    else if (S.decider === 'No')   say = 'The business fits; the meeting doesn’t. Don’t pitch phases to someone who can’t say yes. Get the assessment in front of whoever decides, with this summary in their hand.';
+  }
+  return { score, band, cls, pos, neg, say };
+}
+
+function renderFit(){
+  const f = fit();
+  $('#fit-flag').className = 'op-flag ' + f.cls;
+  $('#fit-v').textContent = f.band;
+  $('#fit-s').textContent = f.score === null ? '—' : f.score;
+  $('#fit-say').textContent = f.say;
+  const li = (c, t) => `<li class="${c}"><span class="b">${c==='pos'?'+':'−'}</span><span>${esc(t)}</span></li>`;
+  $('#fit-pos').innerHTML = f.pos.length ? f.pos.map(t => li('pos', t)).join('') : '<li style="color:var(--ink-faint);font-size:13px;">Nothing yet.</li>';
+  $('#fit-neg').innerHTML = f.neg.length ? f.neg.map(t => li('neg', t)).join('') : '<li style="color:var(--ink-faint);font-size:13px;">Nothing yet.</li>';
+}
+
+/* ══ RENDER ═════════════════════════════════════════════════════════════ */
+let renderLock = false;
+function render(){
+  if (renderLock) return;
+  renderLock = true;
+  const focus = document.activeElement;
+  const fk = focus && focus.dataset ? focus.dataset.k : null;
+  const fSel = focus && focus.selectionStart;
+
+  renderLeaks();
+  const entry = renderSequence();
+  renderInvestment(entry);
+  renderFit();
+  markStrip();
+  $('#rail-who').textContent = S.biz || '';
+  document.title = (S.biz ? S.biz + ' — ' : '') + 'Discovery — Newsonic Age';
+
+  // renderLeaks() rewrites the assumption inputs, so put the caret back.
+  if (fk && !document.body.contains(focus)){
+    const back = document.querySelector(`[data-k="${fk}"]`);
+    if (back){ back.focus(); try { back.setSelectionRange(fSel, fSel); } catch(e){} }
+  }
+  renderLock = false;
+}
+
+function markStrip(){
+  const filled = {
+    s1:['biz','trade','who','role','team','rev','rel'],
+    s2:['sources','answers','after','speed','flow'],
+    s3:['have','site','records','integrated'],
+    s4:['avgJob','jobsMo','callsWk','missedWk','quotesMo','coldMo','adminHrs','ownerHrs','dormant'],
+    s5:[], s6:['bn','worst'], s7:['goals','vision','urgency','change'],
+    s8:[], s9:['next']
+  };
+  $$('.strip a').forEach(a => {
+    const ks = filled[a.dataset.s] || [];
+    let done;
+    if (a.dataset.s === 's5')      done = leakMo() > 0;
+    else if (a.dataset.s === 's8') done = !!sequence().entry;
+    else done = ks.some(k => Array.isArray(S[k]) ? S[k].length : has(k));
+    a.classList.toggle('done', !!done);
+  });
+}
+
+/* ══ BINDING ════════════════════════════════════════════════════════════ */
+function bind(){
+  document.addEventListener('input', e => {
+    const el = e.target.closest('[data-k]');
+    if (!el || !('value' in el)) return;
+    S[el.dataset.k] = el.value;
+    save(); render();
+  });
+
+  document.addEventListener('click', e => {
+    const chip = e.target.closest('.chip');
+    if (chip){
+      const grp = chip.closest('[data-k]');
+      const k = grp.dataset.k, v = chip.dataset.v;
+      if (grp.hasAttribute('data-multi')){
+        // Groups can share a key (section 06 splits bottlenecks across five
+        // headings) — so operate on the value list, not on this group alone.
+        const list = arr(k).slice();
+        const i = list.indexOf(v);
+        i === -1 ? list.push(v) : list.splice(i, 1);
+        S[k] = list;
+      } else {
+        S[k] = (S[k] === v) ? '' : v;
+        if (k === 'rel') S.arch = archFor(S[k]);
+      }
+      paintChips();
+      save(); render();
+      return;
+    }
+    const tog = e.target.closest('[data-tog]');
+    if (tog){
+      S.leakOff = Object.assign({}, S.leakOff);
+      S.leakOff[tog.dataset.tog] = !S.leakOff[tog.dataset.tog];
+      save(); render();
+    }
+  });
+}
+
+const archFor = rel =>
+  rel === 'Current client' || rel === 'Past client' ? 'LEGACY' : 'NEW';
+
+function paintChips(){
+  $$('[data-k]').forEach(grp => {
+    if (!grp.classList.contains('chips')) return;
+    const k = grp.dataset.k, multi = grp.hasAttribute('data-multi');
+    grp.querySelectorAll('.chip').forEach(ch => {
+      const on = multi ? hasV(k, ch.dataset.v) : S[k] === ch.dataset.v;
+      ch.classList.toggle('on', on);
+      ch.classList.toggle('red', grp.classList.contains('red'));
+    });
+  });
+}
+function paintInputs(){
+  $$('input[data-k], textarea[data-k]').forEach(el => {
+    const v = S[el.dataset.k];
+    if (v !== undefined && v !== null && !Array.isArray(v)) el.value = v;
+  });
+}
+
+/* ══ PERSISTENCE ════════════════════════════════════════════════════════
+   Autosaves from the first keystroke. A meeting is exactly when a tab dies.  */
+let saveT = null;
+function save(){
+  $('#saved').classList.add('pending');
+  $('#saved-t').textContent = 'Saving';
+  clearTimeout(saveT);
+  saveT = setTimeout(() => {
+    try {
+      localStorage.setItem(KEY, JSON.stringify({ s:S, t:Date.now() }));
+      $('#saved').classList.remove('pending');
+      $('#saved-t').textContent = 'Saved ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    } catch(e){
+      $('#saved-t').textContent = 'Not saving';
+    }
+    saveT = null;   // beforeunload reads this to know a write is in flight
+  }, 450);
+}
+function load(){
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw){
+      const d = JSON.parse(raw);
+      if (d && d.s) S = Object.assign({}, DEFAULTS, d.s);
+    }
+  } catch(e){}
+}
+const sessions = () => { try { return JSON.parse(localStorage.getItem(ARCHIVE)) || []; } catch(e){ return []; } };
+const writeSessions = l => { try { localStorage.setItem(ARCHIVE, JSON.stringify(l.slice(0,40))); } catch(e){} };
+
+/* The archive is plaintext localStorage on a laptop that gets opened in front
+   of clients. Everything in it is answers the client themselves gave — except
+   the operator read, which is a private judgement about them. That never gets
+   written to disk; it's recomputed from the answers whenever it's needed. */
+const OPERATOR_ONLY = ['opnotes'];
+function archive(){
+  if (!Object.keys(S).some(k => !(k in DEFAULTS) && has(k))) return;
+  const clean = Object.assign({}, S);
+  OPERATOR_ONLY.forEach(k => { delete clean[k]; });
+  const l = sessions();
+  l.unshift({ id:'s'+Date.now(), name:S.biz || 'Untitled session', at:Date.now(), s:clean });
+  writeSessions(l);
+}
+function renderSessions(){
+  const l = sessions();
+  $('#sheet-b').innerHTML = l.length ? l.map(x => `
+    <div class="sess">
+      <div class="sess-m">
+        <div class="sess-n">${esc(x.name)}</div>
+        <div class="sess-d">${new Date(x.at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}</div>
+      </div>
+      <div class="sess-a">
+        <button data-open="${x.id}">Open</button>
+        <button class="del" data-del="${x.id}">Delete</button>
+      </div>
+    </div>`).join('')
+    : '<div class="sheet-empty">Nothing archived yet. “New session” files the current one here first.</div>';
+}
+
+/* ══ OUTPUT ═════════════════════════════════════════════════════════════ */
+function recap(){
+  const f = fit(), { rows, entry, sharpest } = sequence(), a = PRICE.arch[S.arch||'NEW'];
+  const mo = leakMo();
+  const L = [];
+  L.push('NEWSONIC AGE — DISCOVERY');
+  L.push(new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}));
+  L.push('');
+  L.push(`BUSINESS   ${S.biz||'—'}${S.trade?' · '+S.trade:''}`);
+  L.push(`CONTACT    ${S.who||'—'}${S.role?' ('+S.role+')':''}${S.phone?' · '+S.phone:''}${S.email?' · '+S.email:''}`);
+  L.push(`SCALE      ${S.team||'—'} on payroll · ${S.rev||'—'} · ${S.years?S.years+' yrs':'—'}`);
+  L.push('');
+  L.push('— IN THE RED —');
+  LEAKS.forEach(x => {
+    if (!leakOn(x.id) || !leakLive(x)) return;
+    L.push(`  ${x.name}: ${money(x.calc())}/mo (${money(x.calc()*12)}/yr) → ${phName(x.phase)}`);
+  });
+  L.push(`  TOTAL: ${money(mo)}/mo · ${money(mo*12)}/yr`);
+  L.push('');
+  L.push('— BOTTLENECKS —');
+  arr('bn').forEach(b => L.push('  · ' + b));
+  if (S.worst) L.push(`  WORST: ${S.worst}`);
+  L.push('');
+  L.push('— SEQUENCE —');
+  L.push(`  0. Business Assessment (no cost)`);
+  rows.forEach((r,i) => {
+    const st = r.cov === 'IN' ? 'IN PLACE' : (r.id === entry ? 'START HERE' : (r.wanted ? 'THEN' : 'not yet'));
+    L.push(`  ${i+1}. ${phName(r.id)} — ${st} · ${PH(r.id).dur}`);
+  });
+  if (sharpest && sharpest !== entry) L.push(`  SHARPEST PAIN: ${phName(sharpest)} (runs on ${phName(entry||'—')})`);
+  L.push('');
+  L.push('— INVESTMENT —');
+  L.push(`  Terms: ${a.label}`);
+  L.push(`  Setup: ${entry==='WEB' ? rng(a.setup) : 'scoped at assessment'}`);
+  L.push(`  Monthly: ${rng(a.monthly)}`);
+  L.push('');
+  L.push('— OPERATOR — not for the client —');
+  L.push(`  FIT: ${f.band}${f.score === null ? '' : ` (${f.score}/100)`}`);
+  f.pos.forEach(t => L.push('   + ' + t));
+  f.neg.forEach(t => L.push('   − ' + t));
+  L.push(`  SAY: ${f.say}`);
+  if (S.next)    L.push(`  NEXT: ${S.next}`);
+  if (S.opnotes) L.push(`  NOTES: ${S.opnotes}`);
+  return L.join('\n');
+}
+
+function buildPDF(){
+  const f = fit(), { rows, entry, sharpest } = sequence(), a = PRICE.arch[S.arch||'NEW'];
+  const mo = leakMo(), yr = mo * 12;
+  const op = document.body.classList.contains('op');
+  const wm = `<div class="p-wm"><img src="assets/nsa-logo.png" alt=""><span><span class="a">NEWSONIC</span><span class="b">AGE</span></span></div>`;
+  const tags = (k, cls) => arr(k).length
+    ? `<div class="p-tags">${arr(k).map(v => `<span class="p-tag ${cls||''}">${esc(v)}</span>`).join('')}</div>` : '';
+
+  const live = LEAKS.filter(x => leakOn(x.id) && leakLive(x) && x.calc() > 0);
+
+  $('#pdoc').innerHTML = `
+  <div class="p-cover">
+    ${wm}
+    <div class="eyebrow">Discovery</div>
+    <h1>${esc(S.biz || 'Discovery Session')}</h1>
+    <div class="sub">${esc(S.trade || '')}${S.area ? ' &middot; ' + esc(S.area) : ''}</div>
+    <div class="p-meta">
+      ${S.who ? `<div><div class="k">With</div><div class="v">${esc(S.who)}${S.role?' — '+esc(S.role):''}</div></div>` : ''}
+      ${S.team ? `<div><div class="k">Team</div><div class="v">${esc(S.team)}</div></div>` : ''}
+      ${S.rev ? `<div><div class="k">Revenue</div><div class="v">${esc(S.rev)}</div></div>` : ''}
+      ${S.years ? `<div><div class="k">Years</div><div class="v">${esc(S.years)}</div></div>` : ''}
+      <div><div class="k">Date</div><div class="v">${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}</div></div>
+    </div>
+  </div>
+
+  ${(arr('bn').length || S.worst || arr('have').length) ? `
+  <div class="p-sec">
+    <div class="rule"></div><h2>Where you stand today</h2>
+    ${arr('bn').length ? `<p class="p-lead">What we wrote down together:</p>${tags('bn','red')}` : ''}
+    ${S.worst ? `<div class="p-quote" style="margin-top:12px;">“${esc(S.worst)}”</div>` : ''}
+    ${arr('have').length ? `<p class="p-lead" style="margin-top:14px;">Already in place:</p>${tags('have','green')}` : ''}
+    ${S.flow ? `<p class="p-lead" style="margin-top:14px;">How work moves through it today: ${esc(S.flow)}</p>` : ''}
+  </div>` : ''}
+
+  ${live.length ? `
+  <div class="p-sec">
+    <div class="rule"></div><h2>What it's costing to leave it alone</h2>
+    <p class="p-lead">Every line below is arithmetic on the figures you gave us. Nothing is estimated on your behalf.</p>
+    <table class="p-t">
+      <thead><tr><th>Where it goes</th><th class="r">Per month</th><th class="r">Per year</th></tr></thead>
+      <tbody>
+        ${live.map(x => `
+        <tr>
+          <td>
+            <div class="nm">${esc(x.name)}</div>
+            <div class="mth">${x.math().replace(/<[^>]*>/g,'').replace(/&times;/g,'×').replace(/&divide;/g,'÷')}</div>
+            <div class="p-closer">Closed by ${esc(phName(x.phase))}</div>
+          </td>
+          <td class="r amt">${money(x.calc())}</td>
+          <td class="r amt">${money(x.calc()*12)}</td>
+        </tr>`).join('')}
+        <tr class="tot">
+          <td>Leaving the business<div class="yr">across ${live.length} line${live.length>1?'s':''}</div></td>
+          <td class="r amt">${money(mo)}</td>
+          <td class="r amt">${money(yr)}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>` : ''}
+
+  <div class="p-sec">
+    <div class="rule"></div><h2>What we'd do, and in what order</h2>
+    <p class="p-lead">${
+      sharpest && entry && sharpest !== entry
+        ? `The sharpest pain is <b>${esc(phName(sharpest))}</b>. It runs on <b>${esc(phName(entry))}</b>, so that is where we start — each phase makes the next one work better than it would alone. The order is settled in the Business Assessment.`
+        : `One operating system, activated a phase at a time. What is already working stays and gets aligned — we do not rebuild what is not broken. The order is settled in the Business Assessment.`
+    }</p>
+    <div class="p-ph">
+      <span class="i">0</span>
+      <div class="m"><div class="nm">Business Assessment<span class="tagx">Always first</span></div>
+        <div class="ot">You know exactly what to fix first, and in what order.</div>
+        <div class="wy">No cost. Nothing gets recommended before this.</div></div>
+      <div class="r">1 wk<div class="pr">No cost</div></div>
+    </div>
+    ${rows.map((r,i) => {
+      const p = PH(r.id), covered = r.cov === 'IN', isEntry = r.id === entry;
+      if (!r.wanted && !covered) return '';
+      const tag = isEntry ? '<span class="tagx">Start here</span>'
+                : covered ? '<span class="tagx g">In place</span>'
+                : '<span class="tagx f">Then</span>';
+      const why = covered ? (WHY_IN[r.id]||'') : (r.leak > 0 ? `Holds ${money(r.leak*12)}/yr of what we just counted.` : (r.bn.length ? r.bn.join(' · ') : ''));
+      const pr = phasePrice(r.id, false);
+      return `<div class="p-ph ${isEntry?'entry':''} ${covered?'covered':''}">
+        <span class="i">${covered ? '✓' : (i+1)}</span>
+        <div class="m"><div class="nm">${p.name}${tag}</div>
+          <div class="ot">${esc(p.out)}</div>
+          ${why ? `<div class="wy">${esc(why)}</div>` : ''}</div>
+        <div class="r">${esc(p.dur)}<div class="pr">${esc(pr.text)}</div></div>
+      </div>`;
+    }).join('')}
+  </div>
+
+  <div class="p-sec">
+    <div class="rule"></div><h2>The investment</h2>
+    <div class="p-est">
+      <div class="row">
+        <div><div class="k">Starts at</div><div class="v ${entry==='WEB'?'':'sm'}">${entry==='WEB' ? (a.setup[0]===0?'No setup':money(a.setup[0])) : 'Scoped'}</div><div class="s">${esc(a.label)} terms</div></div>
+        <div><div class="k">First implementation</div><div class="v ${entry==='WEB'?'':'sm'}">${entry==='WEB' ? rng(a.setup) : 'After the assessment'}</div><div class="s">${entry ? esc(phName(entry)) + ' · ' + esc(PH(entry).dur) : ''}</div></div>
+        <div><div class="k">Ongoing</div><div class="v">${rng(a.monthly)}</div><div class="s">per month</div></div>
+      </div>
+      <div class="note">A phase is priced as a whole phase, not a list of parts, and setup trades against the monthly rather than adding to it. <b>We never build and leave</b> — the monthly maintains it, updates it, and keeps improving it. Every later phase is scoped when it is reached, and only proposed once the last one has visibly paid for itself.</div>
+      ${(() => {
+        // Same discipline as the screen: cost of starting against cost of
+        // standing still. Never the whole leak against the first phase.
+        if (mo <= 0) return '';
+        const yearOne = (entry === 'WEB' ? a.setup[1] : 0) + a.monthly[1] * 12;
+        if (yearOne <= 0) return '';
+        const share = (yearOne / (mo * 12)) * 100;
+        const entryLeak = (leakByPhase()[entry] || 0) * 12;
+        return `
+      <div class="p-pay">
+        <div class="k">Starting, against standing still</div>
+        <div class="v">A full first year comes to <i>${money(yearOne)}</i> — <b>${share < 1 ? share.toFixed(1) : Math.round(share)}%</b> of the ${money(mo * 12)} the business is losing anyway.</div>
+        <div class="cap">${entryLeak > 0
+          ? `${esc(phName(entry))} alone closes ${money(entryLeak)} a year of it.`
+          : 'The leak closes phase by phase, not on day one. This is what it costs to start.'}</div>
+      </div>`;
+      })()}
+    </div>
+    ${S.next ? `<p class="p-lead" style="margin-top:14px;"><b>Agreed next step:</b> ${esc(S.next)}</p>` : ''}
+  </div>
+
+  ${op ? `
+  <div class="p-op">
+    <div class="stamp">Operator copy — not for the client</div>
+    <div class="verdict">${esc(f.band)}</div>
+    <div class="score">${f.score === null ? 'Not enough answered to score' : `Fit score ${f.score} / 100`}</div>
+    <ul>${f.pos.map(t=>`<li class="pos">${esc(t)}</li>`).join('')}${f.neg.map(t=>`<li class="neg">${esc(t)}</li>`).join('')}</ul>
+    <div class="p-quote">${esc(f.say)}</div>
+    ${S.opnotes ? `<p class="p-lead" style="margin-top:12px;"><b>Notes:</b> ${esc(S.opnotes)}</p>` : ''}
+    ${S.tried ? `<p class="p-lead"><b>Tried before:</b> ${esc(S.tried)}</p>` : ''}
+  </div>` : ''}
+
+  <div class="p-foot">
+    ${wm}
+    <div class="tag">An adaptive systems studio.</div>
+    <div class="cx">newsonicage.com &nbsp;&middot;&nbsp; Call or text (678) 903-1255</div>
+  </div>`;
+}
+
+/* ══ TOAST ══ */
+let toastT;
+function toast(msg){
+  const t = $('#toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+/* ══ WIRE ═══════════════════════════════════════════════════════════════ */
+function wire(){
+  $('#btn-op').addEventListener('click', () => {
+    const on = document.body.classList.toggle('op');
+    $('#btn-op').classList.toggle('on', on);
+    $('#pdf-label').textContent = on ? 'PDF — operator copy' : 'PDF — client copy';
+    $('#btn-sessions').hidden = !on;
+    if (!on) $('#sheet').classList.remove('open');   // don't leave it open behind the toggle
+    if (on) $('#s-op').scrollIntoView({behavior:'smooth', block:'start'});
+  });
+
+  $('#btn-pdf').addEventListener('click', () => { buildPDF(); setTimeout(() => window.print(), 60); });
+
+  $('#btn-copy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(recap()); toast('Recap copied'); }
+    catch(e){
+      const ta = document.createElement('textarea');
+      ta.value = recap(); document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); ta.remove(); toast('Recap copied');
+    }
+  });
+
+  $('#btn-new').addEventListener('click', () => {
+    if (!confirm('File this session and start a clean one?')) return;
+    archive();
+    S = Object.assign({}, DEFAULTS);
+    try { localStorage.removeItem(KEY); } catch(e){}
+    $$('input[data-k], textarea[data-k]').forEach(el => { el.value = ''; });
+    paintChips(); paintInputs(); render();
+    window.scrollTo({top:0, behavior:'smooth'});
+    toast('Filed. Clean session.');
+  });
+
+  $('#btn-sessions').addEventListener('click', () => { renderSessions(); $('#sheet').classList.add('open'); });
+  $('#sheet-x').addEventListener('click', () => $('#sheet').classList.remove('open'));
+  $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet') $('#sheet').classList.remove('open'); });
+  $('#sheet-b').addEventListener('click', e => {
+    const o = e.target.closest('[data-open]'), d = e.target.closest('[data-del]');
+    if (o){
+      const rec = sessions().find(x => x.id === o.dataset.open);
+      if (!rec) return;
+      archive();
+      S = Object.assign({}, DEFAULTS, rec.s);
+      save(); paintChips(); paintInputs(); render();
+      $('#sheet').classList.remove('open');
+      window.scrollTo({top:0}); toast('Opened ' + (rec.name || 'session'));
+    }
+    if (d){
+      writeSessions(sessions().filter(x => x.id !== d.dataset.del));
+      renderSessions();
+    }
+  });
+
+  // Section highlight in the strip.
+  const secs = $$('main section[id]');
+  const io = new IntersectionObserver(en => {
+    en.forEach(x => {
+      if (!x.isIntersecting) return;
+      $$('.strip a').forEach(a => a.classList.toggle('here', a.dataset.s === x.target.id));
+    });
+  }, { rootMargin:'-120px 0px -65% 0px' });
+  secs.forEach(s => io.observe(s));
+
+  // Only warn while a save is genuinely in flight. Guarding on "has content"
+  // instead would fire on every navigation forever, because autosave means
+  // there is never anything at risk — a confirm dialog between Brad and
+  // closing a tab, in a meeting, protecting nothing.
+  window.addEventListener('beforeunload', e => {
+    if (saveT !== null){ e.preventDefault(); e.returnValue = ''; }
+  });
+}
+
+/* ══ GO ═════════════════════════════════════════════════════════════════ */
+indexBottlenecks();
+load();
+bind();
+wire();
+paintInputs();
+paintChips();
+render();
+if (localStorage.getItem(KEY)) $('#saved-t').textContent = 'Restored';
+</script>
+</body>
+</html>

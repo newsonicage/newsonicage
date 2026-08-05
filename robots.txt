@@ -9,19 +9,45 @@ User-agent: *
 Allow: /
 Disallow: /ebtl.html
 Disallow: /ebtl-automation.html
+Disallow: /discovery
+Disallow: /discovery.html
 
 # ── Search engines ───────────────────────────────────────
+# /discovery is repeated in EVERY block below, on purpose. A named block
+# replaces the * block wholesale, so a Disallow that appears only under * does
+# nothing for any agent named here — it would have blocked the anonymous
+# crawlers and left the ones we actually name free to fetch.
+#
+# The usual advice is the opposite: let a crawler fetch, so it can read the
+# page's noindex, because a robots-blocked page can still be indexed URL-only.
+# That trap needs an inbound link to fire, and /discovery has none — unlinked
+# from every nav, absent from sitemap.xml. What it does have is the pricing
+# model in its source. Refusing the fetch keeps that out of caches and
+# answer-engine corpora; the noindex in the page covers anything that ignores
+# this file.
+#
+# This is obscurity, not access control. Anyone holding the URL can still read
+# the source. If that stops being acceptable the fix is server-side auth on
+# the path, not another line in here.
 User-agent: Googlebot
 Allow: /
+Disallow: /discovery
+Disallow: /discovery.html
 
 User-agent: Bingbot
 Allow: /
+Disallow: /discovery
+Disallow: /discovery.html
 
 User-agent: DuckDuckBot
 Allow: /
+Disallow: /discovery
+Disallow: /discovery.html
 
 User-agent: Applebot
 Allow: /
+Disallow: /discovery
+Disallow: /discovery.html
 
 # ── AI answer engines ────────────────────────────────────
 # These are the crawlers that read a page in order to answer a question and
@@ -29,24 +55,38 @@ Allow: /
 # homepage — the pricing, services, and FAQ are all published for them.
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /discovery
+Disallow: /discovery.html
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /discovery
+Disallow: /discovery.html
 
 User-agent: Claude-SearchBot
 Allow: /
+Disallow: /discovery
+Disallow: /discovery.html
 
 User-agent: Claude-User
 Allow: /
+Disallow: /discovery
+Disallow: /discovery.html
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /discovery
+Disallow: /discovery.html
 
 User-agent: Perplexity-User
 Allow: /
+Disallow: /discovery
+Disallow: /discovery.html
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /discovery
+Disallow: /discovery.html
 
 # ── Model-training crawlers ──────────────────────────────
 # Refused 2026-07-25. These collect content to train models rather than to
@@ -78,5 +118,7 @@ Disallow: /
 #   meta-externalagent — also gates whether Meta AI can answer with this site
 User-agent: meta-externalagent
 Allow: /
+Disallow: /discovery
+Disallow: /discovery.html
 
 Sitemap: https://newsonicage.com/sitemap.xml
