@@ -96,6 +96,9 @@ input,select,textarea{font:inherit;color:inherit;}
 /* An explicit display beats the UA rule for [hidden], so the Sessions button
    would stay visible despite the attribute. Restate it. */
 .rail-btn[hidden]{display:none;}
+.rail-btn.icon{padding:6px 8px;}
+.rail-btn.icon svg{width:15px;height:15px;display:block;}
+.rail-btn.icon:hover{border-color:var(--warn);color:var(--warn);}
 .rail-btn.on{background:var(--ink900);border-color:var(--ink900);color:#fff;}
 .saved{
   font-family:var(--mono);font-size:10px;letter-spacing:.6px;color:var(--ink-faint);
@@ -545,6 +548,14 @@ body.op #s-op{display:block;}
        lives one click away on a screen a client is looking at. -->
   <button class="rail-btn" id="btn-sessions" hidden>Sessions</button>
   <button class="rail-btn" id="btn-op" title="Show the fit read. Client-visible when on — turn it off before you turn the screen.">Operator</button>
+  <!-- Drops the gate cookie and sends this device back to the 404. For before
+       you hand the laptop over. The session itself is kept — unlocking again
+       restores it. -->
+  <button class="rail-btn icon" id="btn-lock" title="Lock this device — back to the passcode" aria-label="Lock this device">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+    </svg>
+  </button>
 </header>
 
 <!-- ═══ STEP STRIP ═══ -->
@@ -2016,6 +2027,20 @@ function wire(){
   });
 
   $('#btn-pdf').addEventListener('click', () => { buildPDF(); setTimeout(() => window.print(), 60); });
+
+  $('#btn-lock').addEventListener('click', async () => {
+    if (!confirm('Lock this device?\n\nThe passcode gets you back in. This session is kept and will be here when you return.')) return;
+    // Flush any debounced write before the page goes away, or the last thing
+    // typed is lost behind a gate.
+    try { localStorage.setItem(KEY, JSON.stringify({ s:S, t:Date.now() })); } catch(e){}
+    try {
+      await fetch(location.pathname, {
+        method:'POST', headers:{'content-type':'application/json'},
+        body: JSON.stringify({ lock:true }), credentials:'same-origin'
+      });
+      location.replace(location.pathname);
+    } catch(e){ toast('Could not reach the server'); }
+  });
 
   $('#btn-copy').addEventListener('click', async () => {
     try { await navigator.clipboard.writeText(recap()); toast('Recap copied'); }

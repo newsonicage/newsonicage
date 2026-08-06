@@ -227,13 +227,27 @@ export default async (request, context) => {
 
   const url = new URL(request.url);
 
-  /* ── keypad submission ── */
+  /* ── keypad submission, or the lock button ── */
   if (request.method === 'POST') {
-    let given = '';
-    try {
-      const b = await request.json();
-      given = typeof b?.code === 'string' ? b.code : '';
-    } catch (_) { /* malformed body falls through to the reject */ }
+    let body = null;
+    try { body = await request.json(); } catch (_) { /* falls through to reject */ }
+
+    // Lock. The cookie is HttpOnly, so the page cannot drop it itself — this
+    // is the only way out. Checked before the passcode branch so it never
+    // eats the wrong-guess delay, and left unauthenticated on purpose: all it
+    // can do is expire the caller's own cookie.
+    if (body?.lock === true) {
+      return new Response(null, {
+        status: 204,
+        headers: {
+          'set-cookie': `${COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`,
+          'cache-control': 'no-store',
+          'x-discovery-gate': 'locked'
+        }
+      });
+    }
+
+    const given = typeof body?.code === 'string' ? body.code : '';
 
     if (passcode && safeEqual(given, passcode)) {
       return new Response(null, {
